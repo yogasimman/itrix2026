@@ -63,7 +63,7 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
         setWarningType("fullscreen");
         logViolation(
           "fullscreen_exit",
-          "Participant exited fullscreen mode during Round 1. Only this quiz site and local Arduino IDE are permitted.",
+          "Participant exited fullscreen mode during Round 1. Only this quiz site is permitted — no external applications allowed.",
           "critical"
         );
       }
@@ -97,7 +97,7 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
     const handleBlur = () => {
       logViolation(
         "window_blur",
-        "Participant switched away from the quiz window. Only this site and locally installed Arduino IDE are permitted during Round 1.",
+        "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
         "critical"
       );
     };
@@ -153,7 +153,7 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
           <div>
             <h1 className="text-2xl font-bold mb-2">Fullscreen Required</h1>
             <p className="text-muted-foreground text-sm">
-              Round 1 requires fullscreen mode. Only this quiz site and your locally installed Arduino IDE are permitted during the exam.
+              Round 1 requires fullscreen mode. Only this quiz site is permitted during the exam — no other applications are allowed.
             </p>
           </div>
           <button
@@ -188,7 +188,7 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
             <h1 className="text-3xl font-bold mb-3">{msg.title}</h1>
             <p className="text-lg opacity-90 mb-2">{msg.body}</p>
             <p className="text-sm opacity-80">
-              This incident has been recorded and sent to the invigilator. Only this quiz site and the locally installed Arduino IDE are permitted.
+              This incident has been recorded and sent to the invigilator. Only this quiz site is permitted during Round 1 — no other applications are allowed.
             </p>
           </div>
           <div className="bg-white/20 rounded-lg px-4 py-2 inline-block">

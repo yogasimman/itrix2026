@@ -1,18 +1,6 @@
 "use client";
 
-import { useEffect, useCallback, useRef } from "react";
-
-// Whitelisted applications that are allowed during the competition
-const WHITELISTED_APPS = [
-  "Arduino IDE",
-  "Visual Studio Code", 
-  "Code",
-  "Notepad++",
-  "Code::Blocks",
-  "PlatformIO",
-  "Thonny",
-  "IDLE",
-];
+import { useEffect, useCallback, useRef, useState } from "react";
 
 interface ViolationTrackerProps {
   participantId: string;
@@ -25,22 +13,21 @@ export function ViolationTracker({
   participantId,
   enabled,
   onViolation,
-  mode = "round1",
+  mode = "round2",
 }: ViolationTrackerProps) {
-  const lastViolationTime = useRef<number>(0);
-  const lastViolationType = useRef<string>("");
+  const lastViolationTime = useRef<Record<string, number>>({});
+  const [showWarningBanner, setShowWarningBanner] = useState(false);
 
   const logViolation = useCallback(
     async (
-      type: string, 
-      details: string, 
+      type: string,
+      details: string,
       severity: "permitted" | "warning" | "critical" = "warning"
     ) => {
-      // Debounce violations (min 2 seconds apart for same type)
       const now = Date.now();
-      if (now - lastViolationTime.current < 2000 && lastViolationType.current === type) return;
-      lastViolationTime.current = now;
-      lastViolationType.current = type;
+      const lastTime = lastViolationTime.current[type] || 0;
+      if (now - lastTime < 3000) return;
+      lastViolationTime.current[type] = now;
 
       try {
         await fetch(`/api/participants/${participantId}`, {
@@ -64,108 +51,91 @@ export function ViolationTracker({
   useEffect(() => {
     if (!enabled) return;
 
-    const isRound1 = mode === "round1";
+    const isRound2 = mode === "round2";
 
-    // Tab visibility change
+    // Tab switch — always a violation for Round 2 (should only use this site + local Arduino IDE, not other browser tabs)
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        // Round 1: strict anti-tab-switch
-        // Round 2: participant may switch to Arduino IDE (allowed), so record as permitted trace only
-        if (isRound1) {
-          logViolation(
-            "tab_switch", 
-            "User switched to another browser tab", 
-            "critical"
-          );
-        } else {
-          logViolation(
-            "focus_change",
-            "User focus left browser window (Round 2 local IDE usage expected)",
-            "permitted"
-          );
-        }
-      }
-    };
-
-    // Window blur - Check if it's a whitelisted app or suspicious
-    // Note: Browser cannot detect which app gained focus, so window blur
-    // is logged as a WARNING (not critical) to allow IDE usage
-    const handleBlur = () => {
-      if (isRound1) {
         logViolation(
-          "window_blur", 
-          "User focus left browser window (may be using local IDE)", 
-          "warning"
-        );
-      } else {
-        logViolation(
-          "window_blur",
-          "User switched away from browser (Round 2 allows local IDE workflow)",
-          "permitted"
-        );
-      }
-    };
-
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement && isRound1) {
-        logViolation(
-          "fullscreen_exit", 
-          "User exited fullscreen mode", 
-          "warning"
-        );
-      }
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Detect suspicious key combinations - CRITICAL
-      if (e.altKey && e.key === "Tab" && isRound1) {
-        logViolation(
-          "alt_tab", 
-          "User pressed Alt+Tab to switch windows", 
+          "tab_switch",
+          "Participant switched to another browser tab. Only this site and locally installed Arduino IDE are permitted.",
           "critical"
         );
+        if (isRound2) setShowWarningBanner(true);
+      } else {
+        // They came back — keep the banner visible so they see it
       }
-      // Ctrl/Cmd + T/N/W opens/manages browser tabs/windows (not required for IDE workflow)
+    };
+
+    // Window blur — switching to another application
+    // For Round 2: Arduino IDE is allowed, anything else is a violation.
+    // We cannot detect which app was used from the browser, so this is logged as a warning
+    // and the invigilator can correlate with context.
+    const handleBlur = () => {
+      if (isRound2) {
+        logViolation(
+          "window_blur",
+          "Participant switched away from browser. Only this site and locally installed Arduino IDE are permitted — any other application is a violation.",
+          "warning"
+        );
+        setShowWarningBanner(true);
+      }
+    };
+
+    // Keyboard shortcuts — block new tabs/windows
+    const handleKeyDown = (e: KeyboardEvent) => {
       const isBrowserShortcut =
         (e.ctrlKey || e.metaKey) &&
-        (e.key.toLowerCase() === "t" || e.key.toLowerCase() === "n" || e.key.toLowerCase() === "w");
+        (e.key.toLowerCase() === "t" ||
+          e.key.toLowerCase() === "n" ||
+          e.key.toLowerCase() === "w");
       if (isBrowserShortcut) {
         e.preventDefault();
         logViolation(
-          "browser_shortcut", 
-          `User pressed browser navigation shortcut (${e.ctrlKey ? "Ctrl" : "Cmd"}+${e.key.toUpperCase()})`,
+          "browser_shortcut",
+          `Participant used browser shortcut (${e.ctrlKey ? "Ctrl" : "Cmd"}+${e.key.toUpperCase()}) — not permitted.`,
           "critical"
         );
       }
-      // Ctrl+C, Ctrl+V in certain contexts could be suspicious
-      // But we allow them for code editing - don't log
-    };
-
-    // Right-click context menu - WARNING
-    const handleContextMenu = (e: MouseEvent) => {
-      // Allow right-click but log it as a warning
-      logViolation(
-        "context_menu",
-        "User opened context menu",
-        "warning"
-      );
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("blur", handleBlur);
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
     document.addEventListener("keydown", handleKeyDown);
-    // Optionally track context menu - uncomment if needed
-    // document.addEventListener("contextmenu", handleContextMenu);
 
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("blur", handleBlur);
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
       document.removeEventListener("keydown", handleKeyDown);
-      // document.removeEventListener("contextmenu", handleContextMenu);
     };
   }, [enabled, logViolation, mode]);
+
+  // Warning banner shown when participant switches away (Round 2)
+  if (!enabled || mode !== "round2") return null;
+
+  if (showWarningBanner) {
+    return (
+      <div className="fixed top-0 left-0 right-0 z-[9999] bg-destructive text-destructive-foreground px-4 py-3 flex items-center justify-between gap-4 shadow-lg">
+        <div className="flex items-center gap-3">
+          <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+          </svg>
+          <span className="font-semibold text-sm">
+            VIOLATION RECORDED — You switched away from this page.{" "}
+            <span className="font-normal opacity-90">
+              Only this competition site and your locally installed Arduino IDE are permitted. All other applications are a violation.
+            </span>
+          </span>
+        </div>
+        <button
+          onClick={() => setShowWarningBanner(false)}
+          className="text-destructive-foreground/70 hover:text-destructive-foreground text-xs underline shrink-0 ml-4"
+        >
+          Dismiss
+        </button>
+      </div>
+    );
+  }
 
   return null;
 }

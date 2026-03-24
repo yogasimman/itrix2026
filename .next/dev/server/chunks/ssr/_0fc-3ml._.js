@@ -917,7 +917,7 @@ function Round1Proctoring({ participantId, enabled }) {
             setIsFullscreen(inFS);
             if (!inFS) {
                 setWarningType("fullscreen");
-                logViolation("fullscreen_exit", "Participant exited fullscreen mode during Round 1. Only this quiz site and local Arduino IDE are permitted.", "critical");
+                logViolation("fullscreen_exit", "Participant exited fullscreen mode during Round 1. Only this quiz site is permitted — no external applications allowed.", "critical");
             }
         };
         document.addEventListener("fullscreenchange", handleFSChange);
@@ -948,7 +948,7 @@ function Round1Proctoring({ participantId, enabled }) {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (!enabled) return;
         const handleBlur = ()=>{
-            logViolation("window_blur", "Participant switched away from the quiz window. Only this site and locally installed Arduino IDE are permitted during Round 1.", "critical");
+            logViolation("window_blur", "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.", "critical");
         };
         window.addEventListener("blur", handleBlur);
         return ()=>window.removeEventListener("blur", handleBlur);
@@ -1034,7 +1034,7 @@ function Round1Proctoring({ participantId, enabled }) {
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-muted-foreground text-sm",
-                                children: "Round 1 requires fullscreen mode. Only this quiz site and your locally installed Arduino IDE are permitted during the exam."
+                                children: "Round 1 requires fullscreen mode. Only this quiz site is permitted during the exam — no other applications are allowed."
                             }, void 0, false, {
                                 fileName: "[project]/components/round1-proctoring.tsx",
                                 lineNumber: 155,
@@ -1113,7 +1113,7 @@ function Round1Proctoring({ participantId, enabled }) {
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-sm opacity-80",
-                                children: "This incident has been recorded and sent to the invigilator. Only this quiz site and the locally installed Arduino IDE are permitted."
+                                children: "This incident has been recorded and sent to the invigilator. Only this quiz site is permitted during Round 1 — no other applications are allowed."
                             }, void 0, false, {
                                 fileName: "[project]/components/round1-proctoring.tsx",
                                 lineNumber: 190,
