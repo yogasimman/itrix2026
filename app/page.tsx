@@ -27,20 +27,18 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isOnline, setIsOnline] = useState(true)
-  const [initialized, setInitialized] = useState(false)
   const [isInitializing, setIsInitializing] = useState(false)
 
   // Check initialization status
-  const { data: initStatus, mutate: checkInit } = useSWR("/api/init", fetcher, {
+  const { data: initStatus, mutate: recheckInit } = useSWR("/api/init", fetcher, {
     refreshInterval: 0,
     revalidateOnFocus: false,
   })
 
-  useEffect(() => {
-    if (initStatus?.initialized) {
-      setInitialized(true)
-    }
-  }, [initStatus])
+  // initStatus === undefined  → still loading
+  // initStatus.initialized === true  → ready
+  // initStatus.initialized === false → needs setup
+  const initialized = initStatus?.initialized === true
 
   // Monitor online/offline status
   useEffect(() => {
@@ -63,10 +61,11 @@ export default function HomePage() {
     try {
       const response = await fetch("/api/init", { method: "POST" })
       if (response.ok) {
-        window.location.reload()
+        await recheckInit({ initialized: true }, false)
       }
     } catch (err) {
       console.error("Failed to initialize database:", err)
+    } finally {
       setIsInitializing(false)
     }
   }
@@ -137,7 +136,19 @@ export default function HomePage() {
     }
   }
 
-  // Not initialized view
+  // Still checking status — show a neutral loading screen
+  if (initStatus === undefined) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-4 text-muted-foreground">
+          <Spinner className="h-8 w-8" />
+          <p className="text-sm">Loading...</p>
+        </div>
+      </main>
+    )
+  }
+
+  // System not yet initialized
   if (!initialized) {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center p-4">
