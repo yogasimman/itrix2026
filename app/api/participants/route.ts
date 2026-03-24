@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   try {
     ensureInitialized();
     const body = await request.json();
-    const { name, teamName, id: providedId, autoAssignScenario = true, assignedRound } = body;
+    const { name, teamName, id: providedId, autoAssignScenario = true, assignedRound, phone, email, year } = body;
 
     if (!name) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 });
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create participant with assigned round
-    const participant = createParticipant(name, participantId, teamName, assignedRound);
+    const participant = createParticipant(name, participantId, teamName, assignedRound, phone, email, year);
 
     // Auto-assign a random scenario if enabled and participant is for Round 2
     let assignedScenario = null;

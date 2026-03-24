@@ -446,12 +446,15 @@ function getAllParticipants() {
         };
     }).sort((a, b)=>new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }
-function createParticipant(name, id, teamName, assignedRound) {
+function createParticipant(name, id, teamName, assignedRound, phone, email, year) {
     const store = getStore();
     const participant = {
         id,
         name,
         team_name: teamName,
+        phone,
+        email,
+        year,
         assigned_round: assignedRound || null,
         scenario_id: null,
         timer_duration: store.global_timer_duration,

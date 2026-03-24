@@ -10,12 +10,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   User,
   Cpu,
   Unlock,
   Lock,
   Activity,
+  AlertTriangle,
+  CheckCircle2,
+  Send,
 } from "lucide-react";
 
 interface Participant {
@@ -26,6 +40,7 @@ interface Participant {
   timer_started_at: string | null;
   is_active: number;
   is_locked: number;
+  round2_completed: boolean;
   scenario_title: string | null;
   situation: string | null;
   what_to_build: string | null;
@@ -66,6 +81,9 @@ export default function ParticipantDashboard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [violationCount, setViolationCount] = useState(0);
+  const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -94,7 +112,6 @@ export default function ParticipantDashboard({
     const initializeParticipant = async () => {
       await fetchData();
       
-      // Log login activity
       await fetch(`/api/participants/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -109,7 +126,6 @@ export default function ParticipantDashboard({
     initializeParticipant();
   }, [id, fetchData]);
   
-  // Auto-start timer when participant has a scenario but timer hasn't started
   useEffect(() => {
     const autoStartTimer = async () => {
       if (participant && participant.scenario_id && !participant.timer_started_at && !participant.is_locked) {
@@ -122,7 +138,6 @@ export default function ParticipantDashboard({
               duration: participant.timer_duration || 3600,
             }),
           });
-          // Refetch to get updated timer state
           fetchData();
         } catch (error) {
           console.error("Failed to auto-start timer:", error);
@@ -145,6 +160,23 @@ export default function ParticipantDashboard({
       console.error("Failed to lock dashboard:", error);
     }
   }, [id, fetchData]);
+
+  const handleFinalSubmit = useCallback(async () => {
+    setSubmitting(true);
+    try {
+      await fetch(`/api/participants/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "complete_round2" }),
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Failed to submit:", error);
+    } finally {
+      setSubmitting(false);
+      setSubmitDialogOpen(false);
+    }
+  }, [id]);
 
   const handleUnlock = useCallback(async () => {
     await fetchData();
@@ -183,6 +215,37 @@ export default function ParticipantDashboard({
 
   const isLocked = !!participant.is_locked;
 
+  // Submission complete screen
+  if (submitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-lg text-center">
+          <CardContent className="pt-10 pb-10 space-y-6">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+              <CheckCircle2 className="h-9 w-9 text-green-600 dark:text-green-400" />
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold">Submission Received</h1>
+              <p className="text-muted-foreground">
+                Your Round 2 work has been submitted successfully.
+              </p>
+            </div>
+            <Alert className="text-left">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Important</AlertTitle>
+              <AlertDescription>
+                Your Participant ID is no longer valid. Please return your device to the invigilator.
+              </AlertDescription>
+            </Alert>
+            <p className="text-sm text-muted-foreground">
+              Participant ID: <span className="font-mono font-semibold">{id}</span>
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (!participant.scenario_id) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -220,6 +283,28 @@ export default function ParticipantDashboard({
         onViolation={handleViolation}
       />
 
+      {/* Confirm Submit Dialog */}
+      <AlertDialog open={submitDialogOpen} onOpenChange={setSubmitDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Submit Round 2?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are about to finish Round 2. Your work will be submitted and you will not be able to make any further changes.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={submitting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleFinalSubmit}
+              disabled={submitting}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {submitting ? "Submitting..." : "Yes, Submit"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Header */}
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-3">
@@ -241,6 +326,17 @@ export default function ParticipantDashboard({
                   {unlockedSnippets.length} Unlocked
                 </Badge>
               </div>
+              {!isLocked && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => setSubmitDialogOpen(true)}
+                >
+                  <Send className="h-4 w-4" />
+                  Final Submit
+                </Button>
+              )}
             </div>
           </div>
         </div>

@@ -5,6 +5,9 @@ export interface Participant {
   id: string;
   name: string;
   team_name?: string;
+  phone?: string;
+  email?: string;
+  year?: string;
   assigned_round: 'round1' | 'round2' | null;
   scenario_id: number | null;
   timer_duration: number;
@@ -261,12 +264,15 @@ export function getAllParticipants(): Participant[] {
   }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }
 
-export function createParticipant(name: string, id: string, teamName?: string, assignedRound?: 'round1' | 'round2'): Participant {
+export function createParticipant(name: string, id: string, teamName?: string, assignedRound?: 'round1' | 'round2', phone?: string, email?: string, year?: string): Participant {
   const store = getStore();
   const participant: Participant = {
     id,
     name,
     team_name: teamName,
+    phone,
+    email,
+    year,
     assigned_round: assignedRound || null,
     scenario_id: null,
     timer_duration: store.global_timer_duration,

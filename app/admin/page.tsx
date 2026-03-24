@@ -108,7 +108,7 @@ export default function AdminDashboard() {
   const [authError, setAuthError] = useState("");
   const [initialized, setInitialized] = useState(false);
   const [initializing, setInitializing] = useState(false);
-  const [newParticipant, setNewParticipant] = useState({ name: "", teamName: "", id: "", assignedRound: "round2" as 'round1' | 'round2' });
+  const [newParticipant, setNewParticipant] = useState({ name: "", teamName: "", id: "", assignedRound: "round2" as 'round1' | 'round2', phone: "", email: "", year: "" });
   const [createdParticipant, setCreatedParticipant] = useState<{ id: string; scenario: string } | null>(null);
   const [selectedScenario, setSelectedScenario] = useState<string>("");
   const [timerDuration, setTimerDuration] = useState("120");
@@ -258,6 +258,9 @@ export default function AdminDashboard() {
           id: newParticipant.id || undefined,
           assignedRound: newParticipant.assignedRound,
           autoAssignScenario: newParticipant.assignedRound === 'round2',
+          phone: newParticipant.phone || undefined,
+          email: newParticipant.email || undefined,
+          year: newParticipant.year || undefined,
         }),
       });
 
@@ -267,7 +270,7 @@ export default function AdminDashboard() {
           id: data.generatedId,
           scenario: newParticipant.assignedRound === 'round1' ? 'Round 1 - MCQ Quiz' : (data.participant.scenario_title || "No scenario available"),
         });
-        setNewParticipant({ name: "", teamName: "", id: "", assignedRound: "round2" });
+        setNewParticipant({ name: "", teamName: "", id: "", assignedRound: "round2", phone: "", email: "", year: "" });
         refreshParticipants();
       }
     } catch (error) {
@@ -760,6 +763,47 @@ export default function AdminDashboard() {
                               setNewParticipant((prev) => ({
                                 ...prev,
                                 teamName: e.target.value,
+                              }))
+                            }
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Phone (Optional)</label>
+                            <Input
+                              placeholder="e.g. 0123456789"
+                              value={newParticipant.phone}
+                              onChange={(e) =>
+                                setNewParticipant((prev) => ({
+                                  ...prev,
+                                  phone: e.target.value,
+                                }))
+                              }
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Year (Optional)</label>
+                            <Input
+                              placeholder="e.g. Year 1"
+                              value={newParticipant.year}
+                              onChange={(e) =>
+                                setNewParticipant((prev) => ({
+                                  ...prev,
+                                  year: e.target.value,
+                                }))
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Email (Optional)</label>
+                          <Input
+                            placeholder="e.g. participant@email.com"
+                            value={newParticipant.email}
+                            onChange={(e) =>
+                              setNewParticipant((prev) => ({
+                                ...prev,
+                                email: e.target.value,
                               }))
                             }
                           />

@@ -68,17 +68,16 @@ export function ViolationTracker({
     };
 
     // Window blur — switching to another application
-    // For Round 2: Arduino IDE is allowed, anything else is a violation.
-    // We cannot detect which app was used from the browser, so this is logged as a warning
-    // and the invigilator can correlate with context.
+    // For Round 2: Arduino IDE is permitted. We cannot detect which app was launched
+    // from the browser, so blur is logged as "permitted" since Arduino IDE is expected.
+    // The invigilator can physically verify app usage.
     const handleBlur = () => {
       if (isRound2) {
         logViolation(
           "window_blur",
-          "Participant switched away from browser. Only this site and locally installed Arduino IDE are permitted — any other application is a violation.",
-          "warning"
+          "Participant switched away from browser — expected for Arduino IDE use.",
+          "permitted"
         );
-        setShowWarningBanner(true);
       }
     };
 
