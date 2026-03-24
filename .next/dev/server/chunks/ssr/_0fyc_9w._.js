@@ -1171,11 +1171,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 function ViolationTracker({ participantId, enabled, onViolation, mode = "round2" }) {
     const lastViolationTime = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])({});
     const [showWarningBanner, setShowWarningBanner] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    // Track whether the browser window currently has OS-level focus.
-    // When the user ALT+TABs to another app, blur fires first (windowHasFocus → false),
-    // then visibilitychange may fire. We use this to tell apart an app-switch
-    // (permitted, e.g. Arduino IDE) from a browser tab-switch (violation).
-    const windowHasFocus = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(true);
     const logViolation = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async (type, details, severity = "warning")=>{
         const now = Date.now();
         const lastTime = lastViolationTime.current[type] || 0;
@@ -1205,29 +1200,23 @@ function ViolationTracker({ participantId, enabled, onViolation, mode = "round2"
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (!enabled) return;
         const isRound2 = mode === "round2";
-        // Tab switch — only flag if the window still has OS focus (i.e. the user
-        // switched browser tabs, not ALT+TABbed to another application).
+        // Tab switch — document.hidden becomes true ONLY when the user switches to
+        // another browser tab. Alt+Tab to another application (e.g. Arduino IDE)
+        // does NOT trigger visibilitychange in modern Chrome/Edge/Firefox; it only
+        // fires window.blur. So this event reliably identifies browser-tab switches.
         const handleVisibilityChange = ()=>{
             if (document.hidden) {
-                if (windowHasFocus.current) {
-                    // Window is focused but tab became hidden → genuine browser tab switch
-                    logViolation("tab_switch", "Participant switched to another browser tab. Only this site and locally installed Arduino IDE are permitted.", "critical");
-                    if (isRound2) setShowWarningBanner(true);
-                }
-            // If !windowHasFocus.current, the user ALT+TABbed to another app —
-            // already handled by handleBlur as "permitted", so we do nothing here.
+                logViolation("tab_switch", "Participant switched to another browser tab. Only this site and locally installed Arduino IDE are permitted.", "critical");
+                if (isRound2) setShowWarningBanner(true);
             }
         };
-        // Window blur — switching to another application (e.g. Arduino IDE via ALT+TAB).
-        // Logged as "permitted" since Arduino IDE is expected in Round 2.
+        // Window blur — fires when the OS focus leaves the browser window entirely
+        // (e.g. Alt+Tab to Arduino IDE). Logged as "permitted" since Arduino IDE
+        // is expected during Round 2. Invigilators verify physical app usage.
         const handleBlur = ()=>{
-            windowHasFocus.current = false;
             if (isRound2) {
                 logViolation("window_blur", "Participant switched away from browser — expected for Arduino IDE use.", "permitted");
             }
-        };
-        const handleFocus = ()=>{
-            windowHasFocus.current = true;
         };
         // Keyboard shortcuts — block new tabs/windows
         const handleKeyDown = (e)=>{
@@ -1239,12 +1228,10 @@ function ViolationTracker({ participantId, enabled, onViolation, mode = "round2"
         };
         document.addEventListener("visibilitychange", handleVisibilityChange);
         window.addEventListener("blur", handleBlur);
-        window.addEventListener("focus", handleFocus);
         document.addEventListener("keydown", handleKeyDown);
         return ()=>{
             document.removeEventListener("visibilitychange", handleVisibilityChange);
             window.removeEventListener("blur", handleBlur);
-            window.removeEventListener("focus", handleFocus);
             document.removeEventListener("keydown", handleKeyDown);
         };
     }, [
@@ -1252,7 +1239,6 @@ function ViolationTracker({ participantId, enabled, onViolation, mode = "round2"
         logViolation,
         mode
     ]);
-    // Warning banner shown when participant switches away (Round 2)
     if (!enabled || mode !== "round2") return null;
     if (showWarningBanner) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1273,37 +1259,37 @@ function ViolationTracker({ participantId, enabled, onViolation, mode = "round2"
                                 d: "M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
                             }, void 0, false, {
                                 fileName: "[project]/components/violation-tracker.tsx",
-                                lineNumber: 134,
+                                lineNumber: 119,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/violation-tracker.tsx",
-                            lineNumber: 133,
+                            lineNumber: 118,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                             className: "font-semibold text-sm",
                             children: [
-                                "VIOLATION RECORDED — You switched away from this page.",
+                                "VIOLATION RECORDED — You switched to another browser tab.",
                                 " ",
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: "font-normal opacity-90",
                                     children: "Only this competition site and your locally installed Arduino IDE are permitted. All other applications are a violation."
                                 }, void 0, false, {
                                     fileName: "[project]/components/violation-tracker.tsx",
-                                    lineNumber: 138,
+                                    lineNumber: 123,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/violation-tracker.tsx",
-                            lineNumber: 136,
+                            lineNumber: 121,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/violation-tracker.tsx",
-                    lineNumber: 132,
+                    lineNumber: 117,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1312,13 +1298,13 @@ function ViolationTracker({ participantId, enabled, onViolation, mode = "round2"
                     children: "Dismiss"
                 }, void 0, false, {
                     fileName: "[project]/components/violation-tracker.tsx",
-                    lineNumber: 143,
+                    lineNumber: 128,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/violation-tracker.tsx",
-            lineNumber: 131,
+            lineNumber: 116,
             columnNumber: 7
         }, this);
     }
@@ -1681,6 +1667,7 @@ function ParticipantDashboard({ params }) {
     const [submitDialogOpen, setSubmitDialogOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [submitting, setSubmitting] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [submitted, setSubmitted] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [reEntryWarning, setReEntryWarning] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const fetchData = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async ()=>{
         try {
             const res = await fetch(`/api/participants/${id}`);
@@ -1707,7 +1694,31 @@ function ParticipantDashboard({ params }) {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const initializeParticipant = async ()=>{
             await fetchData();
-            await fetch(`/api/participants/${id}`, {
+            // Check sessionStorage: if this participant already had a session this
+            // browser session, they may be re-entering after navigating away.
+            // Distinguish a genuine re-entry (navigation away) from a page refresh.
+            const sessionKey = `iot_session_${id}`;
+            const navEntry = performance.getEntriesByType("navigation")[0];
+            const isReload = navEntry?.type === "reload";
+            if (sessionStorage.getItem(sessionKey) && !isReload) {
+                setReEntryWarning(true);
+                // Log re-entry violation
+                fetch(`/api/participants/${id}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        action: "log_violation",
+                        violationType: "re_entry",
+                        details: "Participant navigated away and re-entered the dashboard.",
+                        severity: "critical"
+                    })
+                }).catch(()=>{});
+            } else {
+                sessionStorage.setItem(sessionKey, "active");
+            }
+            fetch(`/api/participants/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -1717,12 +1728,32 @@ function ParticipantDashboard({ params }) {
                     eventType: "login",
                     details: "Participant logged into dashboard"
                 })
-            });
+            }).catch(()=>{});
         };
         initializeParticipant();
     }, [
         id,
         fetchData
+    ]);
+    // Log navigation-away when participant leaves the page
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        const handleBeforeUnload = ()=>{
+            const blob = new Blob([
+                JSON.stringify({
+                    action: "log_violation",
+                    violationType: "navigation_away",
+                    details: "Participant navigated away from the dashboard.",
+                    severity: "critical"
+                })
+            ], {
+                type: "application/json"
+            });
+            navigator.sendBeacon(`/api/participants/${id}`, blob);
+        };
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        return ()=>window.removeEventListener("beforeunload", handleBeforeUnload);
+    }, [
+        id
     ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const autoStartTimer = async ()=>{
@@ -1809,7 +1840,7 @@ function ParticipantDashboard({ params }) {
                         className: "h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"
                     }, void 0, false, {
                         fileName: "[project]/app/participant/[id]/page.tsx",
-                        lineNumber: 193,
+                        lineNumber: 237,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1817,18 +1848,18 @@ function ParticipantDashboard({ params }) {
                         children: "Loading dashboard..."
                     }, void 0, false, {
                         fileName: "[project]/app/participant/[id]/page.tsx",
-                        lineNumber: 194,
+                        lineNumber: 238,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 192,
+                lineNumber: 236,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/participant/[id]/page.tsx",
-            lineNumber: 191,
+            lineNumber: 235,
             columnNumber: 7
         }, this);
     }
@@ -1846,42 +1877,42 @@ function ParticipantDashboard({ params }) {
                                 className: "h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 206,
+                                lineNumber: 250,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertTitle"], {
                                 children: "Error"
                             }, void 0, false, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 207,
+                                lineNumber: 251,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDescription"], {
                                 children: error || "Participant not found"
                             }, void 0, false, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 208,
+                                lineNumber: 252,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/participant/[id]/page.tsx",
-                        lineNumber: 205,
+                        lineNumber: 249,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/participant/[id]/page.tsx",
-                    lineNumber: 204,
+                    lineNumber: 248,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 203,
+                lineNumber: 247,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/participant/[id]/page.tsx",
-            lineNumber: 202,
+            lineNumber: 246,
             columnNumber: 7
         }, this);
     }
@@ -1901,12 +1932,12 @@ function ParticipantDashboard({ params }) {
                                 className: "h-9 w-9 text-green-600 dark:text-green-400"
                             }, void 0, false, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 225,
+                                lineNumber: 269,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 224,
+                            lineNumber: 268,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1917,7 +1948,7 @@ function ParticipantDashboard({ params }) {
                                     children: "Submission Received"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 228,
+                                    lineNumber: 272,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1925,13 +1956,13 @@ function ParticipantDashboard({ params }) {
                                     children: "Your Round 2 work has been submitted successfully."
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 229,
+                                    lineNumber: 273,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 227,
+                            lineNumber: 271,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Alert"], {
@@ -1941,27 +1972,27 @@ function ParticipantDashboard({ params }) {
                                     className: "h-4 w-4"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 234,
+                                    lineNumber: 278,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertTitle"], {
                                     children: "Important"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 235,
+                                    lineNumber: 279,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDescription"], {
                                     children: "Your Participant ID is no longer valid. Please return your device to the invigilator."
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 236,
+                                    lineNumber: 280,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 233,
+                            lineNumber: 277,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1973,29 +2004,29 @@ function ParticipantDashboard({ params }) {
                                     children: id
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 241,
+                                    lineNumber: 285,
                                     columnNumber: 31
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 240,
+                            lineNumber: 284,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/participant/[id]/page.tsx",
-                    lineNumber: 223,
+                    lineNumber: 267,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 222,
+                lineNumber: 266,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/participant/[id]/page.tsx",
-            lineNumber: 221,
+            lineNumber: 265,
             columnNumber: 7
         }, this);
     }
@@ -2014,12 +2045,12 @@ function ParticipantDashboard({ params }) {
                                     className: "h-6 w-6 text-primary"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 255,
+                                    lineNumber: 299,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 254,
+                                lineNumber: 298,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
@@ -2030,13 +2061,13 @@ function ParticipantDashboard({ params }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 257,
+                                lineNumber: 301,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/participant/[id]/page.tsx",
-                        lineNumber: 253,
+                        lineNumber: 297,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2048,27 +2079,27 @@ function ParticipantDashboard({ params }) {
                                         className: "h-4 w-4"
                                     }, void 0, false, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 261,
+                                        lineNumber: 305,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertTitle"], {
                                         children: "Waiting for Assignment"
                                     }, void 0, false, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 262,
+                                        lineNumber: 306,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDescription"], {
                                         children: "Your scenario has not been assigned yet. Please wait for the admin to assign you a scenario."
                                     }, void 0, false, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 263,
+                                        lineNumber: 307,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 260,
+                                lineNumber: 304,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2080,30 +2111,30 @@ function ParticipantDashboard({ params }) {
                                         children: participant.id
                                     }, void 0, false, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 269,
+                                        lineNumber: 313,
                                         columnNumber: 24
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 268,
+                                lineNumber: 312,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/participant/[id]/page.tsx",
-                        lineNumber: 259,
+                        lineNumber: 303,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 252,
+                lineNumber: 296,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/participant/[id]/page.tsx",
-            lineNumber: 251,
+            lineNumber: 295,
             columnNumber: 7
         }, this);
     }
@@ -2117,8 +2148,74 @@ function ParticipantDashboard({ params }) {
                 onViolation: handleViolation
             }, void 0, false, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 279,
+                lineNumber: 323,
                 columnNumber: 7
+            }, this),
+            reEntryWarning && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "fixed top-0 left-0 right-0 z-[9999] bg-destructive text-destructive-foreground px-4 py-3 flex items-center justify-between gap-4 shadow-lg",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex items-center gap-3",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                className: "h-5 w-5 shrink-0",
+                                fill: "none",
+                                viewBox: "0 0 24 24",
+                                stroke: "currentColor",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                    strokeLinecap: "round",
+                                    strokeLinejoin: "round",
+                                    strokeWidth: 2,
+                                    d: "M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/participant/[id]/page.tsx",
+                                    lineNumber: 335,
+                                    columnNumber: 15
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/app/participant/[id]/page.tsx",
+                                lineNumber: 334,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "font-semibold text-sm",
+                                children: [
+                                    "VIOLATION RECORDED — You navigated away and re-entered this page.",
+                                    " ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-normal opacity-90",
+                                        children: "Leaving the competition dashboard is not permitted. This incident has been logged."
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/participant/[id]/page.tsx",
+                                        lineNumber: 339,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/participant/[id]/page.tsx",
+                                lineNumber: 337,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/app/participant/[id]/page.tsx",
+                        lineNumber: 333,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        onClick: ()=>setReEntryWarning(false),
+                        className: "text-destructive-foreground/70 hover:text-destructive-foreground text-xs underline shrink-0 ml-4",
+                        children: "Dismiss"
+                    }, void 0, false, {
+                        fileName: "[project]/app/participant/[id]/page.tsx",
+                        lineNumber: 344,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/app/participant/[id]/page.tsx",
+                lineNumber: 332,
+                columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialog"], {
                 open: submitDialogOpen,
@@ -2131,20 +2228,20 @@ function ParticipantDashboard({ params }) {
                                     children: "Submit Round 2?"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 290,
+                                    lineNumber: 357,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogDescription"], {
                                     children: "You are about to finish Round 2. Your work will be submitted and you will not be able to make any further changes."
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 291,
+                                    lineNumber: 358,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 289,
+                            lineNumber: 356,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogFooter"], {
@@ -2154,7 +2251,7 @@ function ParticipantDashboard({ params }) {
                                     children: "Cancel"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 296,
+                                    lineNumber: 363,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogAction"], {
@@ -2164,24 +2261,24 @@ function ParticipantDashboard({ params }) {
                                     children: submitting ? "Submitting..." : "Yes, Submit"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 297,
+                                    lineNumber: 364,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 295,
+                            lineNumber: 362,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/participant/[id]/page.tsx",
-                    lineNumber: 288,
+                    lineNumber: 355,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 287,
+                lineNumber: 354,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
@@ -2200,12 +2297,12 @@ function ParticipantDashboard({ params }) {
                                             className: "h-5 w-5 text-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/app/participant/[id]/page.tsx",
-                                            lineNumber: 314,
+                                            lineNumber: 381,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 313,
+                                        lineNumber: 380,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2215,7 +2312,7 @@ function ParticipantDashboard({ params }) {
                                                 children: participant.name
                                             }, void 0, false, {
                                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                                lineNumber: 317,
+                                                lineNumber: 384,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2226,19 +2323,19 @@ function ParticipantDashboard({ params }) {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                                lineNumber: 318,
+                                                lineNumber: 385,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 316,
+                                        lineNumber: 383,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 312,
+                                lineNumber: 379,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2254,7 +2351,7 @@ function ParticipantDashboard({ params }) {
                                                     className: "h-3 w-3"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                                    lineNumber: 325,
+                                                    lineNumber: 392,
                                                     columnNumber: 19
                                                 }, this),
                                                 unlockedSnippets.length,
@@ -2262,12 +2359,12 @@ function ParticipantDashboard({ params }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/participant/[id]/page.tsx",
-                                            lineNumber: 324,
+                                            lineNumber: 391,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 323,
+                                        lineNumber: 390,
                                         columnNumber: 15
                                     }, this),
                                     !isLocked && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -2280,36 +2377,36 @@ function ParticipantDashboard({ params }) {
                                                 className: "h-4 w-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                                lineNumber: 336,
+                                                lineNumber: 403,
                                                 columnNumber: 19
                                             }, this),
                                             "Final Submit"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 330,
+                                        lineNumber: 397,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 322,
+                                lineNumber: 389,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/participant/[id]/page.tsx",
-                        lineNumber: 311,
+                        lineNumber: 378,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/participant/[id]/page.tsx",
-                    lineNumber: 310,
+                    lineNumber: 377,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 309,
+                lineNumber: 376,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2321,12 +2418,12 @@ function ParticipantDashboard({ params }) {
                     isLocked: isLocked
                 }, void 0, false, {
                     fileName: "[project]/app/participant/[id]/page.tsx",
-                    lineNumber: 347,
+                    lineNumber: 414,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 346,
+                lineNumber: 413,
                 columnNumber: 7
             }, this),
             isLocked && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2338,32 +2435,32 @@ function ParticipantDashboard({ params }) {
                             className: "h-4 w-4"
                         }, void 0, false, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 359,
+                            lineNumber: 426,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertTitle"], {
                             children: "Dashboard Locked"
                         }, void 0, false, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 360,
+                            lineNumber: 427,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDescription"], {
                             children: "Your time has expired. The dashboard is now locked and no further actions can be taken."
                         }, void 0, false, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 361,
+                            lineNumber: 428,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/participant/[id]/page.tsx",
-                    lineNumber: 358,
+                    lineNumber: 425,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 357,
+                lineNumber: 424,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -2380,7 +2477,7 @@ function ParticipantDashboard({ params }) {
                                     children: "Scenario"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 373,
+                                    lineNumber: 440,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -2388,7 +2485,7 @@ function ParticipantDashboard({ params }) {
                                     children: "Components"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 374,
+                                    lineNumber: 441,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -2396,13 +2493,13 @@ function ParticipantDashboard({ params }) {
                                     children: "Unlocked"
                                 }, void 0, false, {
                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                    lineNumber: 375,
+                                    lineNumber: 442,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 372,
+                            lineNumber: 439,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -2414,12 +2511,12 @@ function ParticipantDashboard({ params }) {
                                 whatToBuild: participant.what_to_build
                             }, void 0, false, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 380,
+                                lineNumber: 447,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 378,
+                            lineNumber: 445,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -2435,19 +2532,19 @@ function ParticipantDashboard({ params }) {
                                                     className: "h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                                    lineNumber: 392,
+                                                    lineNumber: 459,
                                                     columnNumber: 19
                                                 }, this),
                                                 "Your Component Kit"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/participant/[id]/page.tsx",
-                                            lineNumber: 391,
+                                            lineNumber: 458,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 390,
+                                        lineNumber: 457,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2457,7 +2554,7 @@ function ParticipantDashboard({ params }) {
                                                 children: 'These are the components assigned to your scenario. Click "Unlock Code Snippet" to reveal the Arduino code for each component.'
                                             }, void 0, false, {
                                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                                lineNumber: 397,
+                                                lineNumber: 464,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2469,29 +2566,29 @@ function ParticipantDashboard({ params }) {
                                                         onUnlock: handleUnlock
                                                     }, component.id, false, {
                                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                                        lineNumber: 404,
+                                                        lineNumber: 471,
                                                         columnNumber: 21
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                                lineNumber: 402,
+                                                lineNumber: 469,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 396,
+                                        lineNumber: 463,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 389,
+                                lineNumber: 456,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 388,
+                            lineNumber: 455,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -2507,7 +2604,7 @@ function ParticipantDashboard({ params }) {
                                                     className: "h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                                    lineNumber: 421,
+                                                    lineNumber: 488,
                                                     columnNumber: 19
                                                 }, this),
                                                 "Unlocked Snippets (",
@@ -2516,12 +2613,12 @@ function ParticipantDashboard({ params }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/participant/[id]/page.tsx",
-                                            lineNumber: 420,
+                                            lineNumber: 487,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 419,
+                                        lineNumber: 486,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2530,7 +2627,7 @@ function ParticipantDashboard({ params }) {
                                             children: "You haven't unlocked any code snippets yet. Go to the Components tab to unlock snippets."
                                         }, void 0, false, {
                                             fileName: "[project]/app/participant/[id]/page.tsx",
-                                            lineNumber: 427,
+                                            lineNumber: 494,
                                             columnNumber: 19
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "space-y-3",
@@ -2546,12 +2643,12 @@ function ParticipantDashboard({ params }) {
                                                                         className: "h-4 w-4 text-chart-2"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                                                        lineNumber: 440,
+                                                                        lineNumber: 507,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                                                    lineNumber: 439,
+                                                                    lineNumber: 506,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2559,13 +2656,13 @@ function ParticipantDashboard({ params }) {
                                                                     children: snippet.component_name
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                                                    lineNumber: 442,
+                                                                    lineNumber: 509,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/participant/[id]/page.tsx",
-                                                            lineNumber: 438,
+                                                            lineNumber: 505,
                                                             columnNumber: 25
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2573,51 +2670,51 @@ function ParticipantDashboard({ params }) {
                                                             children: new Date(snippet.unlocked_at).toLocaleTimeString()
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/participant/[id]/page.tsx",
-                                                            lineNumber: 446,
+                                                            lineNumber: 513,
                                                             columnNumber: 25
                                                         }, this)
                                                     ]
                                                 }, snippet.id, true, {
                                                     fileName: "[project]/app/participant/[id]/page.tsx",
-                                                    lineNumber: 434,
+                                                    lineNumber: 501,
                                                     columnNumber: 23
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/app/participant/[id]/page.tsx",
-                                            lineNumber: 432,
+                                            lineNumber: 499,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/participant/[id]/page.tsx",
-                                        lineNumber: 425,
+                                        lineNumber: 492,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/participant/[id]/page.tsx",
-                                lineNumber: 418,
+                                lineNumber: 485,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/participant/[id]/page.tsx",
-                            lineNumber: 417,
+                            lineNumber: 484,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/participant/[id]/page.tsx",
-                    lineNumber: 371,
+                    lineNumber: 438,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/participant/[id]/page.tsx",
-                lineNumber: 370,
+                lineNumber: 437,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/participant/[id]/page.tsx",
-        lineNumber: 278,
+        lineNumber: 322,
         columnNumber: 5
     }, this);
 }

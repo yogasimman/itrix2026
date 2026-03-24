@@ -1,26 +1,5 @@
-{"timestamp":"00:00:00.900","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:00:21.750","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:05:43.515","source":"Server","level":"LOG","message":"Database seeded successfully"}
-{"timestamp":"00:06:18.564","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:06:20.348","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:06:51.581","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:12:27.917","source":"Server","level":"LOG","message":"○ Compiling /participant/[id] ..."}
-{"timestamp":"00:19:20.202","source":"Server","level":"LOG","message":"✓ Compiled in 78ms"}
-{"timestamp":"00:19:42.494","source":"Server","level":"LOG","message":"✓ Compiled in 84ms"}
-{"timestamp":"00:19:48.568","source":"Server","level":"LOG","message":"✓ Compiled in 66ms"}
-{"timestamp":"00:19:54.120","source":"Server","level":"LOG","message":"✓ Compiled in 70ms"}
-{"timestamp":"00:20:04.686","source":"Server","level":"LOG","message":"✓ Compiled in 81ms"}
-{"timestamp":"00:20:57.723","source":"Server","level":"LOG","message":"✓ Compiled in 640ms"}
-{"timestamp":"00:26:29.553","source":"Server","level":"LOG","message":"✓ Compiled in 68ms"}
-{"timestamp":"00:26:30.619","source":"Server","level":"LOG","message":"✓ Compiled in 99ms"}
-{"timestamp":"00:26:36.064","source":"Server","level":"LOG","message":"✓ Compiled in 62ms"}
-{"timestamp":"00:26:37.551","source":"Server","level":"LOG","message":"✓ Compiled in 57ms"}
-{"timestamp":"00:26:39.026","source":"Server","level":"LOG","message":"✓ Compiled in 53ms"}
-{"timestamp":"00:26:47.996","source":"Server","level":"LOG","message":"✓ Compiled in 67ms"}
-{"timestamp":"00:29:23.988","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:29:35.921","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:32:39.149","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:44:02.909","source":"Server","level":"LOG","message":"✓ Compiled in 167ms"}
-{"timestamp":"00:44:05.859","source":"Server","level":"LOG","message":"✓ Compiled in 107ms"}
-{"timestamp":"00:44:12.345","source":"Server","level":"LOG","message":"✓ Compiled in 87ms"}
-{"timestamp":"00:44:17.814","source":"Server","level":"LOG","message":"✓ Compiled in 73ms"}
+{"timestamp":"00:00:06.824","source":"Server","level":"WARN","message":"⚠ Slow filesystem detected. The benchmark took 282ms. If /home/runner/workspace/.next/dev is a network drive, consider moving it to a local folder.\nSee more: https://nextjs.org/docs/app/guides/local-development"}
+{"timestamp":"00:00:10.682","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:13.710","source":"Server","level":"LOG","message":"○ Compiling / ..."}
+{"timestamp":"00:00:20.503","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:00:20.618","source":"Server","level":"LOG","message":"Database seeded successfully"}

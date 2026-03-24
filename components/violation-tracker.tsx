@@ -17,11 +17,6 @@ export function ViolationTracker({
 }: ViolationTrackerProps) {
   const lastViolationTime = useRef<Record<string, number>>({});
   const [showWarningBanner, setShowWarningBanner] = useState(false);
-  // Track whether the browser window currently has OS-level focus.
-  // When the user ALT+TABs to another app, blur fires first (windowHasFocus → false),
-  // then visibilitychange may fire. We use this to tell apart an app-switch
-  // (permitted, e.g. Arduino IDE) from a browser tab-switch (violation).
-  const windowHasFocus = useRef(true);
 
   const logViolation = useCallback(
     async (
@@ -58,28 +53,25 @@ export function ViolationTracker({
 
     const isRound2 = mode === "round2";
 
-    // Tab switch — only flag if the window still has OS focus (i.e. the user
-    // switched browser tabs, not ALT+TABbed to another application).
+    // Tab switch — document.hidden becomes true ONLY when the user switches to
+    // another browser tab. Alt+Tab to another application (e.g. Arduino IDE)
+    // does NOT trigger visibilitychange in modern Chrome/Edge/Firefox; it only
+    // fires window.blur. So this event reliably identifies browser-tab switches.
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        if (windowHasFocus.current) {
-          // Window is focused but tab became hidden → genuine browser tab switch
-          logViolation(
-            "tab_switch",
-            "Participant switched to another browser tab. Only this site and locally installed Arduino IDE are permitted.",
-            "critical"
-          );
-          if (isRound2) setShowWarningBanner(true);
-        }
-        // If !windowHasFocus.current, the user ALT+TABbed to another app —
-        // already handled by handleBlur as "permitted", so we do nothing here.
+        logViolation(
+          "tab_switch",
+          "Participant switched to another browser tab. Only this site and locally installed Arduino IDE are permitted.",
+          "critical"
+        );
+        if (isRound2) setShowWarningBanner(true);
       }
     };
 
-    // Window blur — switching to another application (e.g. Arduino IDE via ALT+TAB).
-    // Logged as "permitted" since Arduino IDE is expected in Round 2.
+    // Window blur — fires when the OS focus leaves the browser window entirely
+    // (e.g. Alt+Tab to Arduino IDE). Logged as "permitted" since Arduino IDE
+    // is expected during Round 2. Invigilators verify physical app usage.
     const handleBlur = () => {
-      windowHasFocus.current = false;
       if (isRound2) {
         logViolation(
           "window_blur",
@@ -87,10 +79,6 @@ export function ViolationTracker({
           "permitted"
         );
       }
-    };
-
-    const handleFocus = () => {
-      windowHasFocus.current = true;
     };
 
     // Keyboard shortcuts — block new tabs/windows
@@ -112,18 +100,15 @@ export function ViolationTracker({
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("blur", handleBlur);
-    window.addEventListener("focus", handleFocus);
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("blur", handleBlur);
-      window.removeEventListener("focus", handleFocus);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [enabled, logViolation, mode]);
 
-  // Warning banner shown when participant switches away (Round 2)
   if (!enabled || mode !== "round2") return null;
 
   if (showWarningBanner) {
@@ -134,7 +119,7 @@ export function ViolationTracker({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
           </svg>
           <span className="font-semibold text-sm">
-            VIOLATION RECORDED — You switched away from this page.{" "}
+            VIOLATION RECORDED — You switched to another browser tab.{" "}
             <span className="font-normal opacity-90">
               Only this competition site and your locally installed Arduino IDE are permitted. All other applications are a violation.
             </span>

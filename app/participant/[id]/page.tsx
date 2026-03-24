@@ -84,6 +84,7 @@ export default function ParticipantDashboard({
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [reEntryWarning, setReEntryWarning] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -111,8 +112,32 @@ export default function ParticipantDashboard({
   useEffect(() => {
     const initializeParticipant = async () => {
       await fetchData();
-      
-      await fetch(`/api/participants/${id}`, {
+
+      // Check sessionStorage: if this participant already had a session this
+      // browser session, they may be re-entering after navigating away.
+      // Distinguish a genuine re-entry (navigation away) from a page refresh.
+      const sessionKey = `iot_session_${id}`;
+      const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+      const isReload = navEntry?.type === "reload";
+
+      if (sessionStorage.getItem(sessionKey) && !isReload) {
+        setReEntryWarning(true);
+        // Log re-entry violation
+        fetch(`/api/participants/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "log_violation",
+            violationType: "re_entry",
+            details: "Participant navigated away and re-entered the dashboard.",
+            severity: "critical",
+          }),
+        }).catch(() => {});
+      } else {
+        sessionStorage.setItem(sessionKey, "active");
+      }
+
+      fetch(`/api/participants/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -120,11 +145,30 @@ export default function ParticipantDashboard({
           eventType: "login",
           details: "Participant logged into dashboard",
         }),
-      });
+      }).catch(() => {});
     };
-    
+
     initializeParticipant();
   }, [id, fetchData]);
+
+  // Log navigation-away when participant leaves the page
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const blob = new Blob(
+        [JSON.stringify({
+          action: "log_violation",
+          violationType: "navigation_away",
+          details: "Participant navigated away from the dashboard.",
+          severity: "critical",
+        })],
+        { type: "application/json" }
+      );
+      navigator.sendBeacon(`/api/participants/${id}`, blob);
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [id]);
   
   useEffect(() => {
     const autoStartTimer = async () => {
@@ -282,6 +326,29 @@ export default function ParticipantDashboard({
         mode="round2"
         onViolation={handleViolation}
       />
+
+      {/* Re-entry warning banner */}
+      {reEntryWarning && (
+        <div className="fixed top-0 left-0 right-0 z-[9999] bg-destructive text-destructive-foreground px-4 py-3 flex items-center justify-between gap-4 shadow-lg">
+          <div className="flex items-center gap-3">
+            <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+            <span className="font-semibold text-sm">
+              VIOLATION RECORDED — You navigated away and re-entered this page.{" "}
+              <span className="font-normal opacity-90">
+                Leaving the competition dashboard is not permitted. This incident has been logged.
+              </span>
+            </span>
+          </div>
+          <button
+            onClick={() => setReEntryWarning(false)}
+            className="text-destructive-foreground/70 hover:text-destructive-foreground text-xs underline shrink-0 ml-4"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Confirm Submit Dialog */}
       <AlertDialog open={submitDialogOpen} onOpenChange={setSubmitDialogOpen}>
