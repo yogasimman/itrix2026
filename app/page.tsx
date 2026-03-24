@@ -99,9 +99,14 @@ export default function HomePage() {
 
       const data = await res.json()
       
-      // Check if participant is locked
+      // Check if participant is locked (submitted or admin-locked)
       if (data.participant.is_locked) {
-        setError("Your session has been locked. Please contact the admin.")
+        const isSubmitted = data.participant.round1_completed || data.participant.round2_completed
+        setError(
+          isSubmitted
+            ? "Your submission has already been recorded. This ID is no longer valid."
+            : "Your session has been locked. Please contact the admin."
+        )
         setIsLoading(false)
         return
       }

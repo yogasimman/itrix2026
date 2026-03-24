@@ -115,6 +115,17 @@ export async function PATCH(
       lockParticipant(id);
       return NextResponse.json({ success: true });
     }
+
+    if (body.action === 'complete_round2') {
+      updateParticipant(id, {
+        round2_completed: true,
+        round2_completed_at: new Date().toISOString(),
+        is_locked: 1,
+        is_active: 0,
+      });
+      logActivity(id, 'round2_completed', 'Round 2 session ended');
+      return NextResponse.json({ success: true });
+    }
     
     if (body.action === 'unlock') {
       unlockParticipant(id);

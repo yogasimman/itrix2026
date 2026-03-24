@@ -65,6 +65,7 @@ export default function ParticipantDashboard({
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [violationCount, setViolationCount] = useState(0);
 
   const fetchData = useCallback(async () => {
     try {
@@ -137,7 +138,7 @@ export default function ParticipantDashboard({
       await fetch(`/api/participants/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "lock" }),
+        body: JSON.stringify({ action: "complete_round2" }),
       });
       fetchData();
     } catch (error) {

@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { Round1Question } from "@/components/round1-question";
-import { Round1Results } from "@/components/round1-results";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -127,7 +126,12 @@ export default function Round1QuizPage({
     );
     const resultData = await resultRes.json();
     if (resultData?.result) {
-      setResult(resultData.result);
+      // Lock the participant so the ID cannot be used again
+      await fetch(`/api/participants/${participantId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "lock" }),
+      });
       setQuizState("completed");
     }
     setIsFinalizing(false);
@@ -288,18 +292,25 @@ export default function Round1QuizPage({
     );
   }
 
-  if (quizState === 'completed' && result) {
-    const totalScore = questions.reduce((sum, q) => sum + q.score, 0);
-
+  if (quizState === 'completed') {
     return (
-      <main className="min-h-screen bg-background p-4">
-        <div className="container mx-auto max-w-2xl py-8">
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-3xl font-bold">Round 1 - Results</h1>
-          </div>
-
-          <Round1Results result={result} maxScore={totalScore} />
-        </div>
+      <main className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mb-4">
+              <Brain className="h-8 w-8 text-primary" />
+            </div>
+            <CardTitle className="text-2xl">Submission Received</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
+              Your Round 1 answers have been successfully submitted. Thank you for participating.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Your Participant ID is no longer valid. Please return your device to the invigilator.
+            </p>
+          </CardContent>
+        </Card>
       </main>
     );
   }
