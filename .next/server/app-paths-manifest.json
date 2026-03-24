@@ -1,0 +1,21 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/api/admin/password/route": "app/api/admin/password/route.js",
+  "/api/admin/timer/route": "app/api/admin/timer/route.js",
+  "/api/admin/verify/route": "app/api/admin/verify/route.js",
+  "/api/admin/whitelist/route": "app/api/admin/whitelist/route.js",
+  "/api/components/route": "app/api/components/route.js",
+  "/api/init/route": "app/api/init/route.js",
+  "/api/logs/route": "app/api/logs/route.js",
+  "/api/participants/[id]/route": "app/api/participants/[id]/route.js",
+  "/api/participants/route": "app/api/participants/route.js",
+  "/api/round1/questions/route": "app/api/round1/questions/route.js",
+  "/api/round1/responses/route": "app/api/round1/responses/route.js",
+  "/api/scenarios/route": "app/api/scenarios/route.js",
+  "/api/snippets/unlock/route": "app/api/snippets/unlock/route.js",
+  "/page": "app/page.js",
+  "/participant/[id]/page": "app/participant/[id]/page.js",
+  "/round1/[id]/page": "app/round1/[id]/page.js"
+}
