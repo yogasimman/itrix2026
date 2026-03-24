@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -19,8 +18,6 @@ import {
   Play
 } from "lucide-react"
 
-const fetcher = (url: string) => fetch(url).then(res => res.json())
-
 export default function HomePage() {
   const router = useRouter()
   const [participantId, setParticipantId] = useState("")
@@ -28,38 +25,24 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null)
   const [isOnline, setIsOnline] = useState(true)
   const [isInitializing, setIsInitializing] = useState(false)
-  // Tracks whether we're hydrated on the client yet
-  const [mounted, setMounted] = useState(false)
-  // Set directly after a successful POST so we never depend on SWR mutate
-  const [manuallyInitialized, setManuallyInitialized] = useState(false)
+  // 'checking' | 'ready' | 'setup-needed'
+  const [initState, setInitState] = useState<'checking' | 'ready' | 'setup-needed'>('checking')
 
-  // Hydration guard – runs only on the client after first paint
-  useEffect(() => { setMounted(true) }, [])
-
-  // Check initialization status (client-only via SWR)
-  const { data: initStatus } = useSWR(
-    mounted ? "/api/init" : null,   // don't fetch until hydrated
-    fetcher,
-    { refreshInterval: 0, revalidateOnFocus: false }
-  )
-
-  // Resolved initialized state:
-  // • not yet mounted → false (spinner shown)
-  // • mounted but SWR not back yet → false (spinner shown)
-  // • POST succeeded → true immediately via manuallyInitialized
-  // • SWR returned true → true
-  const initialized = manuallyInitialized || initStatus?.initialized === true
+  // Check init status once on mount — no SWR, no extra render cycles
+  useEffect(() => {
+    fetch("/api/init")
+      .then(r => r.json())
+      .then(data => setInitState(data.initialized ? 'ready' : 'setup-needed'))
+      .catch(() => setInitState('setup-needed'))
+  }, [])
 
   // Monitor online/offline status
   useEffect(() => {
     const handleOnline = () => setIsOnline(true)
     const handleOffline = () => setIsOnline(false)
-    
     setIsOnline(navigator.onLine)
-    
     window.addEventListener("online", handleOnline)
     window.addEventListener("offline", handleOffline)
-    
     return () => {
       window.removeEventListener("online", handleOnline)
       window.removeEventListener("offline", handleOffline)
@@ -71,7 +54,7 @@ export default function HomePage() {
     try {
       const response = await fetch("/api/init", { method: "POST" })
       if (response.ok) {
-        setManuallyInitialized(true)
+        setInitState('ready')
       }
     } catch (err) {
       console.error("Failed to initialize database:", err)
@@ -147,7 +130,7 @@ export default function HomePage() {
   }
 
   // Still checking status — show a neutral loading screen
-  if (initStatus === undefined) {
+  if (initState === 'checking') {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="flex flex-col items-center gap-4 text-muted-foreground">
@@ -159,7 +142,7 @@ export default function HomePage() {
   }
 
   // System not yet initialized
-  if (!initialized) {
+  if (initState === 'setup-needed') {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
