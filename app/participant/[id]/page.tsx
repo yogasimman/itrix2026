@@ -113,28 +113,40 @@ export default function ParticipantDashboard({
     const initializeParticipant = async () => {
       await fetchData();
 
-      // Check sessionStorage: if this participant already had a session this
-      // browser session, they may be re-entering after navigating away.
-      // Distinguish a genuine re-entry (navigation away) from a page refresh.
-      const sessionKey = `iot_session_${id}`;
-      const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
-      const isReload = navEntry?.type === "reload";
+      // Re-entry detection:
+      // We use a window-level flag (resets on full page navigation but survives
+      // React's StrictMode double-mount) combined with sessionStorage (persists
+      // across navigations within the same browser session).
+      //
+      // window.__iotInit[id] = true  → this JS instance has already run the
+      //   check, so skip (handles StrictMode's second effect run).
+      // sessionStorage[key] exists   → participant has visited before in this
+      //   browser session (genuine re-entry after navigating away).
+      const win = window as any;
+      if (!win.__iotInit) win.__iotInit = {};
 
-      if (sessionStorage.getItem(sessionKey) && !isReload) {
-        setReEntryWarning(true);
-        // Log re-entry violation
-        fetch(`/api/participants/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "log_violation",
-            violationType: "re_entry",
-            details: "Participant navigated away and re-entered the dashboard.",
-            severity: "critical",
-          }),
-        }).catch(() => {});
-      } else {
-        sessionStorage.setItem(sessionKey, "active");
+      if (!win.__iotInit[id]) {
+        win.__iotInit[id] = true;
+
+        const sessionKey = `iot_session_${id}`;
+        const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+        const isReload = navEntry?.type === "reload";
+
+        if (sessionStorage.getItem(sessionKey) && !isReload) {
+          setReEntryWarning(true);
+          fetch(`/api/participants/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "log_violation",
+              violationType: "re_entry",
+              details: "Participant navigated away and re-entered the dashboard.",
+              severity: "critical",
+            }),
+          }).catch(() => {});
+        } else {
+          sessionStorage.setItem(sessionKey, "active");
+        }
       }
 
       fetch(`/api/participants/${id}`, {
