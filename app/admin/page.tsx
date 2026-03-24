@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -95,6 +95,7 @@ interface Violation {
   participant_id: string;
   participant_name: string;
   violation_type: string;
+  severity?: "permitted" | "warning" | "critical";
   app_name?: string;
   details: string;
   created_at: string;
@@ -114,6 +115,8 @@ export default function AdminDashboard() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [globalTimerDuration, setGlobalTimerDuration] = useState("120");
+  const [newViolationAlert, setNewViolationAlert] = useState<{ participant: string; type: string; time: string } | null>(null);
+  const lastViolationIdRef = useRef<number>(0);
   
   // Check for existing admin session and redirect if already authenticated
   useEffect(() => {
@@ -176,6 +179,23 @@ export default function AdminDashboard() {
       setGlobalTimerDuration(timerData.minutes.toString());
     }
   }, [timerData]);
+
+  // Real-time violation alert: fire when new violations arrive via polling
+  useEffect(() => {
+    if (!violationsData?.violations?.length) return;
+    const latest = violationsData.violations[0];
+    if (latest && latest.id !== lastViolationIdRef.current) {
+      if (lastViolationIdRef.current !== 0) {
+        // A new violation arrived since we last checked
+        setNewViolationAlert({
+          participant: latest.participant_name || latest.participant_id,
+          type: latest.violation_type,
+          time: new Date(latest.created_at).toLocaleTimeString(),
+        });
+      }
+      lastViolationIdRef.current = latest.id;
+    }
+  }, [violationsData]);
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -569,6 +589,25 @@ export default function AdminDashboard() {
         </div>
       </header>
 
+      {/* Live violation alert banner */}
+      {newViolationAlert && (
+        <div className="bg-destructive text-destructive-foreground px-4 py-3 flex items-center justify-between gap-4 animate-pulse">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="h-5 w-5 shrink-0" />
+            <span className="font-semibold text-sm">
+              NEW VIOLATION — {newViolationAlert.participant}:{" "}
+              <span className="font-normal">{newViolationAlert.type.replace(/_/g, " ")} at {newViolationAlert.time}</span>
+            </span>
+          </div>
+          <button
+            onClick={() => setNewViolationAlert(null)}
+            className="text-destructive-foreground/70 hover:text-destructive-foreground text-xs underline shrink-0"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Stats */}
       <div className="container mx-auto px-4 py-6">
         <div className="grid gap-4 md:grid-cols-4">
@@ -625,7 +664,14 @@ export default function AdminDashboard() {
           <TabsTrigger value="round1-manage">Round 1 - Manage</TabsTrigger>
           <TabsTrigger value="round1-questions">Round 1 - Questions</TabsTrigger>
           <TabsTrigger value="activity">Activity Log</TabsTrigger>
-          <TabsTrigger value="violations">Violations</TabsTrigger>
+          <TabsTrigger value="violations" className="gap-1.5">
+            Violations
+            {violations.filter(v => v.severity === "critical").length > 0 && (
+              <span className="bg-destructive text-destructive-foreground text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center leading-none">
+                {violations.filter(v => v.severity === "critical").length}
+              </span>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="components">Components</TabsTrigger>
         </TabsList>
 
@@ -1001,39 +1047,65 @@ export default function AdminDashboard() {
                         No violations recorded.
                       </p>
                     ) : (
-                      violations.map((violation) => (
-                        <div
-                          key={violation.id}
-                          className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3"
-                        >
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-destructive/10">
-                            <AlertTriangle className="h-4 w-4 text-destructive" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-medium text-sm">
-                                {violation.participant_name}
-                              </span>
-                              <Badge variant="destructive" className="text-xs">
-                                {violation.violation_type}
-                              </Badge>
-                              {violation.app_name && (
-                                <Badge variant="outline" className="text-xs">
-                                  {violation.app_name}
+                      violations.map((violation) => {
+                        const isCritical = violation.severity === "critical";
+                        const isPermitted = violation.severity === "permitted";
+                        return (
+                          <div
+                            key={violation.id}
+                            className={`flex items-start gap-3 rounded-lg border p-3 ${
+                              isCritical
+                                ? "border-destructive/50 bg-destructive/10"
+                                : isPermitted
+                                ? "border-border bg-muted/30"
+                                : "border-yellow-500/30 bg-yellow-500/5"
+                            }`}
+                          >
+                            <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                              isCritical ? "bg-destructive/20" : isPermitted ? "bg-muted" : "bg-yellow-500/20"
+                            }`}>
+                              <AlertTriangle className={`h-4 w-4 ${
+                                isCritical ? "text-destructive" : isPermitted ? "text-muted-foreground" : "text-yellow-600"
+                              }`} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-medium text-sm">
+                                  {violation.participant_name || violation.participant_id}
+                                </span>
+                                <Badge
+                                  variant={isCritical ? "destructive" : "outline"}
+                                  className={`text-xs ${!isCritical && !isPermitted ? "border-yellow-500 text-yellow-700" : ""}`}
+                                >
+                                  {violation.violation_type.replace(/_/g, " ")}
                                 </Badge>
+                                {violation.severity && (
+                                  <Badge variant="outline" className={`text-xs ${
+                                    isCritical ? "border-destructive text-destructive" :
+                                    isPermitted ? "border-muted-foreground text-muted-foreground" :
+                                    "border-yellow-500 text-yellow-700"
+                                  }`}>
+                                    {violation.severity}
+                                  </Badge>
+                                )}
+                                {violation.app_name && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {violation.app_name}
+                                  </Badge>
+                                )}
+                              </div>
+                              {violation.details && (
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  {violation.details}
+                                </p>
                               )}
                             </div>
-                            {violation.details && (
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {violation.details}
-                              </p>
-                            )}
+                            <span className="text-xs text-muted-foreground shrink-0">
+                              {new Date(violation.created_at).toLocaleTimeString()}
+                            </span>
                           </div>
-                          <span className="text-xs text-muted-foreground shrink-0">
-                            {new Date(violation.created_at).toLocaleTimeString()}
-                          </span>
-                        </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </ScrollArea>

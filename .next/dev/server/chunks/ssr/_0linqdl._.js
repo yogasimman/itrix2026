@@ -1293,31 +1293,11 @@ function Round1QuizPage({ params }) {
             e.preventDefault();
             e.returnValue = "";
         };
-        const onVisibility = ()=>{
-            if (document.hidden) {
-                fetch(`/api/participants/${participantId}`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        action: "log_violation",
-                        violationType: "tab_switch",
-                        details: "Participant switched tab during Round 1",
-                        severity: "critical"
-                    })
-                });
-            }
-        };
         window.addEventListener("beforeunload", onBeforeUnload);
-        document.addEventListener("visibilitychange", onVisibility);
         return ()=>{
             window.removeEventListener("beforeunload", onBeforeUnload);
-            document.removeEventListener("visibilitychange", onVisibility);
         };
-    }, [
-        participantId
-    ]);
+    }, []);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         // Best-effort source tracking when user lands back from external search/LLM pages.
         if (!document.referrer) return;
@@ -1368,25 +1348,25 @@ function Round1QuizPage({ params }) {
                                     className: "h-8 w-8 text-primary"
                                 }, void 0, false, {
                                     fileName: "[project]/app/round1/[id]/page.tsx",
-                                    lineNumber: 260,
+                                    lineNumber: 245,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 259,
+                                lineNumber: 244,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
                                 children: "Loading Round 1 Quiz"
                             }, void 0, false, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 262,
+                                lineNumber: 247,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/round1/[id]/page.tsx",
-                        lineNumber: 258,
+                        lineNumber: 243,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1395,23 +1375,23 @@ function Round1QuizPage({ params }) {
                             className: "h-8 w-8"
                         }, void 0, false, {
                             fileName: "[project]/app/round1/[id]/page.tsx",
-                            lineNumber: 265,
+                            lineNumber: 250,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/round1/[id]/page.tsx",
-                        lineNumber: 264,
+                        lineNumber: 249,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/round1/[id]/page.tsx",
-                lineNumber: 257,
+                lineNumber: 242,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/round1/[id]/page.tsx",
-            lineNumber: 256,
+            lineNumber: 241,
             columnNumber: 7
         }, this);
     }
@@ -1429,19 +1409,19 @@ function Round1QuizPage({ params }) {
                                     className: "h-5 w-5"
                                 }, void 0, false, {
                                     fileName: "[project]/app/round1/[id]/page.tsx",
-                                    lineNumber: 278,
+                                    lineNumber: 263,
                                     columnNumber: 15
                                 }, this),
                                 "Error Loading Quiz"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/round1/[id]/page.tsx",
-                            lineNumber: 277,
+                            lineNumber: 262,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/round1/[id]/page.tsx",
-                        lineNumber: 276,
+                        lineNumber: 261,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1453,12 +1433,12 @@ function Round1QuizPage({ params }) {
                                     children: error
                                 }, void 0, false, {
                                     fileName: "[project]/app/round1/[id]/page.tsx",
-                                    lineNumber: 284,
+                                    lineNumber: 269,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 283,
+                                lineNumber: 268,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1467,24 +1447,24 @@ function Round1QuizPage({ params }) {
                                 children: "Return to Home"
                             }, void 0, false, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 286,
+                                lineNumber: 271,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/round1/[id]/page.tsx",
-                        lineNumber: 282,
+                        lineNumber: 267,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/round1/[id]/page.tsx",
-                lineNumber: 275,
+                lineNumber: 260,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/round1/[id]/page.tsx",
-            lineNumber: 274,
+            lineNumber: 259,
             columnNumber: 7
         }, this);
     }
@@ -1502,12 +1482,12 @@ function Round1QuizPage({ params }) {
                                     className: "h-8 w-8 text-primary"
                                 }, void 0, false, {
                                     fileName: "[project]/app/round1/[id]/page.tsx",
-                                    lineNumber: 301,
+                                    lineNumber: 286,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 300,
+                                lineNumber: 285,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
@@ -1515,13 +1495,13 @@ function Round1QuizPage({ params }) {
                                 children: "Submission Received"
                             }, void 0, false, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 303,
+                                lineNumber: 288,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/round1/[id]/page.tsx",
-                        lineNumber: 299,
+                        lineNumber: 284,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1532,7 +1512,7 @@ function Round1QuizPage({ params }) {
                                 children: "Your Round 1 answers have been successfully submitted. Thank you for participating."
                             }, void 0, false, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 306,
+                                lineNumber: 291,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1540,24 +1520,24 @@ function Round1QuizPage({ params }) {
                                 children: "Your Participant ID is no longer valid. Please return your device to the invigilator."
                             }, void 0, false, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 309,
+                                lineNumber: 294,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/round1/[id]/page.tsx",
-                        lineNumber: 305,
+                        lineNumber: 290,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/round1/[id]/page.tsx",
-                lineNumber: 298,
+                lineNumber: 283,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/round1/[id]/page.tsx",
-            lineNumber: 297,
+            lineNumber: 282,
             columnNumber: 7
         }, this);
     }
@@ -1579,14 +1559,14 @@ function Round1QuizPage({ params }) {
                                             className: "h-6 w-6 text-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/app/round1/[id]/page.tsx",
-                                            lineNumber: 326,
+                                            lineNumber: 311,
                                             columnNumber: 15
                                         }, this),
                                         "Round 1 - IoT Challenge"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/round1/[id]/page.tsx",
-                                    lineNumber: 325,
+                                    lineNumber: 310,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1597,7 +1577,7 @@ function Round1QuizPage({ params }) {
                                             children: formatTime(remainingSeconds)
                                         }, void 0, false, {
                                             fileName: "[project]/app/round1/[id]/page.tsx",
-                                            lineNumber: 330,
+                                            lineNumber: 315,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1607,19 +1587,19 @@ function Round1QuizPage({ params }) {
                                             children: isFinalizing ? "Submitting..." : "Final Submit"
                                         }, void 0, false, {
                                             fileName: "[project]/app/round1/[id]/page.tsx",
-                                            lineNumber: 331,
+                                            lineNumber: 316,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/round1/[id]/page.tsx",
-                                    lineNumber: 329,
+                                    lineNumber: 314,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/round1/[id]/page.tsx",
-                            lineNumber: 324,
+                            lineNumber: 309,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$round1$2d$question$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Round1Question"], {
@@ -1633,13 +1613,13 @@ function Round1QuizPage({ params }) {
                             isSaving: isSavingAnswer
                         }, currentQuestion.id, false, {
                             fileName: "[project]/app/round1/[id]/page.tsx",
-                            lineNumber: 341,
+                            lineNumber: 326,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/round1/[id]/page.tsx",
-                    lineNumber: 323,
+                    lineNumber: 308,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialog"], {
@@ -1653,20 +1633,20 @@ function Round1QuizPage({ params }) {
                                         children: "Submit Round 1?"
                                     }, void 0, false, {
                                         fileName: "[project]/app/round1/[id]/page.tsx",
-                                        lineNumber: 356,
+                                        lineNumber: 341,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogDescription"], {
                                         children: "You are about to finish Round 1. You cannot edit answers after submission."
                                     }, void 0, false, {
                                         fileName: "[project]/app/round1/[id]/page.tsx",
-                                        lineNumber: 357,
+                                        lineNumber: 342,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 355,
+                                lineNumber: 340,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogFooter"], {
@@ -1675,7 +1655,7 @@ function Round1QuizPage({ params }) {
                                         children: "Cancel"
                                     }, void 0, false, {
                                         fileName: "[project]/app/round1/[id]/page.tsx",
-                                        lineNumber: 362,
+                                        lineNumber: 347,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogAction"], {
@@ -1683,30 +1663,30 @@ function Round1QuizPage({ params }) {
                                         children: "Yes, Submit"
                                     }, void 0, false, {
                                         fileName: "[project]/app/round1/[id]/page.tsx",
-                                        lineNumber: 363,
+                                        lineNumber: 348,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/round1/[id]/page.tsx",
-                                lineNumber: 361,
+                                lineNumber: 346,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/round1/[id]/page.tsx",
-                        lineNumber: 354,
+                        lineNumber: 339,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/round1/[id]/page.tsx",
-                    lineNumber: 353,
+                    lineNumber: 338,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/round1/[id]/page.tsx",
-            lineNumber: 322,
+            lineNumber: 307,
             columnNumber: 7
         }, this);
     }

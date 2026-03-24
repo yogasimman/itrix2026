@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { Round1Question } from "@/components/round1-question";
+import { Round1Proctoring } from "@/components/round1-proctoring";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -191,27 +192,11 @@ export default function Round1QuizPage({
       e.preventDefault();
       e.returnValue = "";
     };
-    const onVisibility = () => {
-      if (document.hidden) {
-        fetch(`/api/participants/${participantId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "log_violation",
-            violationType: "tab_switch",
-            details: "Participant switched tab during Round 1",
-            severity: "critical",
-          }),
-        });
-      }
-    };
     window.addEventListener("beforeunload", onBeforeUnload);
-    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       window.removeEventListener("beforeunload", onBeforeUnload);
-      document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [participantId]);
+  }, []);
 
   useEffect(() => {
     // Best-effort source tracking when user lands back from external search/LLM pages.
@@ -320,6 +305,7 @@ export default function Round1QuizPage({
 
     return (
       <main className="min-h-screen bg-background p-4">
+        <Round1Proctoring participantId={participantId} enabled={true} />
         <div className="container mx-auto max-w-2xl py-8">
           <div className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-bold flex items-center gap-2">
