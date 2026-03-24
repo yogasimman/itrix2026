@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Spinner } from "@/components/ui/spinner";
-import { UserCheck, Users, BarChart3, CheckCircle, Clock } from "lucide-react";
+import { UserCheck, Users, BarChart3, CheckCircle, Clock, Trophy, ArrowUpCircle } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -37,9 +37,49 @@ interface ParticipantData {
   round2_completed?: boolean;
 }
 
+interface TeamEntry {
+  team_name: string;
+  members: ParticipantData[];
+  avg_score: number;
+  all_completed: boolean;
+  any_completed: boolean;
+  promoted_to_round2: boolean;
+}
+
+function buildTeamLeaderboard(participants: ParticipantData[]): TeamEntry[] {
+  const round1Participants = participants.filter(p => p.assigned_round === "round1");
+  const teamMap = new Map<string, ParticipantData[]>();
+
+  for (const p of round1Participants) {
+    const key = p.team_name?.trim() || "__no_team__";
+    if (!teamMap.has(key)) teamMap.set(key, []);
+    teamMap.get(key)!.push(p);
+  }
+
+  const entries: TeamEntry[] = [];
+  teamMap.forEach((members, team_name) => {
+    const completedMembers = members.filter(m => m.round1_completed);
+    const avg_score =
+      completedMembers.length > 0
+        ? completedMembers.reduce((sum, m) => sum + (m.round1_score || 0), 0) / completedMembers.length
+        : 0;
+    entries.push({
+      team_name: team_name === "__no_team__" ? "(No Team)" : team_name,
+      members,
+      avg_score,
+      all_completed: members.every(m => m.round1_completed),
+      any_completed: members.some(m => m.round1_completed),
+      promoted_to_round2: members.every(m => m.assigned_round === "round2"),
+    });
+  });
+
+  return entries.sort((a, b) => b.avg_score - a.avg_score);
+}
+
 export function Round1Management() {
   const [filterRound, setFilterRound] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [promotingTeam, setPromotingTeam] = useState<string | null>(null);
 
   const { data: participantsData, mutate: refreshParticipants } = useSWR(
     "/api/participants",
@@ -57,12 +97,29 @@ export function Round1Management() {
           assigned_round: round,
         }),
       });
-
-      if (res.ok) {
-        refreshParticipants();
-      }
+      if (res.ok) refreshParticipants();
     } catch (error) {
       console.error("Failed to assign round:", error);
+    }
+  };
+
+  const handlePromoteTeam = async (team: TeamEntry) => {
+    setPromotingTeam(team.team_name);
+    try {
+      await Promise.all(
+        team.members.map(m =>
+          fetch(`/api/participants/${m.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "assign_round", assigned_round: "round2" }),
+          })
+        )
+      );
+      refreshParticipants();
+    } catch (error) {
+      console.error("Failed to promote team:", error);
+    } finally {
+      setPromotingTeam(null);
     }
   };
 
@@ -76,17 +133,20 @@ export function Round1Management() {
     );
   }
 
-  const participants = participantsData.participants || [];
-  
+  const participants: ParticipantData[] = participantsData.participants || [];
+
+  const teamLeaderboard = buildTeamLeaderboard(participants);
+
   let filtered = participants.filter((p: ParticipantData) => {
-    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         p.id.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesSearch =
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.team_name || "").toLowerCase().includes(searchTerm.toLowerCase());
+
     if (filterRound === "all") return matchesSearch;
     if (filterRound === "unassigned") return matchesSearch && !p.assigned_round;
     if (filterRound === "round1") return matchesSearch && p.assigned_round === "round1";
     if (filterRound === "round2") return matchesSearch && p.assigned_round === "round2";
-    
     return matchesSearch;
   });
 
@@ -104,15 +164,18 @@ export function Round1Management() {
     round1Completed: participants.filter((p: ParticipantData) => p.round1_completed).length,
   };
 
+  const rankColors = ["text-yellow-500", "text-slate-400", "text-amber-700"];
+  const rankLabels = ["1st", "2nd", "3rd"];
+
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid md:grid-cols-5 gap-4">
+      <div className="grid md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Total
+              Total Participants
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -160,17 +223,132 @@ export function Round1Management() {
         </Card>
       </div>
 
-      {/* Filter and Search */}
+      {/* Team Leaderboard */}
+      {teamLeaderboard.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-yellow-500" />
+              Team Leaderboard
+            </CardTitle>
+            <CardDescription>
+              Teams ranked by average Round 1 score. Promote top teams to Round 2.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-16">Rank</TableHead>
+                    <TableHead>Team Name</TableHead>
+                    <TableHead>Members</TableHead>
+                    <TableHead>Avg Score</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {teamLeaderboard.map((team, idx) => {
+                    const isPromoting = promotingTeam === team.team_name;
+                    const alreadyPromoted = team.members.every(m => m.assigned_round === "round2");
+                    return (
+                      <TableRow key={team.team_name} className={idx === 0 ? "bg-yellow-50 dark:bg-yellow-950/20" : ""}>
+                        <TableCell>
+                          <span className={`font-bold text-lg ${rankColors[idx] || "text-foreground"}`}>
+                            {rankLabels[idx] || `${idx + 1}th`}
+                          </span>
+                        </TableCell>
+                        <TableCell className="font-semibold">{team.team_name}</TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            {team.members.map(m => (
+                              <div key={m.id} className="flex items-center gap-2 text-sm">
+                                <span className="font-mono text-xs text-muted-foreground">{m.id}</span>
+                                <span>{m.name}</span>
+                                {m.round1_completed ? (
+                                  <Badge variant="outline" className="text-xs text-green-600 border-green-300">
+                                    {m.round1_score ?? 0} pts
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="outline" className="text-xs text-muted-foreground">
+                                    pending
+                                  </Badge>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {team.any_completed ? (
+                            <div className="flex items-center gap-1">
+                              <span className="text-2xl font-bold text-primary">
+                                {team.avg_score.toFixed(1)}
+                              </span>
+                              {!team.all_completed && (
+                                <span className="text-xs text-muted-foreground">(partial)</span>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">Not started</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {alreadyPromoted ? (
+                            <Badge className="bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-400">
+                              In Round 2
+                            </Badge>
+                          ) : team.all_completed ? (
+                            <Badge variant="default">All Done</Badge>
+                          ) : team.any_completed ? (
+                            <Badge variant="outline">In Progress</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-yellow-600">Waiting</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {alreadyPromoted ? (
+                            <span className="text-sm text-muted-foreground flex items-center gap-1">
+                              <CheckCircle className="h-4 w-4 text-green-500" /> Promoted
+                            </span>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="gap-1"
+                              disabled={isPromoting}
+                              onClick={() => handlePromoteTeam(team)}
+                            >
+                              {isPromoting ? (
+                                <Spinner className="h-3 w-3" />
+                              ) : (
+                                <ArrowUpCircle className="h-4 w-4 text-primary" />
+                              )}
+                              Promote to Round 2
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Individual Participants Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Manage Participant Rounds</CardTitle>
-          <CardDescription>Assign or reassign participants to Round 1 or Round 2</CardDescription>
+          <CardTitle>Individual Participants</CardTitle>
+          <CardDescription>View and manage round assignment for individual participants</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <div className="flex gap-4">
             <Input
-              placeholder="Search by name or ID..."
+              placeholder="Search by name, ID, or team..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="flex-1"
@@ -188,7 +366,6 @@ export function Round1Management() {
             </Select>
           </div>
 
-          {/* Participants Table */}
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
