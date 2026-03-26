@@ -1,22 +1,31 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import gsap from "gsap"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
-  Cpu,
-  Settings,
-  User,
   ArrowRight,
   AlertTriangle,
+  Bolt,
+  Cpu,
+  Radio,
+  Settings,
+  User,
   Wifi,
   WifiOff,
-  Play
+  Play,
 } from "lucide-react"
+
+const IotAmbientCanvas = dynamic(
+  () => import("@/components/iot-ambient-canvas").then((mod) => mod.IotAmbientCanvas),
+  { ssr: false }
+)
 
 export function HomePageClient({ serverInitialized }: { serverInitialized: boolean }) {
   const router = useRouter()
@@ -25,21 +34,57 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
   const [error, setError] = useState<string | null>(null)
   const [isOnline, setIsOnline] = useState(true)
   const [isInitializing, setIsInitializing] = useState(false)
-  // Start with the value the server already knows — no fetch needed
   const [initialized, setInitialized] = useState(serverInitialized)
 
-  // Monitor online/offline status
+  const shellRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     const handleOnline = () => setIsOnline(true)
     const handleOffline = () => setIsOnline(false)
+
     setIsOnline(navigator.onLine)
     window.addEventListener("online", handleOnline)
     window.addEventListener("offline", handleOffline)
+
     return () => {
       window.removeEventListener("online", handleOnline)
       window.removeEventListener("offline", handleOffline)
     }
   }, [])
+
+  useEffect(() => {
+    if (!initialized || !shellRef.current) return
+
+    const ctx = gsap.context(() => {
+      const timeline = gsap.timeline({ defaults: { ease: "power3.out" } })
+
+      timeline.fromTo(
+        ".js-status",
+        { y: -20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.55 }
+      )
+      timeline.fromTo(
+        ".js-hero",
+        { y: 28, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7 },
+        "-=0.2"
+      )
+      timeline.fromTo(
+        ".js-kpi",
+        { y: 18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45, stagger: 0.1 },
+        "-=0.35"
+      )
+      timeline.fromTo(
+        ".js-panel",
+        { y: 32, opacity: 0, scale: 0.98 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.65, stagger: 0.12 },
+        "-=0.2"
+      )
+    }, shellRef)
+
+    return () => ctx.revert()
+  }, [initialized])
 
   const initializeDatabase = async () => {
     setIsInitializing(true)
@@ -57,6 +102,7 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
 
   const handleParticipantAccess = async (e: React.FormEvent) => {
     e.preventDefault()
+
     if (!participantId.trim()) {
       setError("Please enter your Participant ID")
       return
@@ -66,7 +112,8 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
     setError(null)
 
     try {
-      const res = await fetch(`/api/participants/${participantId.trim().toUpperCase()}`)
+      const id = participantId.trim().toUpperCase()
+      const res = await fetch(`/api/participants/${id}`)
 
       if (!res.ok) {
         if (res.status === 404) {
@@ -93,11 +140,11 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
 
       const assignedRound = data.participant.assigned_round
 
-      if (assignedRound === 'round1') {
-        router.push(`/round1/${participantId.trim().toUpperCase()}`)
-      } else if (assignedRound === 'round2') {
+      if (assignedRound === "round1") {
+        router.push(`/round1/${id}`)
+      } else if (assignedRound === "round2") {
         if (data.participant.scenario_id && !data.participant.timer_started_at) {
-          await fetch(`/api/participants/${participantId.trim().toUpperCase()}`, {
+          await fetch(`/api/participants/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -106,191 +153,184 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
             }),
           })
         }
-        router.push(`/participant/${participantId.trim().toUpperCase()}`)
+        router.push(`/participant/${id}`)
       } else {
         setError("Round assignment pending. Please contact the admin.")
         setIsLoading(false)
       }
-    } catch (err) {
+    } catch {
       setError("Connection error. The system works offline - ensure the local server is running.")
       setIsLoading(false)
     }
   }
 
-  // System not yet initialized
   if (!initialized) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mb-4">
-              <Cpu className="h-8 w-8 text-primary" />
-            </div>
-            <CardTitle className="text-2xl">IoT Competition Platform</CardTitle>
-            <CardDescription>Initialize the system to get started</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center">
-              This will set up the database with 49 components and 8 competition scenarios.
-            </p>
-            <Button
-              onClick={initializeDatabase}
-              disabled={isInitializing}
-              className="w-full"
-              size="lg"
-            >
-              {isInitializing ? (
-                <>
-                  <Spinner className="mr-2 h-4 w-4" />
-                  Initializing...
-                </>
-              ) : (
-                <>
-                  <Play className="mr-2 h-4 w-4" />
-                  Initialize System
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+      <main className="relative min-h-screen overflow-hidden bg-background px-4 py-8">
+        <div className="iot-grid-overlay" />
+        <div className="relative mx-auto flex min-h-[85vh] w-full max-w-2xl items-center justify-center">
+          <Card className="w-full border-white/10 bg-card/80 backdrop-blur-lg">
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl border border-accent/30 bg-accent/15">
+                <Cpu className="h-9 w-9 text-accent" />
+              </div>
+              <CardTitle className="text-3xl font-semibold tracking-tight">Competition Control Center</CardTitle>
+              <CardDescription>Initialize the platform and prime all IoT challenge modules.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-center text-sm text-muted-foreground">
+                Initialization prepares the local database with components, round assignments, and scenario data.
+              </p>
+              <Button onClick={initializeDatabase} disabled={isInitializing} className="h-12 w-full gap-2" size="lg">
+                {isInitializing ? (
+                  <>
+                    <Spinner className="h-4 w-4" />
+                    Initializing...
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-4 w-4" />
+                    Initialize System
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-background">
-      {/* Status Bar */}
-      <div className="border-b bg-card">
-        <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm">
-              {isOnline ? (
-                <span className="flex items-center gap-1.5 text-muted-foreground">
-                  <Wifi className="h-3.5 w-3.5 text-success" />
-                  Online
-                </span>
-              ) : (
-                <span className="flex items-center gap-1.5 text-warning">
-                  <WifiOff className="h-3.5 w-3.5" />
-                  Offline Mode
-                </span>
-              )}
-            </div>
-            <span className="text-xs text-muted-foreground">
-              Local Server Active
-            </span>
+    <main ref={shellRef} className="relative min-h-screen overflow-hidden bg-background text-foreground">
+      <div className="iot-grid-overlay" />
+      <IotAmbientCanvas />
+      <div className="scan-line" />
+
+      <section className="js-status relative border-b border-white/10 bg-black/35 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 md:px-8">
+          <div className="flex items-center gap-3 text-sm">
+            <span className="pulse-dot" aria-hidden />
+            {isOnline ? (
+              <span className="flex items-center gap-1.5 text-emerald-300">
+                <Wifi className="h-3.5 w-3.5" />
+                Network Ready
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 text-amber-300">
+                <WifiOff className="h-3.5 w-3.5" />
+                Offline Safe Mode
+              </span>
+            )}
+          </div>
+          <div className="hidden items-center gap-2 text-xs uppercase tracking-[0.22em] text-cyan-100/70 sm:flex">
+            <Radio className="h-3.5 w-3.5" />
+            Local Server Active
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          {/* Logo & Title */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary mb-6">
-              <Cpu className="w-10 h-10 text-primary-foreground" />
-            </div>
-            <h1 className="text-4xl font-bold tracking-tight text-foreground mb-3 text-balance">
-              IoT Competition Platform
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto text-pretty">
-              Build innovative IoT solutions with Arduino. Select your role to continue.
-            </p>
+      <section className="relative mx-auto w-full max-w-7xl px-4 pb-20 pt-10 md:px-8 md:pt-14">
+        <div className="js-hero mb-8 md:mb-12">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">
+            <Bolt className="h-3.5 w-3.5" />
+            National IoT Challenge Interface
           </div>
+          <h1 className="max-w-4xl text-balance text-4xl font-semibold tracking-tight md:text-6xl">
+            Engineer, Monitor, and Compete in a Real-Time IoT Arena
+          </h1>
+          <p className="mt-4 max-w-2xl text-pretty text-base text-cyan-100/80 md:text-lg">
+            Professional competition console for device scenarios, participant sessions, and round control built for fast decisions under pressure.
+          </p>
+        </div>
 
-          {/* Role Selection Cards */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Admin Card */}
-            <Card className="relative overflow-hidden border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary mb-4">
-                  <Settings className="h-6 w-6 text-secondary-foreground" />
-                </div>
-                <CardTitle className="text-xl">Admin Dashboard</CardTitle>
-                <CardDescription>
-                  Manage participants, assign scenarios, monitor progress, and view activity logs
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  className="w-full gap-2"
-                  size="lg"
-                  onClick={() => router.push("/admin")}
-                >
-                  Enter Admin Panel
-                  <ArrowRight className="h-4 w-4" />
+        <div className="mb-10 grid gap-3 sm:grid-cols-3 md:mb-14">
+          <div className="js-kpi glass-kpi">
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Latency</p>
+            <p className="mt-1 text-2xl font-semibold">&lt; 25 ms</p>
+          </div>
+          <div className="js-kpi glass-kpi">
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Data Engine</p>
+            <p className="mt-1 text-2xl font-semibold">Local + Secure</p>
+          </div>
+          <div className="js-kpi glass-kpi">
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Competition State</p>
+            <p className="mt-1 text-2xl font-semibold">Operational</p>
+          </div>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <Card className="js-panel border-white/10 bg-slate-950/60 backdrop-blur-xl transition-colors hover:border-cyan-300/50">
+            <CardHeader>
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-300/30 bg-cyan-400/15">
+                <Settings className="h-6 w-6 text-cyan-200" />
+              </div>
+              <CardTitle className="text-2xl">Admin Operations</CardTitle>
+              <CardDescription className="text-cyan-100/70">
+                Manage participants, assign rounds, observe progress, and audit session events in one control room.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button className="h-12 w-full gap-2" size="lg" onClick={() => router.push("/admin")}>
+                Enter Admin Panel
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              <p className="text-center text-xs text-cyan-100/60">Credential-protected command access</p>
+            </CardContent>
+          </Card>
+
+          <Card className="js-panel border-white/10 bg-slate-950/60 backdrop-blur-xl transition-colors hover:border-cyan-300/50">
+            <CardHeader>
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl border border-emerald-300/30 bg-emerald-300/15">
+                <User className="h-6 w-6 text-emerald-200" />
+              </div>
+              <CardTitle className="text-2xl">Participant Gateway</CardTitle>
+              <CardDescription className="text-cyan-100/70">
+                Enter your participant code to start your assigned round and timed challenge scenario.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleParticipantAccess} className="space-y-4">
+                <Input
+                  type="text"
+                  placeholder="Enter Participant ID"
+                  value={participantId}
+                  onChange={(e) => {
+                    setParticipantId(e.target.value.toUpperCase())
+                    setError(null)
+                  }}
+                  className="h-12 border-white/20 bg-black/35 text-center font-mono text-lg tracking-[0.28em] text-cyan-50 placeholder:text-cyan-100/40"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                {error && (
+                  <Alert variant="destructive" className="border-red-400/40 bg-red-900/30 py-2">
+                    <AlertTriangle className="h-3.5 w-3.5" />
+                    <AlertDescription className="ml-2 text-sm">{error}</AlertDescription>
+                  </Alert>
+                )}
+                <Button type="submit" className="h-12 w-full gap-2" size="lg" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Spinner className="h-4 w-4" />
+                      Verifying...
+                    </>
+                  ) : (
+                    <>
+                      Start Competition
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
                 </Button>
-                <p className="text-xs text-center text-muted-foreground">
-                  Password protected access
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Participant Card */}
-            <Card className="relative overflow-hidden border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 mb-4">
-                  <User className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle className="text-xl">Participant Access</CardTitle>
-                <CardDescription>
-                  Enter your unique ID to access your scenario, components, and Arduino IDE
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleParticipantAccess} className="space-y-4">
-                  <div className="space-y-2">
-                    <Input
-                      type="text"
-                      placeholder="Enter your Participant ID"
-                      value={participantId}
-                      onChange={(e) => {
-                        setParticipantId(e.target.value.toUpperCase())
-                        setError(null)
-                      }}
-                      className="text-center font-mono text-lg tracking-wider"
-                      autoComplete="off"
-                      spellCheck={false}
-                    />
-                    {error && (
-                      <Alert variant="destructive" className="py-2">
-                        <AlertTriangle className="h-3.5 w-3.5" />
-                        <AlertDescription className="text-sm ml-2">{error}</AlertDescription>
-                      </Alert>
-                    )}
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full gap-2"
-                    size="lg"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Spinner className="h-4 w-4" />
-                        Verifying...
-                      </>
-                    ) : (
-                      <>
-                        Start Competition
-                        <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Info Footer */}
-          <div className="mt-12 text-center">
-            <p className="text-sm text-muted-foreground">
-              All data is stored locally. No internet connection required during the competition.
-            </p>
-          </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
-      </div>
+
+        <p className="mt-10 text-center text-xs uppercase tracking-[0.2em] text-cyan-100/55 md:mt-14">
+          Autonomous local runtime • zero external dependency during live rounds
+        </p>
+      </section>
     </main>
   )
 }

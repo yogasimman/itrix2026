@@ -3,6 +3,32 @@
 ## Project Overview
 Successfully implemented a comprehensive update plan for the IoT competition platform with 5 major features focused on security, real-time synchronization, documentation, and enhanced proctoring.
 
+## Feature Notes
+
+### 2026-03-26 - Round 1 Free-Wiring Canvas (Wokwi/Tinkercad Style)
+- Replaced click-to-map behavior with direct drag-wire pin connections using a shared canvas interaction model.
+- Added draggable module nodes and draggable Arduino node so participants can arrange the lab workspace like a simulator.
+- Added explicit source/target pin handles with single-source and single-target enforcement while wiring.
+- Kept answer persistence and offline evaluator compatibility by serializing connections back to the same normalized JSON map.
+
+### 2026-03-26 - Direct Arduino Pin Hotspots (No Side-List Targeting)
+- Moved Arduino target connection points from side list controls onto the Arduino board image itself.
+- Added direct hotspot handles for D2, D7, D8, D9, 5V, and GND so users wire straight to visible Uno pins.
+- Updated wiring guidance copy to reflect direct board-pin wiring interaction.
+
+### 2026-03-26 - Round 1 Wiring Visual Overhaul (Wokwi Feel Pass 2)
+- Reworked the connection canvas to a board-first simulator layout with large workspace, module cards, and Arduino placement.
+- Added module-specific pin anchor positioning (PIR, buzzer, LED, servo) so wires originate from realistic component-side pads.
+- Added Arduino pin anchor positioning with labeled connection pads and improved jumper routing visuals.
+- Preserved existing scoring/answer format while improving the participant interaction model to match wiring-lab expectations.
+
+### 2026-03-26 - Round 1 Wiring UI and Section Control Upgrade
+- Replaced abstract connection UI with Wokwi library-based components (`@wokwi/elements`) and simulator-style wiring canvas.
+- Added server-backed section progression rules: participant can move only forward after confirmation and cannot return.
+- Added admin override control to send a participant back to an earlier Round 1 section for invigilator support.
+- Added development/testing-mode fullscreen bypass in Round 1 proctoring while preserving production fullscreen enforcement.
+- Added and updated unit/UI/integration/regression coverage for section control and wiring behavior.
+
 ---
 
 ## 1. Session Management & Security for Admin Panel ✅

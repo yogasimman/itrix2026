@@ -32,6 +32,9 @@ interface ParticipantData {
   assigned_round: string | null;
   round1_score?: number;
   round1_completed?: boolean;
+  round1_answered?: number;
+  round1_total_questions?: number;
+  round1_unlocked_section?: number;
   round2_score?: number;
   round2_completed?: boolean;
 }
@@ -96,6 +99,22 @@ export function Round1Management() {
       if (res.ok) refreshParticipants();
     } catch (error) {
       console.error("Failed to assign round:", error);
+    }
+  };
+
+  const handleSectionOverride = async (participantId: string, sectionIndex: number) => {
+    try {
+      const res = await fetch(`/api/participants/${participantId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "round1_override_section",
+          sectionIndex,
+        }),
+      });
+      if (res.ok) refreshParticipants();
+    } catch (error) {
+      console.error("Failed to override Round 1 section:", error);
     }
   };
 
@@ -327,6 +346,8 @@ export function Round1Management() {
                   <TableHead>Team</TableHead>
                   <TableHead>Current Round</TableHead>
                   <TableHead>Round 1 Score</TableHead>
+                  <TableHead>Round 1 Attended</TableHead>
+                  <TableHead>Round 1 Section</TableHead>
                   <TableHead>Round 2 Score</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
@@ -358,6 +379,31 @@ export function Round1Management() {
                           <CheckCircle className="h-4 w-4 text-green-600" />
                           <span className="font-medium">{participant.round1_score || 0}</span>
                         </div>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm font-medium">
+                        {participant.round1_answered || 0}/{participant.round1_total_questions || 0}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {participant.assigned_round === "round1" ? (
+                        <Select
+                          value={String(participant.round1_unlocked_section ?? 0)}
+                          onValueChange={(value) => handleSectionOverride(participant.id, Number(value))}
+                        >
+                          <SelectTrigger className="w-44 h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0">Section 1 - MCQ</SelectItem>
+                            <SelectItem value="1">Section 2 - Scenario</SelectItem>
+                            <SelectItem value="2">Section 3 - Connection</SelectItem>
+                            <SelectItem value="3">Section 4 - Snippet Coding</SelectItem>
+                          </SelectContent>
+                        </Select>
                       ) : (
                         <span className="text-muted-foreground">-</span>
                       )}

@@ -149,7 +149,7 @@ export function Round1QuestionManager() {
           <div>
             <CardTitle>Round 1 Questions</CardTitle>
             <CardDescription>
-              AI-generated IoT-only pool for Round 1 (manual entry disabled)
+              Curated IoT-only pool for Round 1 (manual entry disabled)
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -246,7 +246,7 @@ export function Round1QuestionManager() {
 
           {questions.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
-              No Round 1 questions yet. Generate the AI IoT question pool.
+              No Round 1 questions yet. Generate the curated Round 1 pool.
             </div>
           )}
         </CardContent>

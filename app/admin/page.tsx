@@ -73,6 +73,9 @@ interface Participant {
   scenario_title: string | null;
   snippets_unlocked: number;
   violation_count: number;
+  round2_score?: number;
+  round2_hint_count?: number;
+  round2_hint_penalty?: number;
 }
 
 interface Scenario {
@@ -521,6 +524,10 @@ export default function AdminDashboard() {
     (sum, p) => sum + p.snippets_unlocked,
     0
   );
+  const totalRound2Accesses = participants.reduce(
+    (sum, p) => sum + (p.round2_hint_count || 0),
+    0
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -633,7 +640,17 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalSnippets}</div>
-              <p className="text-xs text-muted-foreground">across all participants</p>
+              <p className="text-xs text-muted-foreground">starter packs unlocked</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Round 2 Component Accesses</CardTitle>
+              <Cpu className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalRound2Accesses}</div>
+              <p className="text-xs text-muted-foreground">penalty-scored component opens</p>
             </CardContent>
           </Card>
           <Card>
@@ -644,16 +661,6 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">{totalViolations}</div>
               <p className="text-xs text-muted-foreground">detected events</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Available Scenarios</CardTitle>
-              <Cpu className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{scenarios.length}</div>
-              <p className="text-xs text-muted-foreground">unique scenarios</p>
             </CardContent>
           </Card>
         </div>
@@ -876,6 +883,8 @@ export default function AdminDashboard() {
                       <TableHead>Scenario</TableHead>
                       <TableHead>Timer</TableHead>
                       <TableHead>Snippets</TableHead>
+                      <TableHead>Component Access</TableHead>
+                      <TableHead>R2 Score</TableHead>
                       <TableHead>Violations</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
@@ -884,7 +893,7 @@ export default function AdminDashboard() {
                   <TableBody>
                     {participants.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={12} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={14} className="text-center py-8 text-muted-foreground">
                           No participants yet. Add one to get started.
                         </TableCell>
                       </TableRow>
@@ -949,6 +958,14 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline">{participant.snippets_unlocked}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">
+                                {participant.round2_hint_count || 0} ({participant.round2_hint_penalty || 0})
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="secondary">{participant.round2_score || 0}</Badge>
                             </TableCell>
                             <TableCell>
                               {participant.violation_count > 0 ? (

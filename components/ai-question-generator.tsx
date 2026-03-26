@@ -44,7 +44,7 @@ export function AIQuestionGenerator({ onQuestionsGenerated }: AIQuestionGenerato
       const res = await fetch("/api/round1/questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "generate_iot_pool" }),
+        body: JSON.stringify({ action: "generate_curated_round1_pool" }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -54,7 +54,7 @@ export function AIQuestionGenerator({ onQuestionsGenerated }: AIQuestionGenerato
       await onQuestionsGenerated(data.questions || []);
     } catch (error) {
       console.error("Failed to generate questions:", error);
-      setError("Unable to generate AI question pool right now.");
+      setError("Unable to generate curated Round 1 question pool right now.");
     } finally {
       setLoading(false);
     }
@@ -65,22 +65,22 @@ export function AIQuestionGenerator({ onQuestionsGenerated }: AIQuestionGenerato
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Sparkles className="h-4 w-4" />
-          AI Generate Questions
+          Generate Curated Pool
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>AI-Powered Question Generator</DialogTitle>
+          <DialogTitle>Curated Round 1 Generator</DialogTitle>
           <DialogDescription>
-            Generate a fresh IoT-only Round 1 pool (MCQ, match-the-following,
-            component matching, and scenario-based).
+            Generate a fresh curated IoT pool with mixed MCQ difficulty, scenario
+            questions, plus dedicated connection-evaluation and basic coding segments.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <Card className="p-4 text-sm text-muted-foreground">
             This replaces existing Round 1 questions with a newly generated
-            intermediate IoT pool and removes manual curation for this round.
+            curated Round 1 pool based on event rules. Manual question entry is disabled.
           </Card>
 
           {!!error && <p className="text-sm text-destructive">{error}</p>}
@@ -128,7 +128,7 @@ export function AIQuestionGenerator({ onQuestionsGenerated }: AIQuestionGenerato
             ) : (
               <>
                 <Sparkles className="mr-2 h-4 w-4" />
-                Generate Round 1 IoT Questions
+                Generate Curated Round 1 Questions
               </>
             )}
           </Button>

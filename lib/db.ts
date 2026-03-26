@@ -1,5 +1,7 @@
 // In-memory database store for IoT Laboratory
 // Data persists during server runtime
+import { evaluateConnections, mapAnswerToEdges } from '@/lib/connection-evaluator';
+import { evaluateSnippetAnswer, parseRequiredKeywords } from '@/lib/snippet-evaluator';
 
 export interface Participant {
   id: string;
@@ -21,9 +23,14 @@ export interface Participant {
   round1_score?: number;
   round1_completed?: boolean;
   round1_completed_at?: string;
+  round1_answered?: number;
+  round1_total_questions?: number;
+  round1_unlocked_section?: number;
   round2_score?: number;
   round2_completed?: boolean;
   round2_completed_at?: string;
+  round2_hint_count?: number;
+  round2_hint_penalty?: number;
 }
 
 export interface Scenario {
@@ -87,7 +94,7 @@ export interface PasswordChange {
 }
 
 // Round 1 Question Types
-export type QuestionType = 'mcq' | 'multi-select' | 'matching' | 'component-matching' | 'logic' | 'simulation';
+export type QuestionType = 'mcq' | 'multi-select' | 'matching' | 'component-matching' | 'logic' | 'simulation' | 'scenario-mcq' | 'connection-evaluation' | 'snippet-coding';
 
 export interface QuestionOption {
   id: string;
@@ -113,6 +120,14 @@ export interface Round1Question {
   options?: QuestionOption[];
   correctAnswer?: string | string[];
   matchingPairs?: MatchingPair[];
+  scenario_group?: string;
+  codeSnippet?: string;
+  sourceNodes?: string[];
+  targetNodes?: string[];
+  expectedConnections?: Array<{
+    from: string;
+    to: string;
+  }>;
   explanation?: string;
   created_at: string;
 }
@@ -155,6 +170,24 @@ export interface Round1Session {
   submitted: boolean;
 }
 
+export interface Round2ComponentPenalty {
+  componentId: number;
+  componentName: string;
+  penalty: number;
+  unlocked: boolean;
+  unlockedAt?: string;
+}
+
+export interface Round2HintSummary {
+  baseScore: number;
+  maxPenalty: number;
+  totalPenalty: number;
+  finalScore: number;
+  hintsUsedCount: number;
+  totalComponents: number;
+  components: Round2ComponentPenalty[];
+}
+
 // In-memory data store
 interface DataStore {
   participants: Map<string, Participant>;
@@ -173,6 +206,7 @@ interface DataStore {
   round1Responses: Round1Response[];
   round1Results: Map<string, Round1Result>;
   round1Sessions: Map<string, Round1Session>;
+  round1SectionAccess: Map<string, number>;
 }
 
 // Global store that persists during server runtime
@@ -200,6 +234,7 @@ function getStore(): DataStore {
       round1Responses: [],
       round1Results: new Map(),
       round1Sessions: new Map(),
+      round1SectionAccess: new Map(),
     };
   }
   
@@ -228,8 +263,99 @@ function getStore(): DataStore {
   if (!global.__iotStore.round1Sessions) {
     global.__iotStore.round1Sessions = new Map();
   }
-  
+  if (!global.__iotStore.round1SectionAccess) {
+    global.__iotStore.round1SectionAccess = new Map();
+  }
+
   return global.__iotStore;
+}
+
+const ROUND2_BASE_SCORE = 100;
+const ROUND2_MAX_HINT_PENALTY = 30;
+
+function getRound2ScenarioContext(participantId: string): { scenario: Scenario; componentIds: number[] } {
+  const store = getStore();
+  const participant = store.participants.get(participantId);
+  if (!participant) {
+    throw new Error('Participant not found');
+  }
+  if (!participant.scenario_id) {
+    throw new Error('Scenario not assigned');
+  }
+
+  const scenario = store.scenarios.get(participant.scenario_id);
+  if (!scenario) {
+    throw new Error('Scenario not found');
+  }
+
+  const componentIds = store.scenarioComponents.get(scenario.id) || [];
+  if (componentIds.length === 0) {
+    throw new Error('Scenario has no components');
+  }
+
+  return { scenario, componentIds };
+}
+
+function getComponentPenaltyMap(componentIds: number[]): Map<number, number> {
+  const sorted = [...componentIds].sort((a, b) => a - b);
+  const count = sorted.length;
+  const penaltyMap = new Map<number, number>();
+  if (count === 0) {
+    return penaltyMap;
+  }
+
+  const even = Math.floor(ROUND2_MAX_HINT_PENALTY / count);
+  const remainder = ROUND2_MAX_HINT_PENALTY - even * count;
+
+  sorted.forEach((componentId, index) => {
+    penaltyMap.set(componentId, even + (index < remainder ? 1 : 0));
+  });
+  return penaltyMap;
+}
+
+export function getRound2HintSummary(participantId: string): Round2HintSummary {
+  const store = getStore();
+  const { scenario, componentIds } = getRound2ScenarioContext(participantId);
+  const penaltyMap = getComponentPenaltyMap(componentIds);
+  const unlocks = store.snippetUnlocks.filter(
+    (unlock) => unlock.participant_id === participantId && componentIds.includes(unlock.component_id)
+  );
+  const unlockedByComponent = new Map<number, SnippetUnlock>();
+  unlocks.forEach((unlock) => {
+    if (!unlockedByComponent.has(unlock.component_id)) {
+      unlockedByComponent.set(unlock.component_id, unlock);
+    }
+  });
+
+  const components: Round2ComponentPenalty[] = [...componentIds]
+    .sort((a, b) => a - b)
+    .map((componentId) => {
+      const component = store.components.get(componentId);
+      const unlocked = unlockedByComponent.get(componentId);
+      return {
+        componentId,
+        componentName: component?.name || `Component ${componentId}`,
+        penalty: penaltyMap.get(componentId) || 0,
+        unlocked: Boolean(unlocked),
+        unlockedAt: unlocked?.unlocked_at,
+      };
+    });
+
+  const totalPenalty = components
+    .filter((component) => component.unlocked)
+    .reduce((sum, component) => sum + component.penalty, 0);
+  const boundedPenalty = Math.min(ROUND2_MAX_HINT_PENALTY, totalPenalty);
+  const finalScore = Math.max(0, ROUND2_BASE_SCORE - boundedPenalty);
+
+  return {
+    baseScore: ROUND2_BASE_SCORE,
+    maxPenalty: ROUND2_MAX_HINT_PENALTY,
+    totalPenalty: boundedPenalty,
+    finalScore,
+    hintsUsedCount: components.filter((component) => component.unlocked).length,
+    totalComponents: components.length,
+    components,
+  };
 }
 
 export function isInitialized(): boolean {
@@ -254,12 +380,35 @@ export function getAllParticipants(): Participant[] {
     const scenario = p.scenario_id ? store.scenarios.get(p.scenario_id) : null;
     const snippetsUnlocked = store.snippetUnlocks.filter(s => s.participant_id === p.id).length;
     const violationCount = store.violations.filter(v => v.participant_id === p.id).length;
+    const round1Answered = store.round1Responses.filter(r => r.participant_id === p.id).length;
+    const round1Session = store.round1Sessions.get(p.id);
+    const round1Result = store.round1Results.get(p.id);
+    const round1TotalQuestions = round1Result?.total_questions || round1Session?.question_ids.length || 0;
+    const round1UnlockedSection = store.round1SectionAccess.get(p.id) ?? 0;
+
+    let round2HintCount = 0;
+    let round2HintPenalty = 0;
+    if (p.scenario_id) {
+      try {
+        const summary = getRound2HintSummary(p.id);
+        round2HintCount = summary.hintsUsedCount;
+        round2HintPenalty = summary.totalPenalty;
+      } catch {
+        round2HintPenalty = 0;
+      }
+    }
+
     return {
       ...p,
       team_name: p.team_name,
       scenario_title: scenario?.title,
       snippets_unlocked: snippetsUnlocked,
       violation_count: violationCount,
+      round1_answered: round1Answered,
+      round1_total_questions: round1TotalQuestions,
+      round1_unlocked_section: round1UnlockedSection,
+      round2_hint_count: round2HintCount,
+      round2_hint_penalty: round2HintPenalty,
     };
   }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }
@@ -410,7 +559,7 @@ export function addComponent(component: Component): void {
 export function getScenarioComponents(scenarioId: number): Component[] {
   const store = getStore();
   const componentIds = store.scenarioComponents.get(scenarioId) || [];
-  return componentIds.map(id => store.components.get(id)).filter(Boolean) as Component[];
+  return componentIds.map((id) => getComponent(id)).filter(Boolean) as Component[];
 }
 
 // Snippet unlock functions
@@ -448,7 +597,17 @@ export function unlockSnippet(participantId: string, componentId: number): { suc
   };
   
   store.snippetUnlocks.push(unlock);
-  logActivity(participantId, 'snippet_unlock', `Unlocked component ID: ${componentId}`);
+  try {
+    const summary = getRound2HintSummary(participantId);
+    const componentPenalty = summary.components.find((c) => c.componentId === componentId)?.penalty || 0;
+    logActivity(
+      participantId,
+      'snippet_unlock',
+      `Unlocked component ID: ${componentId}; penalty +${componentPenalty}; total penalty ${summary.totalPenalty}/${summary.maxPenalty}; score ${summary.finalScore}`
+    );
+  } catch {
+    logActivity(participantId, 'snippet_unlock', `Unlocked component ID: ${componentId}`);
+  }
   
   return { success: true };
 }
@@ -622,6 +781,7 @@ export function clearRound1Questions(): void {
   store.round1Responses = [];
   store.round1Results.clear();
   store.round1Sessions.clear();
+  store.round1SectionAccess.clear();
 }
 
 export function getRound1Questions(section?: string): Round1Question[] {
@@ -644,49 +804,125 @@ function shuffled<T>(items: T[]): T[] {
 export function startOrGetRound1Session(participantId: string, perParticipantQuestionCount = 12): Round1Session {
   const store = getStore();
   const existing = store.round1Sessions.get(participantId);
-  if (existing) return existing;
+  if (existing) {
+    const assignedValidCount = existing.question_ids.filter((id) => store.round1Questions.has(id)).length;
+    const isUsableSession =
+      !existing.submitted &&
+      existing.question_ids.length > 0 &&
+      assignedValidCount === existing.question_ids.length;
 
-  const all = Array.from(store.round1Questions.values());
-  const requestedCount = Math.min(perParticipantQuestionCount, all.length);
+    if (isUsableSession) {
+      if (!store.round1SectionAccess.has(participantId)) {
+        store.round1SectionAccess.set(participantId, 0);
+      }
+      return existing;
+    }
 
-  // Keep an exact per-type mix when possible, and randomize order within each section.
-  const targetByType: Partial<Record<QuestionType, number>> = {
-    mcq: 10,
-    matching: 5,
-    "component-matching": 5,
-    simulation: 10,
-  };
-
-  const selected: Round1Question[] = [];
-  (Object.keys(targetByType) as QuestionType[]).forEach((type) => {
-    const typeQuestions = shuffled(all.filter((q) => q.type === type));
-    const take = Math.min(targetByType[type] || 0, typeQuestions.length);
-    selected.push(...typeQuestions.slice(0, take));
-  });
-
-  if (selected.length < requestedCount) {
-    const selectedIds = new Set(selected.map((q) => q.id));
-    const remaining = shuffled(all.filter((q) => !selectedIds.has(q.id)));
-    selected.push(...remaining.slice(0, requestedCount - selected.length));
+    // Recover from stale/empty sessions created before the curated pool fix.
+    store.round1Sessions.delete(participantId);
   }
 
-  const orderByType: QuestionType[] = ["mcq", "matching", "component-matching", "simulation"];
-  const questions = orderByType.flatMap((type) =>
-    shuffled(selected.filter((q) => q.type === type))
+  const all = Array.from(store.round1Questions.values());
+
+  // Required structure:
+  // 20 MCQ (10 Easy + 10 Hard), 10 scenario-based (2 scenarios x 5),
+  // 2 connection-evaluation questions, and 2 snippet-coding questions.
+  const easyMcq = shuffled(all.filter((q) => q.type === 'mcq' && q.difficulty === 'Easy'));
+  const hardMcq = shuffled(all.filter((q) => q.type === 'mcq' && q.difficulty === 'Hard'));
+  const selectedMcq = shuffled([...easyMcq.slice(0, 10), ...hardMcq.slice(0, 10)]);
+
+  if (selectedMcq.length < 20) {
+    const selectedIds = new Set(selectedMcq.map((q) => q.id));
+    const fallbackMcq = shuffled(
+      all.filter((q) => q.type === 'mcq' && !selectedIds.has(q.id))
+    ).slice(0, 20 - selectedMcq.length);
+    selectedMcq.push(...fallbackMcq);
+  }
+
+  const scenarioQuestions = all.filter((q) => q.type === 'scenario-mcq' && Boolean(q.scenario_group));
+  const grouped = new Map<string, Round1Question[]>();
+  scenarioQuestions.forEach((q) => {
+    const key = q.scenario_group as string;
+    if (!grouped.has(key)) {
+      grouped.set(key, []);
+    }
+    grouped.get(key)!.push(q);
+  });
+
+  const selectedScenarioGroups = shuffled(Array.from(grouped.keys())).slice(0, 2);
+  const selectedScenarioQuestions: Round1Question[] = [];
+  selectedScenarioGroups.forEach((groupId) => {
+    selectedScenarioQuestions.push(...shuffled(grouped.get(groupId) || []).slice(0, 5));
+  });
+
+  if (selectedScenarioQuestions.length < 10) {
+    const selectedIds = new Set(selectedScenarioQuestions.map((q) => q.id));
+    const fallbackScenario = shuffled(
+      scenarioQuestions.filter((q) => !selectedIds.has(q.id))
+    ).slice(0, 10 - selectedScenarioQuestions.length);
+    selectedScenarioQuestions.push(...fallbackScenario);
+  }
+
+  const connectionQuestion = shuffled(
+    all.filter((q) => q.type === 'connection-evaluation')
+  ).slice(0, 2);
+
+  const snippetQuestion = shuffled(
+    all.filter((q) => q.type === 'snippet-coding')
+  ).slice(0, 2);
+
+  const questions = [
+    ...selectedMcq.slice(0, 20),
+    ...selectedScenarioQuestions.slice(0, 10),
+    ...connectionQuestion,
+    ...snippetQuestion,
+  ];
+
+  const requestedCount = Math.min(
+    perParticipantQuestionCount > 0 ? perParticipantQuestionCount : 34,
+    questions.length
   );
+  const finalQuestions = questions.slice(0, requestedCount);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
 
   const session: Round1Session = {
     participant_id: participantId,
-    question_ids: questions.map((q) => q.id),
+    question_ids: finalQuestions.map((q) => q.id),
     started_at: now.toISOString(),
     expires_at: expiresAt.toISOString(),
     submitted: false,
   };
   store.round1Sessions.set(participantId, session);
+  if (!store.round1SectionAccess.has(participantId)) {
+    store.round1SectionAccess.set(participantId, 0);
+  }
   logActivity(participantId, "round1_started", `Round 1 started with ${session.question_ids.length} questions`);
   return session;
+}
+
+export function getRound1UnlockedSection(participantId: string): number {
+  const store = getStore();
+  const value = store.round1SectionAccess.get(participantId);
+  if (typeof value !== 'number') {
+    store.round1SectionAccess.set(participantId, 0);
+    return 0;
+  }
+  return Math.max(0, Math.min(3, value));
+}
+
+export function setRound1UnlockedSection(participantId: string, sectionIndex: number): number {
+  const store = getStore();
+  const next = Math.max(0, Math.min(3, sectionIndex));
+  store.round1SectionAccess.set(participantId, next);
+  logActivity(participantId, 'round1_section_override', `Round 1 section set to ${next}`);
+  return next;
+}
+
+export function advanceRound1Section(participantId: string): number {
+  const current = getRound1UnlockedSection(participantId);
+  const next = Math.min(3, current + 1);
+  return setRound1UnlockedSection(participantId, next);
 }
 
 export function getRound1Session(participantId: string): Round1Session | undefined {
@@ -740,7 +976,7 @@ export function recordRound1Response(
   let isCorrect = false;
   let scoreObtained = 0;
   
-  if (question.type === 'mcq' || question.type === 'logic') {
+  if (question.type === 'mcq' || question.type === 'logic' || question.type === 'scenario-mcq') {
     isCorrect = answer === question.correctAnswer;
   } else if (question.type === 'multi-select') {
     const correctAnswers = Array.isArray(question.correctAnswer) ? question.correctAnswer : [question.correctAnswer];
@@ -761,6 +997,27 @@ export function recordRound1Response(
     isCorrect = normalize(answer) === normalize(question.correctAnswer);
   } else if (question.type === 'simulation') {
     isCorrect = answer === question.correctAnswer;
+  } else if (question.type === 'connection-evaluation') {
+    try {
+      const expected = question.expectedConnections || [];
+      const submittedMap = typeof answer === 'string' ? JSON.parse(answer) : answer;
+      const submitted = mapAnswerToEdges(submittedMap as Record<string, string>);
+      const evaluation = evaluateConnections(expected, submitted);
+      isCorrect = evaluation.isCorrect;
+      if (!isCorrect) {
+        scoreObtained = Math.round(question.score * evaluation.scoreRatio);
+      }
+    } catch {
+      isCorrect = false;
+    }
+  } else if (question.type === 'snippet-coding') {
+    const rawAnswer = Array.isArray(answer) ? answer.join('\n') : String(answer || '');
+    const requiredTokens = parseRequiredKeywords(question.correctAnswer);
+    const evaluation = evaluateSnippetAnswer(rawAnswer, requiredTokens, 0.75);
+    isCorrect = evaluation.isCorrect;
+    if (!isCorrect) {
+      scoreObtained = Math.round(question.score * evaluation.scoreRatio);
+    }
   }
   
   if (isCorrect) {

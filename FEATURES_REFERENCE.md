@@ -164,6 +164,58 @@ Component {
 
 ---
 
+## 4.5️⃣ ROUND 2 HINT SCORING (FAIR MODE)
+
+### Why this exists
+- Round 2 now applies penalty only when participants access component guidance in the Components tab.
+- The penalty model is deterministic and fair across scenarios with different component counts.
+
+### Scoring model
+```
+Base Round 2 Score = 100
+
+Max component-access penalty = 30
+
+For a participant's assigned scenario:
+- Let N = total number of assigned components
+- Total penalty budget (30) is distributed across N components
+- Each component gets a deterministic penalty share
+    (equal split + remainder distributed by sorted component ID)
+
+When a component guidance pack is unlocked:
+- That component's penalty is applied once (idempotent)
+
+Final Score = 100 - min(30, sum(unlocked component penalties))
+```
+
+### Participant experience
+- No hints are shown in `What to Build`.
+- In Components tab, participant unlocks a starter guidance pack per component.
+- Each unlock includes basic code plus component documentation (pinout/setup/warnings/libraries).
+- Score card shows:
+    - Base Score
+    - Penalty Used (out of 30)
+    - Current Score
+    - Components Accessed
+
+### Admin visibility (fair calculation)
+- Participants table now shows:
+        - Component access count and cumulative penalty
+    - Current Round 2 score
+- Completion logs include a score trail:
+    - Final score
+        - Total penalty used (out of 30)
+        - Total components accessed
+
+### Unlock behavior for component guidance
+- "Unlock Code Snippet" is now a **starter guidance pack**:
+    - Basic code skeleton
+    - Pinout and setup guidance
+    - Warnings/libraries if available
+- Full final solution is not given directly.
+
+---
+
 ## 5️⃣ ENHANCED PROCTORING
 
 ### Violation Categories:

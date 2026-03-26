@@ -5,9 +5,10 @@ import { useEffect, useState, useCallback, useRef } from "react";
 interface Round1ProctoringProps {
   participantId: string;
   enabled: boolean;
+  enforceFullscreen?: boolean;
 }
 
-export function Round1Proctoring({ participantId, enabled }: Round1ProctoringProps) {
+export function Round1Proctoring({ participantId, enabled, enforceFullscreen = true }: Round1ProctoringProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [warningType, setWarningType] = useState<"fullscreen" | "tab" | null>(null);
   const [violationCount, setViolationCount] = useState(0);
@@ -46,16 +47,16 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
 
   // Enter fullscreen when quiz becomes enabled
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !enforceFullscreen) return;
     const timeout = setTimeout(() => {
       enterFullscreen();
     }, 500);
     return () => clearTimeout(timeout);
-  }, [enabled, enterFullscreen]);
+  }, [enabled, enterFullscreen, enforceFullscreen]);
 
   // Fullscreen change listener
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !enforceFullscreen) return;
     const handleFSChange = () => {
       const inFS = !!document.fullscreenElement;
       setIsFullscreen(inFS);
@@ -70,7 +71,7 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
     };
     document.addEventListener("fullscreenchange", handleFSChange);
     return () => document.removeEventListener("fullscreenchange", handleFSChange);
-  }, [enabled, logViolation]);
+  }, [enabled, logViolation, enforceFullscreen]);
 
   // Tab visibility change listener
   useEffect(() => {
@@ -139,6 +140,10 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
   }, [enabled, logViolation]);
 
   if (!enabled) return null;
+
+  if (!enforceFullscreen) {
+    return null;
+  }
 
   // Fullscreen entry prompt (before fullscreen is active, no violation yet)
   if (!isFullscreen && warningType === null) {

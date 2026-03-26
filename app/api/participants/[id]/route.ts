@@ -4,6 +4,7 @@ import {
   getScenario,
   getScenarioComponents,
   getUnlockedSnippets,
+  getRound2HintSummary,
   assignScenario,
   startTimer,
   lockParticipant,
@@ -15,6 +16,7 @@ import {
   initializeDatabase,
   isInitialized,
   getViolations
+  ,setRound1UnlockedSection
 } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed-data';
 
@@ -39,6 +41,15 @@ export async function GET(
       return NextResponse.json({ error: 'Participant not found' }, { status: 404 });
     }
     
+    let round2HintSummary = null;
+    if (participant.scenario_id) {
+      try {
+        round2HintSummary = getRound2HintSummary(id);
+      } catch {
+        round2HintSummary = null;
+      }
+    }
+
     // Get scenario details if assigned
     let scenario = null;
     let components: Array<{
@@ -49,6 +60,12 @@ export async function GET(
       category: string;
       code_snippet: string;
       is_unlocked?: boolean;
+      component_hint_penalty?: number;
+      setup_instructions?: string;
+      connection_diagram?: string;
+      warnings?: string[];
+      required_libraries?: string[];
+      complexity_level?: 'Beginner' | 'Intermediate' | 'Advanced';
     }> = [];
     
     if (participant.scenario_id) {
@@ -58,7 +75,8 @@ export async function GET(
       
       components = scenarioComps.map(c => ({
         ...c,
-        is_unlocked: unlockedIds.includes(c.id)
+        is_unlocked: unlockedIds.includes(c.id),
+        component_hint_penalty: (round2HintSummary?.components || []).find((item) => item.componentId === c.id)?.penalty || 0,
       }));
     }
     
@@ -73,10 +91,14 @@ export async function GET(
         situation: scenario?.situation,
         what_to_build: scenario?.what_to_build,
         snippets_unlocked: unlockedSnippets.length,
-        violation_count: violations.length
+        violation_count: violations.length,
+        round2_hint_count: round2HintSummary?.hintsUsedCount || 0,
+        round2_hint_penalty: round2HintSummary?.totalPenalty || 0,
+        round2_score: round2HintSummary?.finalScore ?? participant.round2_score ?? 0,
       }, 
       components,
-      unlockedSnippets
+      unlockedSnippets,
+      round2HintSummary,
     });
   } catch (error) {
     console.error('Error fetching participant:', error);
@@ -117,14 +139,20 @@ export async function PATCH(
     }
 
     if (body.action === 'complete_round2') {
+      const round2Summary = getRound2HintSummary(id);
       updateParticipant(id, {
+        round2_score: round2Summary.finalScore,
         round2_completed: true,
         round2_completed_at: new Date().toISOString(),
         is_locked: 1,
         is_active: 0,
       });
-      logActivity(id, 'round2_completed', 'Round 2 session ended');
-      return NextResponse.json({ success: true });
+      logActivity(
+        id,
+        'round2_completed',
+        `Round 2 completed. Score: ${round2Summary.finalScore}/${round2Summary.baseScore}, Penalty: ${round2Summary.totalPenalty}/${round2Summary.maxPenalty}, Components accessed: ${round2Summary.hintsUsedCount}/${round2Summary.totalComponents}`
+      );
+      return NextResponse.json({ success: true, round2Summary });
     }
     
     if (body.action === 'unlock') {
@@ -162,6 +190,15 @@ export async function PATCH(
       updateParticipant(id, { assigned_round: round });
       logActivity(id, 'round_assigned', `Assigned to: ${round || 'unassigned'}`);
       return NextResponse.json({ success: true });
+    }
+
+    if (body.action === 'round1_override_section') {
+      const sectionIndex = Number(body.sectionIndex);
+      if (Number.isNaN(sectionIndex)) {
+        return NextResponse.json({ error: 'sectionIndex must be a number' }, { status: 400 });
+      }
+      const unlockedSection = setRound1UnlockedSection(id, sectionIndex);
+      return NextResponse.json({ success: true, unlockedSection });
     }
     
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });

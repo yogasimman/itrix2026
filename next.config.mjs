@@ -7,6 +7,8 @@ const nextConfig = {
     unoptimized: true,
   },
   allowedDevOrigins: [
+    "127.0.0.1",
+    "localhost",
     "*.replit.dev",
     "*.janeway.replit.dev",
     "*.spock.replit.dev",

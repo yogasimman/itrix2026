@@ -46,6 +46,9 @@ interface Participant {
   what_to_build: string | null;
   snippets_unlocked: number;
   violation_count: number;
+  round2_hint_count?: number;
+  round2_hint_penalty?: number;
+  round2_score?: number;
 }
 
 interface Component {
@@ -56,6 +59,12 @@ interface Component {
   category: string;
   code_snippet: string;
   is_unlocked: number;
+  component_hint_penalty?: number;
+  setup_instructions?: string;
+  connection_diagram?: string;
+  warnings?: string[];
+  required_libraries?: string[];
+  complexity_level?: "Beginner" | "Intermediate" | "Advanced";
 }
 
 interface UnlockedSnippet {
@@ -64,6 +73,15 @@ interface UnlockedSnippet {
   component_id: number;
   unlocked_at: string;
   component_name: string;
+}
+
+interface Round2HintSummary {
+  baseScore: number;
+  maxPenalty: number;
+  totalPenalty: number;
+  finalScore: number;
+  hintsUsedCount: number;
+  totalComponents: number;
 }
 
 export default function ParticipantDashboard({
@@ -80,6 +98,7 @@ export default function ParticipantDashboard({
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [round2HintSummary, setRound2HintSummary] = useState<Round2HintSummary | null>(null);
   const [violationCount, setViolationCount] = useState(0);
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -101,6 +120,7 @@ export default function ParticipantDashboard({
       setParticipant(data.participant);
       setComponents(data.components);
       setUnlockedSnippets(data.unlockedSnippets);
+      setRound2HintSummary(data.round2HintSummary || null);
     } catch (err) {
       setError("Failed to load dashboard");
       console.error(err);
@@ -244,19 +264,28 @@ export default function ParticipantDashboard({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto" />
-          <p className="text-muted-foreground">Loading dashboard...</p>
-        </div>
+      <div className="relative flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="iot-grid-overlay" />
+        <Card className="w-full max-w-xl border-cyan-200/20 bg-slate-950/70 backdrop-blur-lg">
+          <CardContent className="space-y-4 p-6 text-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-300 border-t-transparent mx-auto" />
+            <p className="text-cyan-100/80">Loading Round 2 dashboard...</p>
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="rounded-md border border-cyan-200/20 bg-slate-900/55 px-3 py-2 text-cyan-100/70">Syncing profile</div>
+              <div className="rounded-md border border-cyan-200/20 bg-slate-900/55 px-3 py-2 text-cyan-100/70">Fetching scenario</div>
+              <div className="rounded-md border border-cyan-200/20 bg-slate-900/55 px-3 py-2 text-cyan-100/70">Loading components</div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (error || !participant) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Card className="w-full max-w-md">
+      <div className="relative flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="iot-grid-overlay" />
+        <Card className="w-full max-w-md border-cyan-200/20 bg-slate-950/75 backdrop-blur-lg">
           <CardContent className="pt-6">
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
@@ -274,27 +303,28 @@ export default function ParticipantDashboard({
   // Submission complete screen
   if (submitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-lg text-center">
-          <CardContent className="pt-10 pb-10 space-y-6">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-              <CheckCircle2 className="h-9 w-9 text-green-600 dark:text-green-400" />
+      <div className="relative flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="iot-grid-overlay" />
+        <Card className="w-full max-w-lg border-cyan-200/20 bg-slate-950/75 text-center backdrop-blur-lg">
+          <CardContent className="space-y-6 pb-10 pt-10">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-emerald-300/35 bg-emerald-300/10">
+              <CheckCircle2 className="h-9 w-9 text-emerald-300" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold">Submission Received</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-2xl font-bold text-cyan-50">Submission Received</h1>
+              <p className="text-cyan-100/75">
                 Your Round 2 work has been submitted successfully.
               </p>
             </div>
-            <Alert className="text-left">
+            <Alert className="border-amber-300/35 bg-amber-300/10 text-left text-amber-100">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Important</AlertTitle>
               <AlertDescription>
                 Your Participant ID is no longer valid. Please return your device to the invigilator.
               </AlertDescription>
             </Alert>
-            <p className="text-sm text-muted-foreground">
-              Participant ID: <span className="font-mono font-semibold">{id}</span>
+            <p className="text-sm text-cyan-100/70">
+              Participant ID: <span className="font-mono font-semibold text-cyan-50">{id}</span>
             </p>
           </CardContent>
         </Card>
@@ -304,16 +334,17 @@ export default function ParticipantDashboard({
 
   if (!participant.scenario_id) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-lg">
+      <div className="relative flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="iot-grid-overlay" />
+        <Card className="w-full max-w-lg border-cyan-200/20 bg-slate-950/75 backdrop-blur-lg">
           <CardHeader className="text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
-              <User className="h-6 w-6 text-primary" />
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-cyan-300/35 bg-cyan-300/10">
+              <User className="h-6 w-6 text-cyan-200" />
             </div>
-            <CardTitle className="text-2xl">Welcome, {participant.name}</CardTitle>
+            <CardTitle className="text-2xl text-cyan-50">Welcome, {participant.name}</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <Alert>
+            <Alert className="border-cyan-200/25 bg-slate-900/65 text-cyan-100">
               <Activity className="h-4 w-4" />
               <AlertTitle>Waiting for Assignment</AlertTitle>
               <AlertDescription>
@@ -321,8 +352,8 @@ export default function ParticipantDashboard({
                 admin to assign you a scenario.
               </AlertDescription>
             </Alert>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Your ID: <span className="font-mono font-medium">{participant.id}</span>
+            <p className="mt-4 text-sm text-cyan-100/70">
+              Your ID: <span className="font-mono font-medium text-cyan-50">{participant.id}</span>
             </p>
           </CardContent>
         </Card>
@@ -331,7 +362,8 @@ export default function ParticipantDashboard({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background">
+      <div className="iot-grid-overlay" />
       <ViolationTracker
         participantId={id}
         enabled={!isLocked && !!participant.timer_started_at}
@@ -385,25 +417,31 @@ export default function ParticipantDashboard({
       </AlertDialog>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 border-b border-cyan-200/15 bg-slate-950/85 backdrop-blur supports-[backdrop-filter]:bg-slate-950/70">
         <div className="container mx-auto px-4 py-3">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <User className="h-5 w-5 text-primary" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-cyan-300/35 bg-cyan-300/10">
+                <User className="h-5 w-5 text-cyan-200" />
               </div>
               <div>
-                <h1 className="font-semibold">{participant.name}</h1>
-                <p className="text-xs text-muted-foreground">ID: {participant.id}</p>
+                <h1 className="font-semibold text-cyan-50">{participant.name}</h1>
+                <p className="text-xs text-cyan-100/70">ID: {participant.id}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="gap-1">
+                <Badge variant="outline" className="gap-1 border-cyan-200/30 text-cyan-100">
                   <Unlock className="h-3 w-3" />
                   {unlockedSnippets.length} Unlocked
                 </Badge>
+                {round2HintSummary && (
+                  <Badge variant="outline" className="gap-1 border-amber-300/35 bg-amber-300/10 text-amber-100">
+                    <AlertTriangle className="h-3 w-3" />
+                    Components Accessed: {round2HintSummary.hintsUsedCount}/{round2HintSummary.totalComponents} | Penalty: {round2HintSummary.totalPenalty}/{round2HintSummary.maxPenalty} | Score: {round2HintSummary.finalScore}
+                  </Badge>
+                )}
               </div>
               {!isLocked && (
                 <Button
@@ -423,12 +461,16 @@ export default function ParticipantDashboard({
 
       {/* Timer */}
       <div className="container mx-auto px-4 py-4">
-        <Timer
-          startedAt={participant.timer_started_at}
-          duration={participant.timer_duration}
-          onTimeUp={handleTimeUp}
-          isLocked={isLocked}
-        />
+        <Card className="border-cyan-200/20 bg-slate-950/60 backdrop-blur-lg">
+          <CardContent className="p-4">
+            <Timer
+              startedAt={participant.timer_started_at}
+              duration={participant.timer_duration}
+              onTimeUp={handleTimeUp}
+              isLocked={isLocked}
+            />
+          </CardContent>
+        </Card>
       </div>
 
       {/* Locked Overlay */}
@@ -448,7 +490,7 @@ export default function ParticipantDashboard({
       {/* Main Content */}
       <main className={`container mx-auto px-4 pb-8 ${isLocked ? "opacity-50 pointer-events-none" : ""}`}>
         <Tabs defaultValue="scenario" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
+          <TabsList className="grid w-full max-w-md grid-cols-3 border border-cyan-200/20 bg-slate-950/60">
             <TabsTrigger value="scenario">Scenario</TabsTrigger>
             <TabsTrigger value="components">Components</TabsTrigger>
             <TabsTrigger value="unlocked">Unlocked</TabsTrigger>
@@ -460,23 +502,23 @@ export default function ParticipantDashboard({
                 title={participant.scenario_title}
                 situation={participant.situation}
                 whatToBuild={participant.what_to_build}
+                hintSummary={round2HintSummary}
               />
             )}
           </TabsContent>
 
           <TabsContent value="components" className="space-y-6">
-            <Card>
+            <Card className="border-cyan-200/20 bg-slate-950/60 backdrop-blur-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-cyan-50">
                   <Cpu className="h-5 w-5" />
                   Your Component Kit
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground mb-6">
+                <p className="mb-6 text-sm text-cyan-100/75">
                   These are the components assigned to your scenario. Click
-                  &quot;Unlock Code Snippet&quot; to reveal the Arduino code for each
-                  component.
+                  &quot;Unlock Starter Hint Pack&quot; to access basic code plus component documentation. Each component access contributes to penalty scoring.
                 </p>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {components.map((component) => (
@@ -494,16 +536,16 @@ export default function ParticipantDashboard({
           </TabsContent>
 
           <TabsContent value="unlocked" className="space-y-6">
-            <Card>
+            <Card className="border-cyan-200/20 bg-slate-950/60 backdrop-blur-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-cyan-50">
                   <Unlock className="h-5 w-5" />
                   Unlocked Snippets ({unlockedSnippets.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {unlockedSnippets.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-8">
+                  <p className="py-8 text-center text-sm text-cyan-100/70">
                     You haven&apos;t unlocked any code snippets yet. Go to the
                     Components tab to unlock snippets.
                   </p>
@@ -512,17 +554,17 @@ export default function ParticipantDashboard({
                     {unlockedSnippets.map((snippet) => (
                       <div
                         key={snippet.id}
-                        className="flex items-center justify-between rounded-lg border p-3"
+                        className="flex items-center justify-between rounded-lg border border-cyan-200/20 bg-slate-900/55 p-3"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chart-2/10">
-                            <Cpu className="h-4 w-4 text-chart-2" />
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-cyan-300/35 bg-cyan-300/10">
+                            <Cpu className="h-4 w-4 text-cyan-200" />
                           </div>
-                          <span className="font-medium text-sm">
+                          <span className="text-sm font-medium text-cyan-50">
                             {snippet.component_name}
                           </span>
                         </div>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-cyan-100/65">
                           {new Date(snippet.unlocked_at).toLocaleTimeString()}
                         </span>
                       </div>
