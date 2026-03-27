@@ -122,12 +122,13 @@
         "timer_duration": 7200,
         "timer_started_at": null,
         "is_active": 0,
-        "is_locked": 0,
+        "is_locked": 1,
         "created_at": "2026-03-27T16:58:09.327Z",
         "round1_score": 0,
-        "round1_completed": false,
+        "round1_completed": true,
         "round2_score": 0,
-        "round2_completed": false
+        "round2_completed": false,
+        "round1_completed_at": "2026-03-27T19:20:56.396Z"
       }
     ]
   ],
@@ -1156,6 +1157,62 @@
       "event_type": "participant_created",
       "details": "New participant created: Test User One (round1)",
       "created_at": "2026-03-27T15:22:24.330Z"
+    },
+    {
+      "id": 30,
+      "participant_id": "JF6DJM",
+      "event_type": "round1_started",
+      "details": "Round 1 started with 66 questions",
+      "created_at": "2026-03-27T19:20:14.948Z"
+    },
+    {
+      "id": 31,
+      "participant_id": "JF6DJM",
+      "event_type": "round1_completed",
+      "details": "Round 1 completed with score: 0",
+      "created_at": "2026-03-27T19:20:56.396Z"
+    },
+    {
+      "id": 32,
+      "participant_id": "JF6DJM",
+      "event_type": "locked",
+      "details": "Dashboard locked - time expired",
+      "created_at": "2026-03-27T19:20:56.754Z"
+    },
+    {
+      "id": 33,
+      "participant_id": "JF6DJM",
+      "event_type": "round1_started",
+      "details": "Round 1 started with 66 questions",
+      "created_at": "2026-03-27T19:34:09.652Z"
+    },
+    {
+      "id": 34,
+      "participant_id": "JF6DJM",
+      "event_type": "round1_response",
+      "details": "Question 61: Correct (4/4 points)",
+      "created_at": "2026-03-27T19:34:20.876Z"
+    },
+    {
+      "id": 35,
+      "participant_id": "JF6DJM",
+      "event_type": "round1_response",
+      "details": "Question 62: Incorrect (6/8 points)",
+      "created_at": "2026-03-27T19:34:28.598Z"
+    },
+    {
+      "id": 36,
+      "participant_id": "JF6DJM",
+      "event_type": "round1_response",
+      "details": "Question 61: Correct (4/4 points)",
+      "created_at": "2026-03-27T19:34:37.575Z"
+    },
+    {
+      "id": 37,
+      "participant_id": "JF6DJM",
+      "event_type": "violation",
+      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
+      "created_at": "2026-03-27T19:34:45.716Z"
     }
   ],
   "violations": [
@@ -1293,6 +1350,15 @@
       "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
       "is_approved": false,
       "created_at": "2026-03-27T15:24:38.939Z"
+    },
+    {
+      "id": 16,
+      "participant_id": "JF6DJM",
+      "violation_type": "tab_switch",
+      "severity": "critical",
+      "details": "Participant switched to another browser tab during Round 1.",
+      "is_approved": false,
+      "created_at": "2026-03-27T19:34:45.716Z"
     }
   ],
   "initialized": true,
@@ -1310,77 +1376,44 @@
       1,
       {
         "type": "mcq",
-        "title": "GPIO Voltage",
-        "scenario": "Most Raspberry Pi GPIO pins are logic-level:",
+        "title": "Raspberry Pi Camera",
+        "scenario": "Raspberry Pi camera module is typically connected through:",
         "section": "A",
         "difficulty": "Easy",
-        "score": 5,
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "1.8V"
+            "text": "CSI interface"
           },
           {
             "id": "B",
-            "text": "3.3V"
+            "text": "PWM pin"
           },
           {
             "id": "C",
-            "text": "5V tolerant always"
+            "text": "I2C only"
           },
           {
             "id": "D",
-            "text": "12V industrial"
+            "text": "CAN bus only"
           }
         ],
-        "correctAnswer": "B",
+        "correctAnswer": "A",
         "id": 1,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.761Z"
       }
     ],
     [
       2,
       {
         "type": "mcq",
-        "title": "Ground Reference",
-        "scenario": "In mixed modules, common GND is required to:",
-        "section": "A",
-        "difficulty": "Easy",
-        "score": 5,
-        "timeLimit": 60,
-        "options": [
-          {
-            "id": "A",
-            "text": "Increase Wi-Fi range"
-          },
-          {
-            "id": "B",
-            "text": "Share voltage reference between modules"
-          },
-          {
-            "id": "C",
-            "text": "Reduce flash memory use"
-          },
-          {
-            "id": "D",
-            "text": "Enable PWM on all pins"
-          }
-        ],
-        "correctAnswer": "B",
-        "id": 2,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      3,
-      {
-        "type": "mcq",
         "title": "Pull-up Resistor",
         "scenario": "INPUT_PULLUP on Arduino is commonly used to:",
         "section": "A",
-        "difficulty": "Hard",
-        "score": 5,
+        "difficulty": "Easy",
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
@@ -1401,85 +1434,250 @@
           }
         ],
         "correctAnswer": "B",
+        "id": 2,
+        "created_at": "2026-03-27T19:20:14.761Z"
+      }
+    ],
+    [
+      3,
+      {
+        "type": "mcq",
+        "title": "Relay Purpose",
+        "scenario": "A relay module in IoT prototypes is mainly used to:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 1,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Amplify analog sensor voltage"
+          },
+          {
+            "id": "B",
+            "text": "Switch higher-voltage/current loads"
+          },
+          {
+            "id": "C",
+            "text": "Convert AC to DC automatically"
+          },
+          {
+            "id": "D",
+            "text": "Measure humidity"
+          }
+        ],
+        "correctAnswer": "B",
         "id": 3,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.765Z"
       }
     ],
     [
       4,
       {
         "type": "mcq",
-        "title": "Raspberry Pi Type",
-        "scenario": "Raspberry Pi is best described as a:",
+        "title": "Loop Function",
+        "scenario": "In Arduino, loop() function:",
         "section": "A",
         "difficulty": "Hard",
-        "score": 5,
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Bare-metal sensor only"
+            "text": "Runs once after reset"
           },
           {
             "id": "B",
-            "text": "Single board computer"
+            "text": "Runs repeatedly after setup()"
           },
           {
             "id": "C",
-            "text": "Only a bootloader chip"
+            "text": "Only runs on interrupt"
           },
           {
             "id": "D",
-            "text": "Simple analog comparator"
+            "text": "Runs only in debug mode"
           }
         ],
         "correctAnswer": "B",
         "id": 4,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.767Z"
       }
     ],
     [
       5,
       {
         "type": "mcq",
-        "title": "LDR Behavior",
-        "scenario": "For a typical LDR, resistance generally:",
+        "title": "Basic RTOS Use",
+        "scenario": "A small RTOS helps embedded apps by:",
         "section": "A",
         "difficulty": "Easy",
-        "score": 5,
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Increases when light increases"
+            "text": "Adding deterministic task scheduling"
           },
           {
             "id": "B",
-            "text": "Decreases when light increases"
+            "text": "Increasing analog voltage"
           },
           {
             "id": "C",
-            "text": "Stays constant with light changes"
+            "text": "Replacing sensors"
           },
           {
             "id": "D",
-            "text": "Becomes negative in darkness"
+            "text": "Disabling interrupts permanently"
           }
         ],
-        "correctAnswer": "B",
+        "correctAnswer": "A",
         "id": 5,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.770Z"
       }
     ],
     [
       6,
       {
         "type": "mcq",
+        "title": "OTA Meaning",
+        "scenario": "OTA firmware update means:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 1,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Over-the-air update"
+          },
+          {
+            "id": "B",
+            "text": "Only terminal access"
+          },
+          {
+            "id": "C",
+            "text": "Offline timing adjustment"
+          },
+          {
+            "id": "D",
+            "text": "Output threshold averaging"
+          }
+        ],
+        "correctAnswer": "A",
+        "id": 6,
+        "created_at": "2026-03-27T19:20:14.773Z"
+      }
+    ],
+    [
+      7,
+      {
+        "type": "mcq",
+        "title": "NVIDIA SBC Example",
+        "scenario": "Which board is a GPU-capable SBC often used for edge AI?",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 1,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Arduino Nano"
+          },
+          {
+            "id": "B",
+            "text": "Jetson Nano"
+          },
+          {
+            "id": "C",
+            "text": "ATmega328P DIP chip"
+          },
+          {
+            "id": "D",
+            "text": "L293D motor driver"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 7,
+        "created_at": "2026-03-27T19:20:14.775Z"
+      }
+    ],
+    [
+      8,
+      {
+        "type": "mcq",
+        "title": "Serial Monitor",
+        "scenario": "Serial.begin(9600) sets:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 1,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "ADC resolution"
+          },
+          {
+            "id": "B",
+            "text": "UART baud rate"
+          },
+          {
+            "id": "C",
+            "text": "I2C address"
+          },
+          {
+            "id": "D",
+            "text": "PWM duty cycle"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 8,
+        "created_at": "2026-03-27T19:20:14.778Z"
+      }
+    ],
+    [
+      9,
+      {
+        "type": "mcq",
+        "title": "Debounce",
+        "scenario": "Button debounce is required because mechanical switches:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 1,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Have floating-point rounding errors"
+          },
+          {
+            "id": "B",
+            "text": "Create rapid transient toggles when pressed"
+          },
+          {
+            "id": "C",
+            "text": "Need analog calibration daily"
+          },
+          {
+            "id": "D",
+            "text": "Lose EEPROM content"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 9,
+        "created_at": "2026-03-27T19:20:14.782Z"
+      }
+    ],
+    [
+      10,
+      {
+        "type": "mcq",
         "title": "Breadboard Rails",
         "scenario": "On a standard breadboard, side rails are usually for:",
         "section": "A",
-        "difficulty": "Hard",
-        "score": 5,
+        "difficulty": "Easy",
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
@@ -1500,338 +1698,206 @@
           }
         ],
         "correctAnswer": "B",
-        "id": 6,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      7,
-      {
-        "type": "mcq",
-        "title": "Cloud Dashboard",
-        "scenario": "IoT dashboard mainly helps to:",
-        "section": "A",
-        "difficulty": "Easy",
-        "score": 5,
-        "timeLimit": 60,
-        "options": [
-          {
-            "id": "A",
-            "text": "Manufacture PCBs"
-          },
-          {
-            "id": "B",
-            "text": "Visualize and monitor telemetry"
-          },
-          {
-            "id": "C",
-            "text": "Increase battery voltage"
-          },
-          {
-            "id": "D",
-            "text": "Generate C compiler binaries"
-          }
-        ],
-        "correctAnswer": "B",
-        "id": 7,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      8,
-      {
-        "type": "mcq",
-        "title": "GPIO Voltage",
-        "scenario": "Most Raspberry Pi GPIO pins are logic-level:",
-        "section": "A",
-        "difficulty": "Hard",
-        "score": 5,
-        "timeLimit": 60,
-        "options": [
-          {
-            "id": "A",
-            "text": "1.8V"
-          },
-          {
-            "id": "B",
-            "text": "3.3V"
-          },
-          {
-            "id": "C",
-            "text": "5V tolerant always"
-          },
-          {
-            "id": "D",
-            "text": "12V industrial"
-          }
-        ],
-        "correctAnswer": "B",
-        "id": 8,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      9,
-      {
-        "type": "mcq",
-        "title": "EEPROM Usage",
-        "scenario": "EEPROM is commonly used to store:",
-        "section": "A",
-        "difficulty": "Hard",
-        "score": 5,
-        "timeLimit": 60,
-        "options": [
-          {
-            "id": "A",
-            "text": "Temporary RAM stack"
-          },
-          {
-            "id": "B",
-            "text": "Persistent configuration values"
-          },
-          {
-            "id": "C",
-            "text": "Live camera frames"
-          },
-          {
-            "id": "D",
-            "text": "Analog waveform output"
-          }
-        ],
-        "correctAnswer": "B",
-        "id": 9,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      10,
-      {
-        "type": "mcq",
-        "title": "Cloud Dashboard",
-        "scenario": "IoT dashboard mainly helps to:",
-        "section": "A",
-        "difficulty": "Hard",
-        "score": 5,
-        "timeLimit": 60,
-        "options": [
-          {
-            "id": "A",
-            "text": "Manufacture PCBs"
-          },
-          {
-            "id": "B",
-            "text": "Visualize and monitor telemetry"
-          },
-          {
-            "id": "C",
-            "text": "Increase battery voltage"
-          },
-          {
-            "id": "D",
-            "text": "Generate C compiler binaries"
-          }
-        ],
-        "correctAnswer": "B",
         "id": 10,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.785Z"
       }
     ],
     [
       11,
       {
         "type": "mcq",
-        "title": "BLE Full Form",
-        "scenario": "BLE stands for:",
+        "title": "JSON Role",
+        "scenario": "JSON in IoT cloud communication is typically used for:",
         "section": "A",
         "difficulty": "Hard",
-        "score": 5,
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Binary Logic Engine"
+            "text": "Power conversion"
           },
           {
             "id": "B",
-            "text": "Bluetooth Low Energy"
+            "text": "Data serialization"
           },
           {
             "id": "C",
-            "text": "Bus Line Encoder"
+            "text": "Noise filtering"
           },
           {
             "id": "D",
-            "text": "Basic Link Ethernet"
+            "text": "PWM generation"
           }
         ],
         "correctAnswer": "B",
         "id": 11,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.787Z"
       }
     ],
     [
       12,
       {
         "type": "mcq",
-        "title": "EEPROM Usage",
-        "scenario": "EEPROM is commonly used to store:",
+        "title": "Servo Control",
+        "scenario": "Standard hobby servo position is commonly controlled using:",
         "section": "A",
         "difficulty": "Easy",
-        "score": 5,
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Temporary RAM stack"
+            "text": "I2C packet count"
           },
           {
             "id": "B",
-            "text": "Persistent configuration values"
+            "text": "PWM pulse width"
           },
           {
             "id": "C",
-            "text": "Live camera frames"
+            "text": "ADC resolution bits"
           },
           {
             "id": "D",
-            "text": "Analog waveform output"
+            "text": "CAN arbitration ID"
           }
         ],
         "correctAnswer": "B",
         "id": 12,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.790Z"
       }
     ],
     [
       13,
       {
         "type": "mcq",
-        "title": "GPIO Direction",
-        "scenario": "In Arduino, what does pinMode(pin, OUTPUT) do?",
+        "title": "UART Basics",
+        "scenario": "UART communication typically uses which pair?",
         "section": "A",
-        "difficulty": "Easy",
-        "score": 5,
+        "difficulty": "Hard",
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Sets the pin to read analog voltage"
+            "text": "SDA/SCL"
           },
           {
             "id": "B",
-            "text": "Sets the pin to produce a digital signal"
+            "text": "TX/RX"
           },
           {
             "id": "C",
-            "text": "Disables interrupts globally"
+            "text": "MISO/MOSI"
           },
           {
             "id": "D",
-            "text": "Configures UART baud rate"
+            "text": "AIN+/AIN-"
           }
         ],
         "correctAnswer": "B",
         "id": 13,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.793Z"
       }
     ],
     [
       14,
       {
         "type": "mcq",
-        "title": "Potentiometer",
-        "scenario": "A potentiometer used with analogRead acts as:",
+        "title": "HTTP Method",
+        "scenario": "To send sensor data to REST API, the common method is:",
         "section": "A",
-        "difficulty": "Easy",
-        "score": 5,
+        "difficulty": "Hard",
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Current source"
+            "text": "TRACE"
           },
           {
             "id": "B",
-            "text": "Variable voltage divider"
+            "text": "POST"
           },
           {
             "id": "C",
-            "text": "Digital encoder"
+            "text": "OPTIONS only"
           },
           {
             "id": "D",
-            "text": "RF transmitter"
+            "text": "HEAD only"
           }
         ],
         "correctAnswer": "B",
         "id": 14,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.797Z"
       }
     ],
     [
       15,
       {
         "type": "mcq",
-        "title": "Buzzer Use",
-        "scenario": "Piezo buzzer in embedded projects is generally an:",
+        "title": "Loop Function",
+        "scenario": "In Arduino, loop() function:",
         "section": "A",
         "difficulty": "Easy",
-        "score": 5,
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Input sensor"
+            "text": "Runs once after reset"
           },
           {
             "id": "B",
-            "text": "Audio output actuator"
+            "text": "Runs repeatedly after setup()"
           },
           {
             "id": "C",
-            "text": "Protocol converter"
+            "text": "Only runs on interrupt"
           },
           {
             "id": "D",
-            "text": "Storage element"
+            "text": "Runs only in debug mode"
           }
         ],
         "correctAnswer": "B",
         "id": 15,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.800Z"
       }
     ],
     [
       16,
       {
         "type": "mcq",
-        "title": "Ground Reference",
-        "scenario": "In mixed modules, common GND is required to:",
+        "title": "Ultrasonic Timing",
+        "scenario": "HC-SR04 distance is computed from:",
         "section": "A",
-        "difficulty": "Hard",
-        "score": 5,
+        "difficulty": "Easy",
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Increase Wi-Fi range"
+            "text": "Current consumption of trigger pin"
           },
           {
             "id": "B",
-            "text": "Share voltage reference between modules"
+            "text": "Echo pulse duration"
           },
           {
             "id": "C",
-            "text": "Reduce flash memory use"
+            "text": "Ambient light level"
           },
           {
             "id": "D",
-            "text": "Enable PWM on all pins"
+            "text": "CPU clock cycles only"
           }
         ],
         "correctAnswer": "B",
         "id": 16,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.803Z"
       }
     ],
     [
@@ -1841,8 +1907,8 @@
         "title": "Threshold Alert",
         "scenario": "A threshold-based alert triggers when:",
         "section": "A",
-        "difficulty": "Easy",
-        "score": 5,
+        "difficulty": "Hard",
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
@@ -1864,117 +1930,457 @@
         ],
         "correctAnswer": "B",
         "id": 17,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.805Z"
       }
     ],
     [
       18,
       {
         "type": "mcq",
-        "title": "Watchdog",
-        "scenario": "A watchdog timer helps by:",
+        "title": "Latency",
+        "scenario": "In IoT systems, latency refers to:",
         "section": "A",
-        "difficulty": "Easy",
-        "score": 5,
+        "difficulty": "Hard",
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Generating PWM on extra channels"
+            "text": "Battery weight"
           },
           {
             "id": "B",
-            "text": "Resetting the MCU if firmware hangs"
+            "text": "Delay between event and response"
           },
           {
             "id": "C",
-            "text": "Increasing RAM size"
+            "text": "ADC pin count"
           },
           {
             "id": "D",
-            "text": "Encrypting BLE packets"
+            "text": "Wire gauge thickness"
           }
         ],
         "correctAnswer": "B",
         "id": 18,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.809Z"
       }
     ],
     [
       19,
       {
         "type": "mcq",
-        "title": "Digital Read Values",
-        "scenario": "digitalRead() returns:",
+        "title": "Topic in MQTT",
+        "scenario": "In MQTT, a topic is:",
         "section": "A",
-        "difficulty": "Hard",
-        "score": 5,
+        "difficulty": "Easy",
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Only floating values"
+            "text": "A battery chemistry type"
           },
           {
             "id": "B",
-            "text": "HIGH or LOW"
+            "text": "A routing string for messages"
           },
           {
             "id": "C",
-            "text": "0 to 1023"
+            "text": "A firmware checksum"
           },
           {
             "id": "D",
-            "text": "Signed 16-bit value always"
+            "text": "An analog pin alias"
           }
         ],
         "correctAnswer": "B",
         "id": 19,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.813Z"
       }
     ],
     [
       20,
       {
         "type": "mcq",
-        "title": "Setup Function",
-        "scenario": "In Arduino, setup() is mainly for:",
+        "title": "PWM Meaning",
+        "scenario": "PWM is mainly used in embedded systems to:",
         "section": "A",
         "difficulty": "Hard",
-        "score": 5,
+        "score": 1,
         "timeLimit": 60,
         "options": [
           {
             "id": "A",
-            "text": "Repeated sensing forever"
+            "text": "Encrypt serial traffic"
           },
           {
             "id": "B",
-            "text": "One-time initialization"
+            "text": "Approximate analog output using duty cycle"
           },
           {
             "id": "C",
-            "text": "Automatic cloud upload"
+            "text": "Increase CPU clock speed"
           },
           {
             "id": "D",
-            "text": "Compiling sketches at runtime"
+            "text": "Store data in EEPROM"
           }
         ],
         "correctAnswer": "B",
         "id": 20,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "created_at": "2026-03-27T19:20:14.814Z"
       }
     ],
     [
       21,
       {
         "type": "scenario-mcq",
+        "title": "Smart City IoT - Q1",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nWhy is NB-IoT chosen over LoRaWAN for this dense urban smart city deployment?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "NB-IoT uses licensed cellular spectrum providing better urban penetration and QoS guarantees"
+          },
+          {
+            "id": "B",
+            "text": "NB-IoT is license-free"
+          },
+          {
+            "id": "C",
+            "text": "NB-IoT has higher data rates than LoRaWAN"
+          },
+          {
+            "id": "D",
+            "text": "NB-IoT does not require a SIM card"
+          }
+        ],
+        "correctAnswer": "A",
+        "scenario_group": "smart_city",
+        "id": 21,
+        "created_at": "2026-03-27T19:20:14.816Z"
+      }
+    ],
+    [
+      22,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart City IoT - Q2",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nWhat is a CVE in the context of IoT cybersecurity?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "A communication protocol for smart sensors"
+          },
+          {
+            "id": "B",
+            "text": "A publicly disclosed vulnerability in software or firmware"
+          },
+          {
+            "id": "C",
+            "text": "A type of encryption standard"
+          },
+          {
+            "id": "D",
+            "text": "A certificate for device authentication"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "smart_city",
+        "id": 22,
+        "created_at": "2026-03-27T19:20:14.820Z"
+      }
+    ],
+    [
+      23,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart City IoT - Q3",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nWhat type of sensor is used in smart parking to detect vehicle presence?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "Ultrasonic fill-level sensor"
+          },
+          {
+            "id": "B",
+            "text": "LiDAR scanner"
+          },
+          {
+            "id": "C",
+            "text": "Magnetometer detecting changes in Earth's magnetic field caused by vehicles"
+          },
+          {
+            "id": "D",
+            "text": "Infrared temperature sensor"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "smart_city",
+        "id": 23,
+        "created_at": "2026-03-27T19:20:14.823Z"
+      }
+    ],
+    [
+      24,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart City IoT - Q4",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nWhy does the analytics platform use a time-series database for sensor data?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "Time-series databases support 3D spatial queries"
+          },
+          {
+            "id": "B",
+            "text": "Time-series databases encrypt data automatically"
+          },
+          {
+            "id": "C",
+            "text": "Time-series databases replace the message broker"
+          },
+          {
+            "id": "D",
+            "text": "Sensor data is inherently timestamped and time-series DBs are optimised for sequential time-indexed data"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "smart_city",
+        "id": 24,
+        "created_at": "2026-03-27T19:20:14.826Z"
+      }
+    ],
+    [
+      25,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart City IoT - Q5",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nWhat is the role of the message broker in the IoT platform architecture?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "To decouple producers and consumers of data, routing messages between devices and applications"
+          },
+          {
+            "id": "B",
+            "text": "To store time-series data permanently"
+          },
+          {
+            "id": "C",
+            "text": "To run ML prediction models"
+          },
+          {
+            "id": "D",
+            "text": "To manage NB-IoT SIM cards"
+          }
+        ],
+        "correctAnswer": "A",
+        "scenario_group": "smart_city",
+        "id": 25,
+        "created_at": "2026-03-27T19:20:14.829Z"
+      }
+    ],
+    [
+      26,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart City IoT - Q6",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nPM2.5 in air quality monitoring refers to:",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "A type of CO2 measurement protocol"
+          },
+          {
+            "id": "B",
+            "text": "Particulate matter with diameter ≤ 2.5 micrometres, posing respiratory health risks"
+          },
+          {
+            "id": "C",
+            "text": "A smart city communication standard"
+          },
+          {
+            "id": "D",
+            "text": "Power management version 2.5 for IoT nodes"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "smart_city",
+        "id": 26,
+        "created_at": "2026-03-27T19:20:14.832Z"
+      }
+    ],
+    [
+      27,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart City IoT - Q7",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nHow do ML models improve waste collection in this smart city?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "By replacing fill-level sensors with cameras"
+          },
+          {
+            "id": "B",
+            "text": "By encrypting collection schedules"
+          },
+          {
+            "id": "C",
+            "text": "By predicting when bins will be full to enable proactive, route-optimised collection"
+          },
+          {
+            "id": "D",
+            "text": "By reducing the number of bins needed"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "smart_city",
+        "id": 27,
+        "created_at": "2026-03-27T19:20:14.834Z"
+      }
+    ],
+    [
+      28,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart City IoT - Q8",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nWhat is the main security risk of running outdated firmware on deployed IoT nodes?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "Outdated firmware increases power consumption"
+          },
+          {
+            "id": "B",
+            "text": "Outdated firmware reduces sensor accuracy"
+          },
+          {
+            "id": "C",
+            "text": "Outdated firmware causes NB-IoT deregistration"
+          },
+          {
+            "id": "D",
+            "text": "Known vulnerabilities (CVEs) can be exploited by attackers to compromise city infrastructure"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "smart_city",
+        "id": 28,
+        "created_at": "2026-03-27T19:20:14.836Z"
+      }
+    ],
+    [
+      29,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart City IoT - Q9",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nWhich of the following best describes a multi-tier IoT architecture?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "Layered components (devices, gateways, brokers, analytics, applications) each handling specific functions"
+          },
+          {
+            "id": "B",
+            "text": "A single server handling all IoT functions"
+          },
+          {
+            "id": "C",
+            "text": "Direct device-to-dashboard communication"
+          },
+          {
+            "id": "D",
+            "text": "A mesh network of identical sensor nodes"
+          }
+        ],
+        "correctAnswer": "A",
+        "scenario_group": "smart_city",
+        "id": 29,
+        "created_at": "2026-03-27T19:20:14.838Z"
+      }
+    ],
+    [
+      30,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart City IoT - Q10",
+        "scenario": "Story and Problem Statement:\nA metropolitan smart city platform integrates thousands of IoT devices: adaptive LED streetlights with ambient and motion sensors, ultrasonic fill-level sensors in waste bins, distributed air quality monitors measuring CO2, NO2, and PM2.5, and smart parking sensors using magnetometers. All sensor nodes use NB-IoT (Narrowband IoT) as the communication protocol, chosen for deep indoor/urban penetration and low power consumption. Data flows to a centralised City Operating Centre (COC) via a multi-tier IoT platform (device → gateway → message broker → analytics engine → dashboard). The city's cybersecurity team recently identified that several sensor nodes are running outdated firmware with known CVEs. The analytics platform uses time-series databases and ML models to predict waste bin fill levels and optimise collection routes. Citizens can access real-time parking availability via a public API.\n\nQuestion:\nWhat is the benefit of exposing parking availability through a public REST API?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "It replaces the need for parking sensors"
+          },
+          {
+            "id": "B",
+            "text": "It allows third-party apps and citizens to access live parking data without accessing backend systems directly"
+          },
+          {
+            "id": "C",
+            "text": "It secures the parking sensor network"
+          },
+          {
+            "id": "D",
+            "text": "It stores parking data in a time-series database"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "smart_city",
+        "id": 30,
+        "created_at": "2026-03-27T19:20:14.841Z"
+      }
+    ],
+    [
+      31,
+      {
+        "type": "scenario-mcq",
         "title": "Smart Healthcare IoT - Q1",
         "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhy is Bluetooth Low Energy (BLE) used instead of Wi-Fi for wearable patches?",
         "section": "B",
         "difficulty": "Medium",
-        "score": 8,
+        "score": 1,
         "timeLimit": 90,
         "options": [
           {
@@ -1996,19 +2402,19 @@
         ],
         "correctAnswer": "A",
         "scenario_group": "smart_healthcare",
-        "id": 21,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 31,
+        "created_at": "2026-03-27T19:20:14.844Z"
       }
     ],
     [
-      22,
+      32,
       {
         "type": "scenario-mcq",
         "title": "Smart Healthcare IoT - Q2",
         "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhat does HL7 FHIR define in the context of this system?",
         "section": "B",
         "difficulty": "Medium",
-        "score": 8,
+        "score": 1,
         "timeLimit": 90,
         "options": [
           {
@@ -2030,19 +2436,19 @@
         ],
         "correctAnswer": "B",
         "scenario_group": "smart_healthcare",
-        "id": 22,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 32,
+        "created_at": "2026-03-27T19:20:14.846Z"
       }
     ],
     [
-      23,
+      33,
       {
         "type": "scenario-mcq",
         "title": "Smart Healthcare IoT - Q3",
         "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhat regulation primarily governs patient data privacy in this US hospital system?",
         "section": "B",
         "difficulty": "Medium",
-        "score": 8,
+        "score": 1,
         "timeLimit": 90,
         "options": [
           {
@@ -2064,19 +2470,19 @@
         ],
         "correctAnswer": "C",
         "scenario_group": "smart_healthcare",
-        "id": 23,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 33,
+        "created_at": "2026-03-27T19:20:14.849Z"
       }
     ],
     [
-      24,
+      34,
       {
         "type": "scenario-mcq",
         "title": "Smart Healthcare IoT - Q4",
         "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nMotion artefacts in wearable ECG sensors cause false alerts because:",
         "section": "B",
         "difficulty": "Medium",
-        "score": 8,
+        "score": 1,
         "timeLimit": 90,
         "options": [
           {
@@ -2098,19 +2504,19 @@
         ],
         "correctAnswer": "D",
         "scenario_group": "smart_healthcare",
-        "id": 24,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 34,
+        "created_at": "2026-03-27T19:20:14.852Z"
       }
     ],
     [
-      25,
+      35,
       {
         "type": "scenario-mcq",
         "title": "Smart Healthcare IoT - Q5",
         "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhat is the primary purpose of AES-256 encryption in this system?",
         "section": "B",
         "difficulty": "Medium",
-        "score": 8,
+        "score": 1,
         "timeLimit": 90,
         "options": [
           {
@@ -2132,189 +2538,539 @@
         ],
         "correctAnswer": "A",
         "scenario_group": "smart_healthcare",
-        "id": 25,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 35,
+        "created_at": "2026-03-27T19:20:14.854Z"
       }
     ],
     [
-      26,
+      36,
       {
         "type": "scenario-mcq",
-        "title": "Smart Traffic IoT - Q1",
-        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhy are edge computing nodes used at intersections instead of sending all data to the cloud?",
+        "title": "Smart Healthcare IoT - Q6",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhy is an on-premise edge server used instead of processing all data in the public cloud?",
         "section": "B",
         "difficulty": "Medium",
-        "score": 8,
+        "score": 1,
         "timeLimit": 90,
         "options": [
           {
             "id": "A",
-            "text": "Edge processing reduces latency for real-time decisions"
+            "text": "Cloud platforms cannot handle BLE data"
           },
           {
             "id": "B",
-            "text": "Cloud storage is too expensive"
+            "text": "Edge processing reduces latency for critical alerts and keeps sensitive data within the hospital"
           },
           {
             "id": "C",
-            "text": "Cloud cannot process video data"
+            "text": "On-premise servers are cheaper than cloud"
           },
           {
             "id": "D",
-            "text": "Edge nodes replace inductive loop sensors"
-          }
-        ],
-        "correctAnswer": "A",
-        "scenario_group": "smart_traffic",
-        "id": 26,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      27,
-      {
-        "type": "scenario-mcq",
-        "title": "Smart Traffic IoT - Q2",
-        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhat technology do emergency vehicles use to communicate with traffic signals in this system?",
-        "section": "B",
-        "difficulty": "Medium",
-        "score": 8,
-        "timeLimit": 90,
-        "options": [
-          {
-            "id": "A",
-            "text": "Bluetooth 5.0"
-          },
-          {
-            "id": "B",
-            "text": "DSRC (Dedicated Short-Range Communication) at 5.9 GHz"
-          },
-          {
-            "id": "C",
-            "text": "Zigbee mesh"
-          },
-          {
-            "id": "D",
-            "text": "LoRaWAN"
+            "text": "Public cloud does not support HL7 FHIR"
           }
         ],
         "correctAnswer": "B",
-        "scenario_group": "smart_traffic",
-        "id": 27,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "scenario_group": "smart_healthcare",
+        "id": 36,
+        "created_at": "2026-03-27T19:20:14.860Z"
       }
     ],
     [
-      28,
+      37,
       {
         "type": "scenario-mcq",
-        "title": "Smart Traffic IoT - Q3",
-        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhat is a spoofing attack in the context of V2I communication?",
+        "title": "Smart Healthcare IoT - Q7",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nSpO2 sensors measure blood oxygen levels using which principle?",
         "section": "B",
         "difficulty": "Medium",
-        "score": 8,
+        "score": 1,
         "timeLimit": 90,
         "options": [
           {
             "id": "A",
-            "text": "Overloading the traffic controller with requests"
+            "text": "Electrical impedance of blood"
           },
           {
             "id": "B",
-            "text": "Intercepting and reading V2I packets"
+            "text": "Ultrasonic pulse reflection"
           },
           {
             "id": "C",
-            "text": "A fake vehicle/device transmitting false identity or data to infrastructure"
+            "text": "Differential light absorption of oxygenated and deoxygenated haemoglobin"
           },
           {
             "id": "D",
-            "text": "Jamming the DSRC frequency band"
+            "text": "Skin temperature differential"
           }
         ],
         "correctAnswer": "C",
-        "scenario_group": "smart_traffic",
-        "id": 28,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "scenario_group": "smart_healthcare",
+        "id": 37,
+        "created_at": "2026-03-27T19:20:14.863Z"
       }
     ],
     [
-      29,
+      38,
       {
         "type": "scenario-mcq",
-        "title": "Smart Traffic IoT - Q4",
-        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhy is LiDAR used alongside inductive loop sensors in this system?",
+        "title": "Smart Healthcare IoT - Q8",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhat causes BLE interference in the ICU environment?",
         "section": "B",
         "difficulty": "Medium",
-        "score": 8,
+        "score": 1,
         "timeLimit": 90,
         "options": [
           {
             "id": "A",
-            "text": "LiDAR is cheaper than loops"
+            "text": "AES-256 encryption overhead"
           },
           {
             "id": "B",
-            "text": "LiDAR works only at night"
+            "text": "HL7 FHIR data parsing delays"
           },
           {
             "id": "C",
-            "text": "LiDAR replaces fibre backhaul"
+            "text": "EHR system network traffic"
           },
           {
             "id": "D",
-            "text": "LiDAR provides 3D spatial data including speed and object classification"
+            "text": "Many BLE devices and other 2.4 GHz equipment operating in a dense RF environment"
           }
         ],
         "correctAnswer": "D",
-        "scenario_group": "smart_traffic",
-        "id": 29,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "scenario_group": "smart_healthcare",
+        "id": 38,
+        "created_at": "2026-03-27T19:20:14.865Z"
       }
     ],
     [
-      30,
+      39,
       {
         "type": "scenario-mcq",
-        "title": "Smart Traffic IoT - Q5",
-        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhat is the purpose of a REST API in this traffic system?",
+        "title": "Smart Healthcare IoT - Q9",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nSecure remote access for off-site physicians should implement which security measure?",
         "section": "B",
         "difficulty": "Medium",
-        "score": 8,
+        "score": 1,
         "timeLimit": 90,
         "options": [
           {
             "id": "A",
-            "text": "To expose real-time traffic data to external apps over HTTP"
+            "text": "Multi-factor authentication (MFA) and encrypted VPN or zero-trust access"
           },
           {
             "id": "B",
-            "text": "To configure traffic light hardware directly"
+            "text": "Unencrypted VPN for speed"
           },
           {
             "id": "C",
-            "text": "To encrypt stored footage"
+            "text": "Shared password across all physicians"
           },
           {
             "id": "D",
-            "text": "To manage V2I transponder pairing"
+            "text": "Direct BLE connection from home"
           }
         ],
         "correctAnswer": "A",
-        "scenario_group": "smart_traffic",
-        "id": 30,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "scenario_group": "smart_healthcare",
+        "id": 39,
+        "created_at": "2026-03-27T19:20:14.867Z"
       }
     ],
     [
-      31,
+      40,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Healthcare IoT - Q10",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nIn IoT healthcare, what is 'data interoperability'?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 1,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "Encrypting data before storage"
+          },
+          {
+            "id": "B",
+            "text": "The ability of different systems and devices to exchange and use health data seamlessly"
+          },
+          {
+            "id": "C",
+            "text": "Streaming ECG in real time"
+          },
+          {
+            "id": "D",
+            "text": "Backing up data to multiple servers"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "smart_healthcare",
+        "id": 40,
+        "created_at": "2026-03-27T19:20:14.870Z"
+      }
+    ],
+    [
+      41,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q1",
+        "title": "Potentiometer and TMP Temperature Sensor - Q1",
+        "scenario": "What is the blue rotary component on the breadboard?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Capacitor"
+          },
+          {
+            "id": "B",
+            "text": "Potentiometer"
+          },
+          {
+            "id": "C",
+            "text": "Inductor"
+          },
+          {
+            "id": "D",
+            "text": "Relay"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 41,
+        "created_at": "2026-03-27T19:20:14.872Z"
+      }
+    ],
+    [
+      42,
+      {
+        "type": "simulation",
+        "title": "Potentiometer and TMP Temperature Sensor - Q2",
+        "scenario": "What does the TMP sensor measure in this circuit?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Humidity"
+          },
+          {
+            "id": "B",
+            "text": "Light intensity"
+          },
+          {
+            "id": "C",
+            "text": "Temperature"
+          },
+          {
+            "id": "D",
+            "text": "Pressure"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 42,
+        "created_at": "2026-03-27T19:20:14.875Z"
+      }
+    ],
+    [
+      43,
+      {
+        "type": "simulation",
+        "title": "Potentiometer and TMP Temperature Sensor - Q3",
+        "scenario": "What type of output do both the potentiometer and TMP sensor provide?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Digital HIGH/LOW"
+          },
+          {
+            "id": "B",
+            "text": "PWM signal"
+          },
+          {
+            "id": "C",
+            "text": "I2C serial data"
+          },
+          {
+            "id": "D",
+            "text": "Analog voltage"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 43,
+        "created_at": "2026-03-27T19:20:14.878Z"
+      }
+    ],
+    [
+      44,
+      {
+        "type": "simulation",
+        "title": "Potentiometer and TMP Temperature Sensor - Q4",
+        "scenario": "Which Arduino function reads values from these sensors?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "digitalRead()"
+          },
+          {
+            "id": "B",
+            "text": "analogRead()"
+          },
+          {
+            "id": "C",
+            "text": "pulseIn()"
+          },
+          {
+            "id": "D",
+            "text": "Wire.read()"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 44,
+        "created_at": "2026-03-27T19:20:14.881Z"
+      }
+    ],
+    [
+      45,
+      {
+        "type": "simulation",
+        "title": "Potentiometer and TMP Temperature Sensor - Q5",
+        "scenario": "What colour wires carry GND in this circuit?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Red"
+          },
+          {
+            "id": "B",
+            "text": "Green"
+          },
+          {
+            "id": "C",
+            "text": "Black"
+          },
+          {
+            "id": "D",
+            "text": "Yellow"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 45,
+        "created_at": "2026-03-27T19:20:14.885Z"
+      }
+    ],
+    [
+      46,
+      {
+        "type": "simulation",
+        "title": "Potentiometer and TMP Temperature Sensor - Q6",
+        "scenario": "What is the output sensitivity of a typical TMP36 sensor?",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "1V per degree C"
+          },
+          {
+            "id": "B",
+            "text": "100mV per degree C"
+          },
+          {
+            "id": "C",
+            "text": "10mV per degree C"
+          },
+          {
+            "id": "D",
+            "text": "0.1mV per degree C"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 46,
+        "created_at": "2026-03-27T19:20:14.888Z"
+      }
+    ],
+    [
+      47,
+      {
+        "type": "simulation",
+        "title": "Potentiometer and TMP Temperature Sensor - Q7",
+        "scenario": "With a potentiometer wiper at midpoint (5V supply), analogRead() returns:",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "0"
+          },
+          {
+            "id": "B",
+            "text": "1023"
+          },
+          {
+            "id": "C",
+            "text": "255"
+          },
+          {
+            "id": "D",
+            "text": "512"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 47,
+        "created_at": "2026-03-27T19:20:14.891Z"
+      }
+    ],
+    [
+      48,
+      {
+        "type": "simulation",
+        "title": "Potentiometer and TMP Temperature Sensor - Q8",
+        "scenario": "To convert TMP36 analogRead() to Celsius, the correct formula is:",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "(reading x 5.0 / 1024 - 0.5) x 100"
+          },
+          {
+            "id": "B",
+            "text": "reading / 1023 x 100"
+          },
+          {
+            "id": "C",
+            "text": "reading x 0.488"
+          },
+          {
+            "id": "D",
+            "text": "(reading - 500) / 10"
+          }
+        ],
+        "correctAnswer": "A",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 48,
+        "created_at": "2026-03-27T19:20:14.893Z"
+      }
+    ],
+    [
+      49,
+      {
+        "type": "simulation",
+        "title": "Potentiometer and TMP Temperature Sensor - Q9",
+        "scenario": "What is the function of the middle (wiper) pin of the potentiometer?",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Always outputs 5V"
+          },
+          {
+            "id": "B",
+            "text": "Always outputs GND"
+          },
+          {
+            "id": "C",
+            "text": "Outputs variable voltage based on rotation"
+          },
+          {
+            "id": "D",
+            "text": "Resets the circuit"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 49,
+        "created_at": "2026-03-27T19:20:14.896Z"
+      }
+    ],
+    [
+      50,
+      {
+        "type": "simulation",
+        "title": "Potentiometer and TMP Temperature Sensor - Q10",
+        "scenario": "What is the operating voltage range of a typical TMP36 sensor?",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 1,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "1.8V-5.5V"
+          },
+          {
+            "id": "B",
+            "text": "6V-12V"
+          },
+          {
+            "id": "C",
+            "text": "0.5V-2V"
+          },
+          {
+            "id": "D",
+            "text": "5V only"
+          }
+        ],
+        "correctAnswer": "A",
+        "scenario_group": "circuit_4_pot_tmp",
+        "imageUrl": "/circuit_pics/Picture4.png",
+        "id": 50,
+        "created_at": "2026-03-27T19:20:14.899Z"
+      }
+    ],
+    [
+      51,
+      {
+        "type": "simulation",
+        "title": "PIR Motion Sensor with Buzzer - Q1",
         "scenario": "What does PIR stand for?",
         "section": "C",
         "difficulty": "Easy",
-        "score": 5,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2337,19 +3093,19 @@
         "correctAnswer": "B",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 31,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 51,
+        "created_at": "2026-03-27T19:20:14.902Z"
       }
     ],
     [
-      32,
+      52,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q2",
+        "title": "PIR Motion Sensor with Buzzer - Q2",
         "scenario": "What component produces the sound alert in this circuit?",
         "section": "C",
         "difficulty": "Easy",
-        "score": 5,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2372,19 +3128,19 @@
         "correctAnswer": "C",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 32,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 52,
+        "created_at": "2026-03-27T19:20:14.905Z"
       }
     ],
     [
-      33,
+      53,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q3",
+        "title": "PIR Motion Sensor with Buzzer - Q3",
         "scenario": "What colour are the 5V power wires in this circuit?",
         "section": "C",
         "difficulty": "Easy",
-        "score": 5,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2407,19 +3163,19 @@
         "correctAnswer": "D",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 33,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 53,
+        "created_at": "2026-03-27T19:20:14.907Z"
       }
     ],
     [
-      34,
+      54,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q4",
+        "title": "PIR Motion Sensor with Buzzer - Q4",
         "scenario": "What signal does the PIR sensor output when motion is detected?",
         "section": "C",
         "difficulty": "Easy",
-        "score": 5,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2442,19 +3198,19 @@
         "correctAnswer": "C",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 34,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 54,
+        "created_at": "2026-03-27T19:20:14.911Z"
       }
     ],
     [
-      35,
+      55,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q5",
+        "title": "PIR Motion Sensor with Buzzer - Q5",
         "scenario": "Which component detects the presence of a person in this circuit?",
         "section": "C",
         "difficulty": "Easy",
-        "score": 5,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2477,19 +3233,19 @@
         "correctAnswer": "D",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 35,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 55,
+        "created_at": "2026-03-27T19:20:14.914Z"
       }
     ],
     [
-      36,
+      56,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q6",
+        "title": "PIR Motion Sensor with Buzzer - Q6",
         "scenario": "The dome-shaped lens on the PIR sensor that focuses infrared radiation is called:",
         "section": "C",
         "difficulty": "Hard",
-        "score": 8,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2512,19 +3268,19 @@
         "correctAnswer": "B",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 36,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 56,
+        "created_at": "2026-03-27T19:20:14.916Z"
       }
     ],
     [
-      37,
+      57,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q7",
+        "title": "PIR Motion Sensor with Buzzer - Q7",
         "scenario": "How many pins does a typical PIR sensor module have?",
         "section": "C",
         "difficulty": "Hard",
-        "score": 8,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2547,19 +3303,19 @@
         "correctAnswer": "C",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 37,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 57,
+        "created_at": "2026-03-27T19:20:14.920Z"
       }
     ],
     [
-      38,
+      58,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q8",
+        "title": "PIR Motion Sensor with Buzzer - Q8",
         "scenario": "Which Arduino pinMode() is set for the pin receiving the PIR OUTPUT?",
         "section": "C",
         "difficulty": "Hard",
-        "score": 8,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2582,19 +3338,19 @@
         "correctAnswer": "D",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 38,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 58,
+        "created_at": "2026-03-27T19:20:14.922Z"
       }
     ],
     [
-      39,
+      59,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q9",
+        "title": "PIR Motion Sensor with Buzzer - Q9",
         "scenario": "After detecting motion the PIR stays HIGH for a few seconds because of:",
         "section": "C",
         "difficulty": "Hard",
-        "score": 8,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2617,19 +3373,19 @@
         "correctAnswer": "B",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 39,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 59,
+        "created_at": "2026-03-27T19:20:14.924Z"
       }
     ],
     [
-      40,
+      60,
       {
         "type": "simulation",
-        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q10",
+        "title": "PIR Motion Sensor with Buzzer - Q10",
         "scenario": "What is the typical maximum motion-detection range of a PIR sensor?",
         "section": "C",
         "difficulty": "Hard",
-        "score": 8,
+        "score": 1,
         "timeLimit": 75,
         "options": [
           {
@@ -2652,362 +3408,12 @@
         "correctAnswer": "B",
         "scenario_group": "circuit_1_pir_buzzer",
         "imageUrl": "/circuit_pics/Picture1.png",
-        "id": 40,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 60,
+        "created_at": "2026-03-27T19:20:14.927Z"
       }
     ],
     [
-      41,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q1",
-        "scenario": "What does LDR stand for?",
-        "section": "C",
-        "difficulty": "Easy",
-        "score": 5,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "Low Density Resistor"
-          },
-          {
-            "id": "B",
-            "text": "Light Dependent Resistor"
-          },
-          {
-            "id": "C",
-            "text": "Laser Detection Relay"
-          },
-          {
-            "id": "D",
-            "text": "Linear Digital Resistor"
-          }
-        ],
-        "correctAnswer": "B",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 41,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      42,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q2",
-        "scenario": "What type of Arduino pin reads the LDR value in this circuit?",
-        "section": "C",
-        "difficulty": "Easy",
-        "score": 5,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "Digital pin"
-          },
-          {
-            "id": "B",
-            "text": "GND pin"
-          },
-          {
-            "id": "C",
-            "text": "Analog pin (A0)"
-          },
-          {
-            "id": "D",
-            "text": "TX pin"
-          }
-        ],
-        "correctAnswer": "C",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 42,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      43,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q3",
-        "scenario": "What output component is visible at the top-left of this circuit?",
-        "section": "C",
-        "difficulty": "Easy",
-        "score": 5,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "Green LED"
-          },
-          {
-            "id": "B",
-            "text": "Buzzer"
-          },
-          {
-            "id": "C",
-            "text": "Red LED"
-          },
-          {
-            "id": "D",
-            "text": "Infrared sensor"
-          }
-        ],
-        "correctAnswer": "C",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 43,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      44,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q4",
-        "scenario": "What happens to LDR resistance when exposed to bright light?",
-        "section": "C",
-        "difficulty": "Easy",
-        "score": 5,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "Increases"
-          },
-          {
-            "id": "B",
-            "text": "Stays constant"
-          },
-          {
-            "id": "C",
-            "text": "Decreases"
-          },
-          {
-            "id": "D",
-            "text": "Becomes infinite"
-          }
-        ],
-        "correctAnswer": "C",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 44,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      45,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q5",
-        "scenario": "Which Arduino function reads the LDR analog value?",
-        "section": "C",
-        "difficulty": "Easy",
-        "score": 5,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "digitalRead()"
-          },
-          {
-            "id": "B",
-            "text": "analogRead()"
-          },
-          {
-            "id": "C",
-            "text": "pulseIn()"
-          },
-          {
-            "id": "D",
-            "text": "Serial.read()"
-          }
-        ],
-        "correctAnswer": "B",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 45,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      46,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q6",
-        "scenario": "What is the full range of values returned by analogRead() on Arduino Uno?",
-        "section": "C",
-        "difficulty": "Hard",
-        "score": 8,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "0-255"
-          },
-          {
-            "id": "B",
-            "text": "0-100"
-          },
-          {
-            "id": "C",
-            "text": "0-4095"
-          },
-          {
-            "id": "D",
-            "text": "0-1023"
-          }
-        ],
-        "correctAnswer": "D",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 46,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      47,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q7",
-        "scenario": "Why is a fixed resistor paired with the LDR in this circuit?",
-        "section": "C",
-        "difficulty": "Hard",
-        "score": 8,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "To power the LDR"
-          },
-          {
-            "id": "B",
-            "text": "To form a voltage divider for analog reading"
-          },
-          {
-            "id": "C",
-            "text": "To filter visible light"
-          },
-          {
-            "id": "D",
-            "text": "To protect the 5V pin"
-          }
-        ],
-        "correctAnswer": "B",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 47,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      48,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q8",
-        "scenario": "When the room is completely dark, analogRead(A0) returns a value close to:",
-        "section": "C",
-        "difficulty": "Hard",
-        "score": 8,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "0"
-          },
-          {
-            "id": "B",
-            "text": "512"
-          },
-          {
-            "id": "C",
-            "text": "1023"
-          },
-          {
-            "id": "D",
-            "text": "-1"
-          }
-        ],
-        "correctAnswer": "C",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 48,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      49,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q9",
-        "scenario": "Which real-world IoT application best uses this LDR circuit?",
-        "section": "C",
-        "difficulty": "Hard",
-        "score": 8,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "Heart rate monitor"
-          },
-          {
-            "id": "B",
-            "text": "Automatic street light"
-          },
-          {
-            "id": "C",
-            "text": "Motor speed control"
-          },
-          {
-            "id": "D",
-            "text": "GPS tracking"
-          }
-        ],
-        "correctAnswer": "B",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 49,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      50,
-      {
-        "type": "simulation",
-        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q10",
-        "scenario": "If the LDR is placed under direct bright sunlight, analogRead() returns a value close to:",
-        "section": "C",
-        "difficulty": "Hard",
-        "score": 8,
-        "timeLimit": 75,
-        "options": [
-          {
-            "id": "A",
-            "text": "1023"
-          },
-          {
-            "id": "B",
-            "text": "0"
-          },
-          {
-            "id": "C",
-            "text": "512"
-          },
-          {
-            "id": "D",
-            "text": "Negative"
-          }
-        ],
-        "correctAnswer": "B",
-        "scenario_group": "circuit_2_ldr_led",
-        "imageUrl": "/circuit_pics/Picture2.png",
-        "id": 50,
-        "created_at": "2026-03-27T15:31:43.865Z"
-      }
-    ],
-    [
-      51,
+      61,
       {
         "type": "matching",
         "title": "Interactive Challenge Q1: IoT Architecture Layer Arrangement",
@@ -3039,19 +3445,19 @@
           }
         ],
         "correctAnswer": "{\"application\":\"application\",\"middleware\":\"middleware\",\"network\":\"network\",\"perception\":\"perception\"}",
-        "id": 51,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 61,
+        "created_at": "2026-03-27T19:20:14.930Z"
       }
     ],
     [
-      52,
+      62,
       {
         "type": "component-matching",
         "title": "Interactive Challenge Q2: Component Function Matching",
         "scenario": "Match each component to its primary function.",
         "section": "D",
         "difficulty": "Medium",
-        "score": 4,
+        "score": 8,
         "timeLimit": 240,
         "matchingPairs": [
           {
@@ -3096,19 +3502,19 @@
           }
         ],
         "correctAnswer": "{\"A\":\"A\",\"B\":\"B\",\"C\":\"C\",\"D\":\"D\",\"E\":\"E\",\"F\":\"F\",\"G\":\"G\",\"H\":\"H\"}",
-        "id": 52,
-        "created_at": "2026-03-27T15:31:43.865Z"
+        "id": 62,
+        "created_at": "2026-03-27T19:20:14.932Z"
       }
     ],
     [
-      53,
+      63,
       {
         "type": "component-matching",
         "title": "Interactive Challenge Q3: Interface and Connection Type Matching",
         "scenario": "Match each component to the interface/connection type used with the microcontroller.",
         "section": "D",
         "difficulty": "Medium",
-        "score": 4,
+        "score": 8,
         "timeLimit": 240,
         "matchingPairs": [
           {
@@ -3153,19 +3559,19 @@
           }
         ],
         "correctAnswer": "{\"A\":\"A\",\"B\":\"B\",\"C\":\"C\",\"D\":\"D\",\"E\":\"E\",\"F\":\"F\",\"G\":\"G\",\"H\":\"H\"}",
-        "id": 53,
-        "created_at": "2026-03-27T15:31:43.866Z"
+        "id": 63,
+        "created_at": "2026-03-27T19:20:14.935Z"
       }
     ],
     [
-      54,
+      64,
       {
         "type": "matching",
         "title": "Interactive Challenge Q4: Code Logic Sequencing",
         "scenario": "Arrange blocks in correct order for an IoT program (Wi-Fi + DHT22 + HTTP upload).",
         "section": "D",
         "difficulty": "Hard",
-        "score": 4,
+        "score": 11,
         "timeLimit": 360,
         "matchingPairs": [
           {
@@ -3225,61 +3631,61 @@
           }
         ],
         "correctAnswer": "{\"D\":\"D\",\"H\":\"H\",\"I\":\"I\",\"K\":\"K\",\"J\":\"J\",\"F\":\"F\",\"B\":\"B\",\"E\":\"E\",\"C\":\"C\",\"G\":\"G\",\"A\":\"A\"}",
-        "id": 54,
-        "created_at": "2026-03-27T15:31:43.866Z"
+        "id": 64,
+        "created_at": "2026-03-27T19:20:14.938Z"
       }
     ],
     [
-      55,
+      65,
       {
         "type": "matching",
         "title": "Interactive Challenge Q5: Sensor-Actuator Scenario Mapping",
         "scenario": "Match each scenario with the correct sensor and actuator pair.",
         "section": "D",
         "difficulty": "Hard",
-        "score": 4,
+        "score": 5,
         "timeLimit": 300,
         "matchingPairs": [
           {
             "id": "AP",
             "left": "Smart Irrigation System",
-            "right": "Soil Moisture Sensor + Water Pump / Solenoid Valve"
+            "right": "Soil Moisture Sensor + Water Pump"
           },
           {
             "id": "BQ",
             "left": "Automatic Street Light",
-            "right": "LDR + LED / Street Light"
+            "right": "LDR + LED"
           },
           {
             "id": "CR",
             "left": "Smoke Detection and Alarm",
-            "right": "MQ-135 / Smoke Sensor + Buzzer"
+            "right": "MQ-135 + Buzzer"
           },
           {
             "id": "DS",
             "left": "Smart Parking System",
-            "right": "Ultrasonic Sensor + Servo Motor / Gate"
+            "right": "Ultrasonic Sensor + Servo Motor"
           },
           {
             "id": "ET",
             "left": "Temperature-Controlled Fan",
-            "right": "DHT22 / Temperature Sensor + DC Fan / Relay Module"
+            "right": "DHT22 + DC Fan"
           }
         ],
         "correctAnswer": "{\"AP\":\"AP\",\"BQ\":\"BQ\",\"CR\":\"CR\",\"DS\":\"DS\",\"ET\":\"ET\"}",
-        "id": 55,
-        "created_at": "2026-03-27T15:31:43.866Z"
+        "id": 65,
+        "created_at": "2026-03-27T19:20:14.941Z"
       }
     ],
     [
-      56,
+      66,
       {
         "type": "matching",
         "title": "Interactive Challenge Q6: Protocol and Communication Match (Bonus)",
         "scenario": "Bonus: Match each use case to the best communication protocol.",
         "section": "D",
         "difficulty": "Hard",
-        "score": 4,
+        "score": 6,
         "timeLimit": 240,
         "matchingPairs": [
           {
@@ -3314,60 +3720,92 @@
           }
         ],
         "correctAnswer": "{\"A1\":\"A1\",\"B2\":\"B2\",\"C3\":\"C3\",\"D4\":\"D4\",\"B5\":\"B5\",\"E6\":\"E6\"}",
-        "id": 56,
-        "created_at": "2026-03-27T15:31:43.866Z"
+        "id": 66,
+        "created_at": "2026-03-27T19:20:14.944Z"
       }
     ]
   ],
   "round1Responses": [
     {
       "id": 1,
-      "participant_id": "TST001",
-      "question_id": 1,
-      "answer": "A",
-      "is_correct": false,
-      "score_obtained": 0,
+      "participant_id": "JF6DJM",
+      "question_id": 61,
+      "answer": "{\"perception\":\"perception\",\"network\":\"network\",\"middleware\":\"middleware\",\"application\":\"application\"}",
+      "is_correct": true,
+      "score_obtained": 4,
       "time_taken": 5,
-      "answered_at": "2026-03-27T15:32:58.011Z"
+      "answered_at": "2026-03-27T19:34:37.575Z"
+    },
+    {
+      "id": 2,
+      "participant_id": "JF6DJM",
+      "question_id": 62,
+      "answer": "{\"A\":\"A\",\"B\":\"B\",\"C\":\"C\",\"D\":\"D\",\"E\":\"E\",\"F\":\"F\",\"G\":\"X\",\"H\":\"Y\"}",
+      "is_correct": false,
+      "score_obtained": 6,
+      "time_taken": 30,
+      "answered_at": "2026-03-27T19:34:28.598Z"
     }
   ],
-  "round1Results": [],
+  "round1Results": [
+    [
+      "JF6DJM",
+      {
+        "id": 1,
+        "participant_id": "JF6DJM",
+        "total_score": 0,
+        "section_scores": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "total_questions": 66,
+        "correct_answers": 0,
+        "completion_status": "completed",
+        "started_at": "2026-03-27T19:20:14.948Z",
+        "completed_at": "2026-03-27T19:20:56.396Z",
+        "tab_switches": 0,
+        "violations": 0
+      }
+    ]
+  ],
   "round1Sessions": [
     [
-      "TST001",
+      "JF6DJM",
       {
-        "participant_id": "TST001",
+        "participant_id": "JF6DJM",
         "question_ids": [
-          1,
-          3,
-          9,
-          5,
-          15,
+          8,
           19,
+          15,
+          16,
+          5,
+          1,
+          12,
+          2,
+          6,
+          20,
+          14,
+          4,
+          13,
+          18,
+          9,
+          7,
           10,
           11,
-          8,
-          7,
           17,
-          4,
-          6,
-          14,
-          13,
-          2,
-          16,
-          20,
-          18,
-          12,
-          26,
-          27,
-          28,
-          29,
-          30,
+          3,
           21,
           22,
           23,
           24,
           25,
+          26,
+          27,
+          28,
+          29,
+          30,
           31,
           32,
           33,
@@ -3388,23 +3826,34 @@
           48,
           49,
           50,
-          54,
-          56,
-          55,
           51,
           52,
-          53
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          66,
+          62,
+          63,
+          64,
+          65
         ],
-        "started_at": "2026-03-27T15:31:50.769Z",
-        "expires_at": "2026-03-27T16:31:50.769Z",
+        "started_at": "2026-03-27T19:34:09.652Z",
+        "expires_at": "2026-03-27T20:34:09.652Z",
         "submitted": false
       }
     ]
   ],
   "round1SectionAccess": [
     [
-      "TST001",
-      3
+      "JF6DJM",
+      0
     ]
-  ]
+  ],
+  "leaderboard_public_enabled": false
 }

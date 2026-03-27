@@ -1,10 +1,10 @@
 {
   "app": {
-    "[project]/app/admin/page": [
+    "[project]/app/page": [
       "static/media/0acc7fdf55eb3220-s.p.12o-f1.6qra-s.woff2",
       "static/media/0c89a48fa5027cee-s.p.0rd3rjvnnhw7n.woff2"
     ],
-    "[project]/app/page": [
+    "[project]/app/round1/[id]/page": [
       "static/media/0acc7fdf55eb3220-s.p.12o-f1.6qra-s.woff2",
       "static/media/0c89a48fa5027cee-s.p.0rd3rjvnnhw7n.woff2"
     ]

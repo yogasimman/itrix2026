@@ -333,6 +333,20 @@ function loadPersistedData(): void {
       }
       if (parsed.round1Questions && Array.isArray(parsed.round1Questions)) {
         store.round1Questions = new Map(parsed.round1Questions);
+        // Migration: enforce correct scoring rules on load
+        store.round1Questions.forEach((q, id) => {
+          let correctScore: number;
+          if (q.section === 'D' && q.matchingPairs) {
+            correctScore = q.matchingPairs.length;
+          } else if (q.section === 'A' || q.section === 'B' || q.section === 'C') {
+            correctScore = 1;
+          } else {
+            return;
+          }
+          if (q.score !== correctScore) {
+            store.round1Questions.set(id, { ...q, score: correctScore });
+          }
+        });
       }
       if (parsed.round1Results && Array.isArray(parsed.round1Results)) {
         store.round1Results = new Map(parsed.round1Results);
@@ -1213,49 +1227,25 @@ export function recordRound1Response(
     isCorrect = JSON.stringify(Array.isArray(answer) ? answer.sort() : [answer]) ===
                JSON.stringify(correctAnswers.sort());
   } else if (question.type === 'matching' || question.type === 'component-matching') {
-    const normalize = (value: unknown): string => {
+    const parseMatchObj = (value: unknown): Record<string, string> => {
       if (typeof value === 'string') {
-        try {
-          const parsed = JSON.parse(value);
-          return JSON.stringify(parsed);
-        } catch {
-          return value;
-        }
+        try { return JSON.parse(value); } catch { return {}; }
       }
-      return JSON.stringify(value);
+      if (typeof value === 'object' && value !== null) return value as Record<string, string>;
+      return {};
     };
-    const normalizedAnswer = normalize(answer);
-    const normalizedCorrect = normalize(question.correctAnswer);
-    isCorrect = normalizedAnswer === normalizedCorrect;
-
-    if (!isCorrect && question.section === 'D' && question.title.includes('Code Logic Sequencing')) {
-      try {
-        const submitted = typeof answer === 'string' ? JSON.parse(answer) : (answer as Record<string, string>);
-        const expected = typeof question.correctAnswer === 'string'
-          ? JSON.parse(question.correctAnswer)
-          : (question.correctAnswer as Record<string, string>);
-
-        const keys = Object.keys(expected || {});
-        let errors = 0;
-        keys.forEach((key) => {
-          if (!submitted || submitted[key] !== expected[key]) {
-            errors += 1;
-          }
-        });
-
-        if (errors <= 2) {
-          scoreObtained = 3;
-        } else if (errors <= 4) {
-          scoreObtained = 2;
-        } else if (errors <= 6) {
-          scoreObtained = 1;
-        } else {
-          scoreObtained = 0;
-        }
-      } catch {
-        scoreObtained = 0;
+    const submittedObj = parseMatchObj(answer);
+    const expectedObj = parseMatchObj(question.correctAnswer);
+    const expectedKeys = Object.keys(expectedObj);
+    let correctPairs = 0;
+    expectedKeys.forEach((key) => {
+      if (submittedObj[key] !== undefined && submittedObj[key] === expectedObj[key]) {
+        correctPairs++;
       }
-    }
+    });
+    const totalPairs = expectedKeys.length;
+    isCorrect = totalPairs > 0 && correctPairs === totalPairs;
+    scoreObtained = correctPairs;
   } else if (question.type === 'simulation') {
     isCorrect = answer === question.correctAnswer;
   } else if (question.type === 'connection-evaluation') {
@@ -1281,8 +1271,11 @@ export function recordRound1Response(
     }
   }
   
-  if (isCorrect) {
-    scoreObtained = question.score;
+  if (question.section === 'D') {
+    // Section D (matching/component-matching): scoreObtained is already set to correctly matched pairs count (1 per pair)
+  } else {
+    // Sections A, B, C: 1 mark per question, all-or-nothing
+    scoreObtained = isCorrect ? 1 : 0;
   }
   
   const existingIdx = store.round1Responses.findIndex(
