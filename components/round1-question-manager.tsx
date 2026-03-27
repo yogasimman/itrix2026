@@ -221,7 +221,7 @@ export function Round1QuestionManager() {
                     {activeQuestion.matchingPairs.map((pair) => (
                       <div key={pair.id} className="rounded border bg-muted/40 px-3 py-2">
                         <span className="font-medium">{pair.left}</span>
-                        <span className="mx-2 text-muted-foreground">-></span>
+                        <span className="mx-2 text-muted-foreground">-&gt;</span>
                         <span>{pair.right}</span>
                       </div>
                     ))}
