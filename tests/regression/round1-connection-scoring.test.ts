@@ -12,12 +12,12 @@ function makeJsonRequest(body: unknown): Request {
   });
 }
 
-describe('round1 connection scoring regression', () => {
+describe('round1 section3 scoring regression', () => {
   beforeEach(() => {
     (globalThis as { __iotStore?: unknown }).__iotStore = undefined;
   });
 
-  it('keeps connection scoring deterministic for full-match and partial-match submissions', async () => {
+  it('keeps image-based Section 3 MCQ scoring deterministic for correct and incorrect submissions', async () => {
     await generatePool(makeJsonRequest({ action: 'generate_curated_round1_pool' }) as never);
 
     createParticipant('Student', 'p-connect', 'Team C', 'round1');
@@ -28,26 +28,19 @@ describe('round1 connection scoring regression', () => {
       questions: Array<{
         id: number;
         type: string;
-        sourceNodes?: string[];
-        targetNodes?: string[];
-        expectedConnections?: Array<{ from: string; to: string }>;
+        section: string;
+        correctAnswer?: string;
       }>;
     };
 
-    const connectionQuestion = startBody.questions.find((q) => q.type === 'connection-evaluation');
-    expect(connectionQuestion).toBeDefined();
-
-    const expected = connectionQuestion!.expectedConnections!;
-    const fullAnswer = expected.reduce<Record<string, string>>((acc, edge) => {
-      acc[edge.from] = edge.to;
-      return acc;
-    }, {});
+    const section3Question = startBody.questions.find((q) => q.type === 'simulation' && q.section === 'C');
+    expect(section3Question).toBeDefined();
 
     const fullRes = await submitResponse(
       makeJsonRequest({
         participantId: 'p-connect',
-        questionId: connectionQuestion!.id,
-        answer: JSON.stringify(fullAnswer),
+        questionId: section3Question!.id,
+        answer: section3Question!.correctAnswer || 'A',
         timeTaken: 20,
       }) as never
     );
@@ -56,17 +49,13 @@ describe('round1 connection scoring regression', () => {
     expect(fullRes.status).toBe(201);
     expect(fullData.response.is_correct).toBe(true);
 
-    const partialAnswer = { ...fullAnswer };
-    const firstKey = Object.keys(partialAnswer)[0];
-    const candidatePins = ['arduino.d2', 'arduino.d7', 'arduino.d8', 'arduino.d9'];
-    const wrongPin = candidatePins.find((pin) => pin !== partialAnswer[firstKey]) || 'arduino.d2';
-    partialAnswer[firstKey] = wrongPin;
+    const wrongAnswer = ['A', 'B', 'C', 'D'].find((opt) => opt !== (section3Question!.correctAnswer || 'A')) || 'B';
 
     const partialRes = await submitResponse(
       makeJsonRequest({
         participantId: 'p-connect',
-        questionId: connectionQuestion!.id,
-        answer: JSON.stringify(partialAnswer),
+        questionId: section3Question!.id,
+        answer: wrongAnswer,
         timeTaken: 20,
       }) as never
     );

@@ -192,6 +192,60 @@
   pointer-events: none;
 }
 
+.sensor-sprint-banner {
+  position: relative;
+  border: 1px solid rgb(62 232 214 / 30%);
+  border-radius: 1rem;
+  background:
+    linear-gradient(120deg, rgb(4 16 31 / 82%), rgb(6 26 41 / 72%)),
+    radial-gradient(circle at 10% 35%, rgb(62 232 214 / 20%), transparent 52%);
+  padding: 1.05rem 1.25rem 1.2rem;
+  overflow: hidden;
+}
+
+.sensor-sprint-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgb(123 246 255 / 45%);
+  border-radius: 9999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: rgb(210 251 255 / 96%);
+  background: rgb(45 188 212 / 16%);
+}
+
+.sensor-sprint-title {
+  margin-top: 0.6rem;
+  margin-bottom: 0;
+  font-size: clamp(2rem, 6.8vw, 4.9rem);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, rgb(229 253 255), rgb(133 234 254) 55%, rgb(93 219 245));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 16px rgb(62 232 214 / 24%);
+}
+
+.sensor-sprint-trace {
+  margin-top: 0.7rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.sensor-sprint-trace span {
+  display: block;
+  height: 0.33rem;
+  border: 1px solid rgb(123 246 255 / 40%);
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgb(23 91 116 / 70%), rgb(106 237 251 / 50%), rgb(23 91 116 / 70%));
+}
+
 @keyframes pulse-ring {
   0% {
     box-shadow: 0 0 0 0 rgb(78 255 198 / 52%);

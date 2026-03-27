@@ -31,6 +31,7 @@ interface Round1QuestionProps {
     timeLimit: number;
     options?: Array<{ id: string; text: string }>;
     matchingPairs?: Array<{ id: string; left: string; right: string }>;
+    imageUrl?: string;
     codeSnippet?: string;
     sourceNodes?: string[];
     targetNodes?: string[];
@@ -141,7 +142,7 @@ export function Round1Question({
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <CardTitle className="text-lg text-cyan-50">{question.title}</CardTitle>
+              {question.title ? <CardTitle className="text-lg text-cyan-50">{question.title}</CardTitle> : null}
               <CardDescription className="mt-2 text-cyan-100/70">{question.scenario}</CardDescription>
             </div>
             <div className="flex gap-2">
@@ -165,6 +166,16 @@ export function Round1Question({
         </CardHeader>
 
         <CardContent className="space-y-6">
+          {question.imageUrl && (
+            <div className="overflow-hidden rounded-lg border border-white/20 bg-slate-950/60">
+              <img
+                src={question.imageUrl}
+                alt={`${question.title} circuit diagram`}
+                className="max-h-[360px] w-full object-contain"
+              />
+            </div>
+          )}
+
           {isMcqType(question.type) && (
             <RadioGroup
               value={selectedAnswer}
@@ -231,9 +242,9 @@ export function Round1Question({
           )}
 
           {isMatchingType(question.type) && (
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-3">
+              <h4 className="text-sm font-medium">Match Items</h4>
               <div className="space-y-3">
-                <h4 className="text-sm font-medium">Left Items</h4>
                 {question.matchingPairs?.map((pair) => (
                   <div key={`left-${pair.id}`} className="space-y-2 rounded-lg border border-white/15 bg-slate-900/35 p-3 text-sm">
                     <div className="font-medium">{pair.left}</div>
@@ -256,15 +267,6 @@ export function Round1Question({
                         </option>
                       ))}
                     </select>
-                  </div>
-                ))}
-              </div>
-
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium">Right Items</h4>
-                {question.matchingPairs?.map((pair) => (
-                  <div key={`right-${pair.id}`} className="rounded-lg bg-slate-900/45 p-3 text-sm text-cyan-50">
-                    {pair.right}
                   </div>
                 ))}
               </div>

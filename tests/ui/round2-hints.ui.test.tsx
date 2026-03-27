@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { ScenarioDisplay } from '@/components/scenario-display';
 
 describe('Round2 hints UI', () => {
-  it('renders component-access score summary without step hint controls', () => {
+  it('renders hint usage summary without exposing score to participants', () => {
     const html = renderToStaticMarkup(
       <ScenarioDisplay
         title="Smart Bin"
@@ -21,8 +21,10 @@ describe('Round2 hints UI', () => {
       />
     );
 
-    expect(html).toContain('Round 2 Component Access Scoring');
-    expect(html).toContain('Components Accessed');
+    expect(html).toContain('Round 2 Hint Usage Summary');
+    expect(html).toContain('Hint Packs Opened');
+    expect(html).toContain('Penalty Used');
+    expect(html).not.toContain('Current Score');
     expect(html).not.toContain('Get Hint L1');
   });
 });

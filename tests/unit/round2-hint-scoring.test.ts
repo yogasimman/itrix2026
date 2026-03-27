@@ -25,7 +25,7 @@ describe('round2 component access scoring (unit)', () => {
       title: 'Component Access Scenario',
       situation: 'Test setup',
       what_to_build: 'Build system',
-      team_number: null,
+      team_number: 1,
     });
     setScenarioComponents(9001, [201, 202, 203]);
 
@@ -53,7 +53,7 @@ describe('round2 component access scoring (unit)', () => {
       title: 'Idempotency Scenario',
       situation: 'Repeated component access test',
       what_to_build: 'Single',
-      team_number: null,
+      team_number: 2,
     });
     setScenarioComponents(9002, [301]);
 
@@ -82,7 +82,7 @@ describe('round2 component access scoring (unit)', () => {
       title: 'Penalty Scale Scenario',
       situation: 'Scale test',
       what_to_build: 'Scale',
-      team_number: null,
+      team_number: 3,
     });
     setScenarioComponents(9003, [401, 402, 403, 404]);
 

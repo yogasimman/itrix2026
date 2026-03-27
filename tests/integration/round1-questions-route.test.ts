@@ -27,18 +27,18 @@ describe('round1 questions route integration', () => {
     const body = (await startRes.json()) as { questions: Array<{ type: string; difficulty: string }> };
 
     expect(startRes.status).toBe(200);
-    expect(body.questions).toHaveLength(34);
+    expect(body.questions).toHaveLength(56);
 
     const mcq = body.questions.filter((q) => q.type === 'mcq');
     const scenario = body.questions.filter((q) => q.type === 'scenario-mcq');
-    const connection = body.questions.filter((q) => q.type === 'connection-evaluation');
-    const snippet = body.questions.filter((q) => q.type === 'snippet-coding');
+    const circuit = body.questions.filter((q) => q.type === 'simulation');
+    const challenge = body.questions.filter((q) => q.section === 'D');
 
     expect(mcq).toHaveLength(20);
     expect(mcq.filter((q) => q.difficulty === 'Easy')).toHaveLength(10);
     expect(mcq.filter((q) => q.difficulty === 'Hard')).toHaveLength(10);
     expect(scenario).toHaveLength(10);
-    expect(connection).toHaveLength(2);
-    expect(snippet).toHaveLength(2);
+    expect(circuit).toHaveLength(20);
+    expect(challenge).toHaveLength(6);
   });
 });

@@ -70,7 +70,10 @@ export async function GET(
     
     if (participant.scenario_id) {
       scenario = getScenario(participant.scenario_id);
-      const scenarioComps = getScenarioComponents(participant.scenario_id);
+    }
+
+    if (scenario) {
+      const scenarioComps = getScenarioComponents(scenario.id);
       const unlockedIds = getUnlockedSnippets(id).map(s => s.component_id);
       
       components = scenarioComps.map(c => ({
@@ -87,6 +90,7 @@ export async function GET(
     return NextResponse.json({ 
       participant: {
         ...participant,
+        scenario_id: scenario?.id || null,
         scenario_title: scenario?.title,
         situation: scenario?.situation,
         what_to_build: scenario?.what_to_build,
@@ -122,8 +126,12 @@ export async function PATCH(
     
     // Handle different update actions
     if (body.action === 'assign_scenario') {
-      assignScenario(id, body.scenarioId);
-      logActivity(id, 'scenario_assigned', `Assigned scenario ID: ${body.scenarioId}`);
+      const scenario = getScenario(Number(body.scenarioId));
+      if (!scenario) {
+        return NextResponse.json({ error: 'Invalid scenario ID. Only official PDF scenarios are allowed.' }, { status: 400 });
+      }
+      assignScenario(id, scenario.id);
+      logActivity(id, 'scenario_assigned', `Assigned scenario ID: ${scenario.id}`);
       return NextResponse.json({ success: true });
     }
     

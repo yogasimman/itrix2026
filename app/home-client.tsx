@@ -52,6 +52,26 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
     }
   }, [])
 
+    // Auto-initialize database on first load if not already initialized
+    useEffect(() => {
+      if (!initialized && !isInitializing) {
+        const autoInit = async () => {
+          setIsInitializing(true)
+          try {
+            const response = await fetch("/api/init", { method: "POST" })
+            if (response.ok) {
+              setInitialized(true)
+            }
+          } catch (err) {
+            console.error("Auto-initialization attempt:", err)
+          } finally {
+            setIsInitializing(false)
+          }
+        }
+        autoInit()
+      }
+    }, [initialized, isInitializing])
+
   useEffect(() => {
     if (!initialized || !shellRef.current) return
 
@@ -185,12 +205,12 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
                 {isInitializing ? (
                   <>
                     <Spinner className="h-4 w-4" />
-                    Initializing...
+                      Auto-initializing System...
                   </>
                 ) : (
                   <>
                     <Play className="h-4 w-4" />
-                    Initialize System
+                      Click to Initialize System
                   </>
                 )}
               </Button>
@@ -234,28 +254,34 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
         <div className="js-hero mb-8 md:mb-12">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">
             <Bolt className="h-3.5 w-3.5" />
-            National IoT Challenge Interface
+            Live Prototype Arena
           </div>
-          <h1 className="max-w-4xl text-balance text-4xl font-semibold tracking-tight md:text-6xl">
-            Engineer, Monitor, and Compete in a Real-Time IoT Arena
-          </h1>
+          <div className="sensor-sprint-banner max-w-4xl">
+            <span className="sensor-sprint-chip">Circuit Mode</span>
+            <h1 className="sensor-sprint-title">Sensor Sprint</h1>
+            <div className="sensor-sprint-trace" aria-hidden>
+              <span />
+              <span />
+              <span />
+            </div>
+          </div>
           <p className="mt-4 max-w-2xl text-pretty text-base text-cyan-100/80 md:text-lg">
-            Professional competition console for device scenarios, participant sessions, and round control built for fast decisions under pressure.
+            Build fast, test smart, and deploy logic under pressure. This control deck powers timed IoT rounds with scenario execution, participant routing, and live hint tracking.
           </p>
         </div>
 
         <div className="mb-10 grid gap-3 sm:grid-cols-3 md:mb-14">
           <div className="js-kpi glass-kpi">
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Latency</p>
-            <p className="mt-1 text-2xl font-semibold">&lt; 25 ms</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Signal Pulse</p>
+            <p className="mt-1 text-2xl font-semibold">Realtime</p>
           </div>
           <div className="js-kpi glass-kpi">
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Data Engine</p>
-            <p className="mt-1 text-2xl font-semibold">Local + Secure</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Challenge Grid</p>
+            <p className="mt-1 text-2xl font-semibold">8 Scenario Tracks</p>
           </div>
           <div className="js-kpi glass-kpi">
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Competition State</p>
-            <p className="mt-1 text-2xl font-semibold">Operational</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Execution Mode</p>
+            <p className="mt-1 text-2xl font-semibold">Timed & Proctored</p>
           </div>
         </div>
 

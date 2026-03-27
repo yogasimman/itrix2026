@@ -575,7 +575,7 @@ export default function AdminDashboard() {
                   <Clock className="mr-2 h-4 w-4" />
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-slate-700 bg-slate-950 text-slate-50">
                   <SelectItem value="30">30 min</SelectItem>
                   <SelectItem value="45">45 min</SelectItem>
                   <SelectItem value="60">60 min</SelectItem>
@@ -842,7 +842,7 @@ export default function AdminDashboard() {
                             <SelectTrigger>
                               <SelectValue placeholder="Select a round" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="border-slate-700 bg-slate-950 text-slate-50">
                               <SelectItem value="round1">Round 1 - MCQ Quiz</SelectItem>
                               <SelectItem value="round2">Round 2 - Hands-on Scenario</SelectItem>
                             </SelectContent>
@@ -932,7 +932,7 @@ export default function AdminDashboard() {
                                     <SelectTrigger className="w-40 h-8 text-xs">
                                       <SelectValue placeholder="Assign..." />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="border-slate-700 bg-slate-950 text-slate-50">
                                       {scenarios.map((s) => (
                                         <SelectItem key={s.id} value={s.id.toString()}>
                                           {s.title}

@@ -328,7 +328,7 @@ export function Round1Management() {
               <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="border-slate-700 bg-slate-950 text-slate-50">
                 <SelectItem value="all">All</SelectItem>
                 <SelectItem value="unassigned">Unassigned</SelectItem>
                 <SelectItem value="round1">Round 1</SelectItem>
@@ -397,7 +397,7 @@ export function Round1Management() {
                           <SelectTrigger className="w-44 h-8">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="border-slate-700 bg-slate-950 text-slate-50">
                             <SelectItem value="0">Section 1 - MCQ</SelectItem>
                             <SelectItem value="1">Section 2 - Scenario</SelectItem>
                             <SelectItem value="2">Section 3 - Connection</SelectItem>
@@ -431,7 +431,7 @@ export function Round1Management() {
                         <SelectTrigger className="w-32 h-8">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="border-slate-700 bg-slate-950 text-slate-50">
                           <SelectItem value="unassigned">Unassigned</SelectItem>
                           <SelectItem value="round1">Round 1</SelectItem>
                           <SelectItem value="round2">Round 2</SelectItem>

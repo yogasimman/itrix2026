@@ -38,26 +38,28 @@ export function ScenarioDisplay({
       {hintSummary && (
         <Card className="border-cyan-200/20 bg-slate-950/60 backdrop-blur-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg text-cyan-50">Round 2 Component Access Scoring</CardTitle>
+            <CardTitle className="text-lg text-cyan-50">Round 2 Hint Usage Summary</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-4">
             <div className="rounded-lg border border-cyan-200/20 bg-slate-900/60 p-3">
-              <p className="text-xs text-cyan-100/70">Base Score</p>
-              <p className="text-xl font-semibold text-cyan-50">{hintSummary.baseScore}</p>
+              <p className="text-xs text-cyan-100/70">Hint Packs Opened</p>
+              <p className="text-xl font-semibold text-cyan-50">
+                {hintSummary.hintsUsedCount}/{hintSummary.totalComponents}
+              </p>
             </div>
             <div className="rounded-lg border border-cyan-200/20 bg-slate-900/60 p-3">
               <p className="text-xs text-cyan-100/70">Penalty Used</p>
               <p className="text-xl font-semibold text-rose-300">-{hintSummary.totalPenalty}</p>
             </div>
             <div className="rounded-lg border border-cyan-200/20 bg-slate-900/60 p-3">
-              <p className="text-xs text-cyan-100/70">Current Score</p>
-              <p className="text-xl font-semibold text-emerald-300">{hintSummary.finalScore}</p>
+              <p className="text-xs text-cyan-100/70">Penalty Remaining</p>
+              <p className="text-xl font-semibold text-emerald-300">
+                {Math.max(0, hintSummary.maxPenalty - hintSummary.totalPenalty)}
+              </p>
             </div>
             <div className="rounded-lg border border-cyan-200/20 bg-slate-900/60 p-3">
-              <p className="text-xs text-cyan-100/70">Components Accessed</p>
-              <p className="text-xl font-semibold text-cyan-50">
-                {hintSummary.hintsUsedCount}/{hintSummary.totalComponents}
-              </p>
+              <p className="text-xs text-cyan-100/70">Penalty Budget</p>
+              <p className="text-xl font-semibold text-cyan-50">{hintSummary.maxPenalty}</p>
             </div>
           </CardContent>
         </Card>

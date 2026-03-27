@@ -1,0 +1,3388 @@
+{
+  "participants": [
+    [
+      "TST001",
+      {
+        "id": "TST001",
+        "name": "Test User One",
+        "team_name": "Alpha Team",
+        "phone": "9000000001",
+        "email": "tst001@test.com",
+        "year": "3",
+        "assigned_round": "round1",
+        "scenario_id": null,
+        "timer_duration": 7200,
+        "timer_started_at": null,
+        "is_active": 0,
+        "is_locked": 0,
+        "created_at": "2026-03-27T15:22:24.328Z",
+        "round1_score": 0,
+        "round1_completed": false,
+        "round2_score": 0,
+        "round2_completed": false
+      }
+    ],
+    [
+      "TST002",
+      {
+        "id": "TST002",
+        "name": "Test User Two",
+        "team_name": "Beta Team",
+        "phone": "9000000002",
+        "email": "tst002@test.com",
+        "year": "2",
+        "assigned_round": "round2",
+        "scenario_id": 4,
+        "timer_duration": 7200,
+        "timer_started_at": null,
+        "is_active": 0,
+        "is_locked": 0,
+        "created_at": "2026-03-27T15:22:24.346Z",
+        "round1_score": 0,
+        "round1_completed": false,
+        "round2_score": 0,
+        "round2_completed": false
+      }
+    ],
+    [
+      "TST003",
+      {
+        "id": "TST003",
+        "name": "Test User Three",
+        "team_name": "Gamma Team",
+        "phone": "9000000003",
+        "email": "tst003@test.com",
+        "year": "4",
+        "assigned_round": "round1",
+        "scenario_id": null,
+        "timer_duration": 7200,
+        "timer_started_at": null,
+        "is_active": 0,
+        "is_locked": 0,
+        "created_at": "2026-03-27T15:22:24.382Z",
+        "round1_score": 0,
+        "round1_completed": false,
+        "round2_score": 0,
+        "round2_completed": false
+      }
+    ],
+    [
+      "6EUSXP",
+      {
+        "id": "6EUSXP",
+        "name": "wrer",
+        "team_name": "wrewr",
+        "phone": "wrwe",
+        "email": "wfewfwr",
+        "assigned_round": "round1",
+        "scenario_id": null,
+        "timer_duration": 7200,
+        "timer_started_at": null,
+        "is_active": 0,
+        "is_locked": 0,
+        "created_at": "2026-03-27T15:23:51.497Z",
+        "round1_score": 0,
+        "round1_completed": false,
+        "round2_score": 0,
+        "round2_completed": false
+      }
+    ],
+    [
+      "GG5GFJ",
+      {
+        "id": "GG5GFJ",
+        "name": "wwre",
+        "team_name": "werewr",
+        "phone": "ewrewr",
+        "email": "sfdsfds",
+        "assigned_round": "round1",
+        "scenario_id": null,
+        "timer_duration": 7200,
+        "timer_started_at": null,
+        "is_active": 0,
+        "is_locked": 0,
+        "created_at": "2026-03-27T15:42:19.588Z",
+        "round1_score": 0,
+        "round1_completed": false,
+        "round2_score": 0,
+        "round2_completed": false
+      }
+    ]
+  ],
+  "scenarios": [
+    [
+      9003,
+      {
+        "id": 9003,
+        "title": "Penalty Scale Scenario",
+        "situation": "Scale test",
+        "what_to_build": "Scale",
+        "team_number": null
+      }
+    ],
+    [
+      1,
+      {
+        "id": 1,
+        "title": "The Midnight Intruder Alarm",
+        "situation": "The college lab is locked after 6 PM - but someone has been sneaking in undetected. The warden installs a lock, but it gets bypassed. CCTV is expensive. The warden reaches out to the IoT lab team and says: \"I need something that detects motion in the dark and raises an alarm - but lets me silence it quickly if it's just me checking in.\"",
+        "what_to_build": "1. Read LDR via analogRead to determine dark/light. When dark, monitor PIR for motion.\n2. Motion detected -> red LED flashes rapidly + piezo alarms.\n3. Pressing the pushbutton within 5 seconds silences the alarm.\n4. If button is NOT pressed within 5 s, alarm continues for a full 20 seconds.\n5. After alarm ends, system re-arms automatically. Use millis() - no delay().",
+        "team_number": 1
+      }
+    ],
+    [
+      2,
+      {
+        "id": 2,
+        "title": "The Touchless Hospital Dustbin",
+        "situation": "In the college medical room, bins are constantly being touched by multiple people - spreading germs during flu season. A nursing student raises a concern: \"We need bins that open themselves when you bring your hand close. No touch, no infection.\" The challenge is to make the lid movement smooth and controlled - not a sudden snap.",
+        "what_to_build": "1. Poll the HC-SR04 every 150 ms. When a hand is detected within 15 cm, smoothly sweep the servo from 0 degrees (closed) to 90 degrees (open) - one degree at a time, 8 ms between steps.\n2. Hold open for 4 seconds, then sweep back to 0 degrees at the same speed.\n3. Green LED stays on while lid is open.\n4. One short beep when opening, two short beeps when closing.\n5. Block re-trigger while lid is already moving or open.",
+        "team_number": 2
+      }
+    ],
+    [
+      3,
+      {
+        "id": 3,
+        "title": "The Seminar Hall Occupancy Counter",
+        "situation": "The college seminar hall seats 80 people but is never managed properly. Some events are dangerously overcrowded while others are half-empty. The Events Committee asks: \"Can we have a live headcount at the door - something that tells us exactly how many people are inside right now, without cameras or manual counting?\"",
+        "what_to_build": "1. Mount IR sensor A and B 5 cm apart at the door frame.\n2. Track which sensor triggers first: A then B = entry (count++), B then A = exit (count--).\n3. Allow a 300 ms window to detect the second sensor after the first fires.\n4. Display occupancy on 3 LEDs: green = low (0-3), yellow = medium (4-7), red = high (8+).\n5. A short beep on each valid entry or exit. Count must not go below 0.\n6. Log direction and count to Serial on every change.",
+        "team_number": 3
+      }
+    ],
+    [
+      4,
+      {
+        "id": 4,
+        "title": "The Smart Staircase Lighting",
+        "situation": "The hostel staircase is completely dark after 10 PM. A student broke their wrist tripping in the dark last semester - the switch is at the wrong end and nobody bothers to flick it. The hostel warden wants lights that respond automatically, stay on long enough for safe passage, and need no switches at all.",
+        "what_to_build": "1. Two PIR sensors simulate top and bottom of a staircase.\n2. PIR-top triggers -> green LED on for 20 s; resets timer if motion is detected again within the window.\n3. PIR-bottom triggers -> red LED on for 20 s with the same re-trigger logic.\n4. Both LEDs can be on simultaneously - they operate fully independently.\n5. No blocking code - use millis() for both independent 20 s timers.\n6. Serial-print which PIR triggered and each LED's remaining time every 5 s.",
+        "team_number": 4
+      }
+    ],
+    [
+      5,
+      {
+        "id": 5,
+        "title": "The Smart Pedestrian Crossing",
+        "situation": "A narrow lane through the college campus has become dangerous. Vehicles speed through while pedestrians step out from between parked cars. Two near-misses in the same month forced the administration to act. A proper traffic light system would take months of approval. You have a weekend and five components.",
+        "what_to_build": "1. Idle state: red LED on (stop), servo at 0 degrees (barrier down).\n2. Pedestrian presses button -> check HC-SR04 for vehicle (distance < 40 cm = vehicle present).\n3. Vehicle present -> red LED flashes fast, deny crossing, recheck every 500 ms for up to 10 s.\n4. No vehicle -> green LED on + servo sweeps to 90 degrees (barrier up). Hold crossing open for 7 s.\n5. Servo sweeps back to 0 degrees, green off, red on.\n6. Serial-log each button press, vehicle detection result, and crossing duration.",
+        "team_number": 5
+      }
+    ],
+    [
+      6,
+      {
+        "id": 6,
+        "title": "The Malfunctioning Traffic Signal",
+        "situation": "The traffic signal at the college entrance has broken down. It's stuck on red and hasn't changed in two days. Vehicles are piling up and pedestrians are jaywalking dangerously. The college principal calls the IoT lab team: \"I need a temporary working traffic signal installed by tomorrow morning - one that runs automatically but lets a traffic officer override it manually with a button.\"",
+        "what_to_build": "1. Normal operation: cycle automatically - white LED on (go) for 8 s -> yellow LED blink 3 times (slow down) -> relay clicks off (stop/red, simulated) -> repeat.\n2. Piezo beeps once at every phase change so people nearby can hear the signal switch.\n3. Pushbutton = officer override: immediately jumps to stop phase (relay OFF, yellow LED off, white LED off) and holds for 15 s before resuming auto-cycle.\n4. During override: yellow LED flashes rapidly to indicate manual control is active.\n5. Use millis() for all phase timing - no delay(). Serial-print current phase and time remaining every second.",
+        "team_number": 6
+      }
+    ],
+    [
+      7,
+      {
+        "id": 7,
+        "title": "The Forgotten Classroom Lights",
+        "situation": "Every evening the college classrooms are left with lights blazing - the last student out never bothers to switch them off. The electricity bill has doubled. The facilities manager is furious: \"I want the lights to turn off automatically when it gets dark outside and nobody is in the room - but I still want a manual override button for when someone genuinely needs to keep them on.\"",
+        "what_to_build": "1. Read LDR every 1 s using millis(). When ambient light drops below threshold (< 300 ADC) -> relay ON, simulating room lights turning off (or fan stopping).\n2. When light is above threshold (bright, daytime) -> relay stays OFF (lights not needed).\n3. White LED mirrors relay state - on when relay is on.\n4. Yellow LED = system status indicator, always on to show the controller is active.\n5. Pushbutton toggles a manual override flag: when override is ON, relay is forced OFF regardless of LDR (lights stay on). Press again to release override.\n6. Serial-print LDR value, relay state, and override flag every 2 s.",
+        "team_number": 7
+      }
+    ],
+    [
+      8,
+      {
+        "id": 8,
+        "title": "The Runaway Workshop Fan",
+        "situation": "The college workshop bench fan has no speed limit. Students routinely crank it to maximum, and last semester the plastic blades cracked under stress, sending a fragment across the room. Nobody was hurt - barely. The HOD has mandated: the fan must not exceed a safe speed, and must slow itself down automatically if a student tries to go too fast.",
+        "what_to_build": "1. Read potentiometer every 200 ms. Map ADC (0-1023) to PWM (0-255) and drive DC motor via NPN transistor.\n2. Yellow LED = slow zone (PWM < 100). Both LEDs off = medium (100-200). Red LED = fast (> 200).\n3. When PWM > 220 (danger zone): automatically cap PWM at 180 - override the potentiometer input.\n4. Red LED rapid flash + piezo 3000 Hz warning beep every 2 s during override.\n5. When pot is dialled back below 200, restore normal pot control and clear override.\n6. Serial-log pot value, PWM applied, speed zone, and override flag every 500 ms.",
+        "team_number": 8
+      }
+    ]
+  ],
+  "components": [
+    [
+      401,
+      {
+        "id": 401,
+        "name": "C1",
+        "description": "C1",
+        "pinout": "P1",
+        "category": "Sensor",
+        "quantity": 1,
+        "code_snippet": "1"
+      }
+    ],
+    [
+      402,
+      {
+        "id": 402,
+        "name": "C2",
+        "description": "C2",
+        "pinout": "P2",
+        "category": "Sensor",
+        "quantity": 1,
+        "code_snippet": "2"
+      }
+    ],
+    [
+      403,
+      {
+        "id": 403,
+        "name": "C3",
+        "description": "C3",
+        "pinout": "P3",
+        "category": "Sensor",
+        "quantity": 1,
+        "code_snippet": "3"
+      }
+    ],
+    [
+      404,
+      {
+        "id": 404,
+        "name": "C4",
+        "description": "C4",
+        "pinout": "P4",
+        "category": "Sensor",
+        "quantity": 1,
+        "code_snippet": "4"
+      }
+    ],
+    [
+      1,
+      {
+        "id": 1,
+        "name": "Micro SD Card (32GB)",
+        "description": "32GB Micro SD Card for data storage",
+        "pinout": "Standard SD interface - VCC, GND, MISO, MOSI, SCK, CS",
+        "category": "Storage",
+        "quantity": 10,
+        "code_snippet": "// Micro SD Card with Arduino\n#include <SPI.h>\n#include <SD.h>\n\nconst int chipSelect = 10;\n\nvoid setup() {\n  Serial.begin(9600);\n  if (!SD.begin(chipSelect)) {\n    Serial.println(\"Card failed!\");\n    return;\n  }\n  Serial.println(\"Card initialized.\");\n}\n\nvoid loop() {\n  File dataFile = SD.open(\"datalog.txt\", FILE_WRITE);\n  if (dataFile) {\n    dataFile.println(\"Hello World!\");\n    dataFile.close();\n  }\n}"
+      }
+    ],
+    [
+      2,
+      {
+        "id": 2,
+        "name": "Card Reader RDF5 (Transcend) - USB 3.1 Gen 1",
+        "description": "USB 3.1 Gen 1 Card Reader for SD cards",
+        "pinout": "USB interface",
+        "category": "Interface",
+        "quantity": 10,
+        "code_snippet": "// USB Card Reader - Used externally with PC\n// No Arduino code required - plug into USB port"
+      }
+    ],
+    [
+      3,
+      {
+        "id": 3,
+        "name": "Small Servo Motor",
+        "description": "9g micro servo motor for precise angular control",
+        "pinout": "Orange: Signal (PWM), Red: VCC (5V), Brown: GND",
+        "category": "Actuator",
+        "quantity": 10,
+        "code_snippet": "// Small Servo Motor Control\n#include <Servo.h>\n\nServo myservo;\nint pos = 0;\n\nvoid setup() {\n  myservo.attach(9);  // Servo on pin 9\n}\n\nvoid loop() {\n  // Sweep from 0 to 180 degrees\n  for (pos = 0; pos <= 180; pos += 1) {\n    myservo.write(pos);\n    delay(15);\n  }\n  // Sweep back\n  for (pos = 180; pos >= 0; pos -= 1) {\n    myservo.write(pos);\n    delay(15);\n  }\n}"
+      }
+    ],
+    [
+      4,
+      {
+        "id": 4,
+        "name": "DC Motor 5V",
+        "description": "5V DC motor for continuous rotation",
+        "pinout": "Two terminals: Motor+ and Motor-",
+        "category": "Actuator",
+        "quantity": 20,
+        "code_snippet": "// DC Motor Control with Transistor\nconst int motorPin = 9;\n\nvoid setup() {\n  pinMode(motorPin, OUTPUT);\n}\n\nvoid loop() {\n  // Motor ON\n  analogWrite(motorPin, 200);  // PWM speed control\n  delay(2000);\n  // Motor OFF\n  analogWrite(motorPin, 0);\n  delay(1000);\n}"
+      }
+    ],
+    [
+      5,
+      {
+        "id": 5,
+        "name": "Piezo Capsule",
+        "description": "Piezoelectric buzzer/speaker for sound output",
+        "pinout": "Positive (+), Negative (-)",
+        "category": "Output",
+        "quantity": 20,
+        "code_snippet": "// Piezo Buzzer Tones\nconst int buzzerPin = 8;\n\nvoid setup() {\n  pinMode(buzzerPin, OUTPUT);\n}\n\nvoid loop() {\n  // Play tone at 1000Hz for 500ms\n  tone(buzzerPin, 1000, 500);\n  delay(1000);\n  // Play tone at 2000Hz for 500ms\n  tone(buzzerPin, 2000, 500);\n  delay(1000);\n}"
+      }
+    ],
+    [
+      6,
+      {
+        "id": 6,
+        "name": "Photo Resistor LDR",
+        "description": "Light Dependent Resistor for light sensing",
+        "pinout": "Two terminals (no polarity) - use with 10K resistor as voltage divider",
+        "category": "Sensor",
+        "quantity": 22,
+        "code_snippet": "// LDR Light Sensor\nconst int ldrPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int lightValue = analogRead(ldrPin);\n  Serial.print(\"Light: \");\n  Serial.println(lightValue);\n  \n  if (lightValue < 300) {\n    Serial.println(\"Dark environment\");\n  } else {\n    Serial.println(\"Bright environment\");\n  }\n  delay(500);\n}"
+      }
+    ],
+    [
+      7,
+      {
+        "id": 7,
+        "name": "Potentiometer 10 kilohm",
+        "description": "10K variable resistor for analog input",
+        "pinout": "Left: GND, Middle: Signal (A0), Right: VCC",
+        "category": "Input",
+        "quantity": 15,
+        "code_snippet": "// Potentiometer Reading\nconst int potPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int potValue = analogRead(potPin);  // 0-1023\n  int mappedValue = map(potValue, 0, 1023, 0, 255);\n  \n  Serial.print(\"Raw: \");\n  Serial.print(potValue);\n  Serial.print(\" Mapped: \");\n  Serial.println(mappedValue);\n  delay(200);\n}"
+      }
+    ],
+    [
+      8,
+      {
+        "id": 8,
+        "name": "Pushbuttons",
+        "description": "Tactile push button switches",
+        "pinout": "4 pins - 2 pairs internally connected. Connect one side to GND, other to digital pin with INPUT_PULLUP",
+        "category": "Input",
+        "quantity": 35,
+        "code_snippet": "// Pushbutton with Internal Pull-up\nconst int buttonPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  // LOW when pressed (pull-up configuration)\n  if (digitalRead(buttonPin) == LOW) {\n    digitalWrite(ledPin, HIGH);\n  } else {\n    digitalWrite(ledPin, LOW);\n  }\n}"
+      }
+    ],
+    [
+      9,
+      {
+        "id": 9,
+        "name": "LED (Bright White)",
+        "description": "High brightness white LED",
+        "pinout": "Long leg: Anode (+), Short leg: Cathode (-). Use 220 ohm resistor.",
+        "category": "Output",
+        "quantity": 50,
+        "code_snippet": "// White LED Blink\nconst int ledPin = 9;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH);\n  delay(500);\n  digitalWrite(ledPin, LOW);\n  delay(500);\n}"
+      }
+    ],
+    [
+      10,
+      {
+        "id": 10,
+        "name": "LED (Red)",
+        "description": "Standard red LED",
+        "pinout": "Long leg: Anode (+), Short leg: Cathode (-). Use 220 ohm resistor.",
+        "category": "Output",
+        "quantity": 50,
+        "code_snippet": "// Red LED with PWM Fade\nconst int ledPin = 9;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  // Fade in\n  for (int i = 0; i <= 255; i++) {\n    analogWrite(ledPin, i);\n    delay(10);\n  }\n  // Fade out\n  for (int i = 255; i >= 0; i--) {\n    analogWrite(ledPin, i);\n    delay(10);\n  }\n}"
+      }
+    ],
+    [
+      11,
+      {
+        "id": 11,
+        "name": "LED (Green)",
+        "description": "Standard green LED",
+        "pinout": "Long leg: Anode (+), Short leg: Cathode (-). Use 220 ohm resistor.",
+        "category": "Output",
+        "quantity": 50,
+        "code_snippet": "// Green LED Status Indicator\nconst int greenLed = 10;\n\nvoid setup() {\n  pinMode(greenLed, OUTPUT);\n}\n\nvoid loop() {\n  // Blink pattern: 2 short, 1 long\n  for (int i = 0; i < 2; i++) {\n    digitalWrite(greenLed, HIGH);\n    delay(200);\n    digitalWrite(greenLed, LOW);\n    delay(200);\n  }\n  digitalWrite(greenLed, HIGH);\n  delay(1000);\n  digitalWrite(greenLed, LOW);\n  delay(500);\n}"
+      }
+    ],
+    [
+      12,
+      {
+        "id": 12,
+        "name": "LED (Yellow)",
+        "description": "Standard yellow LED",
+        "pinout": "Long leg: Anode (+), Short leg: Cathode (-). Use 220 ohm resistor.",
+        "category": "Output",
+        "quantity": 50,
+        "code_snippet": "// Yellow LED Warning Signal\nconst int yellowLed = 11;\n\nvoid setup() {\n  pinMode(yellowLed, OUTPUT);\n}\n\nvoid loop() {\n  // Fast warning blink\n  digitalWrite(yellowLed, HIGH);\n  delay(100);\n  digitalWrite(yellowLed, LOW);\n  delay(100);\n}"
+      }
+    ],
+    [
+      13,
+      {
+        "id": 13,
+        "name": "Transistor",
+        "description": "NPN transistor (2N2222 or similar) for switching",
+        "pinout": "E: Emitter, B: Base (connect via 1K resistor to Arduino), C: Collector",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// NPN Transistor as Switch for Motor\nconst int basePin = 9;  // PWM pin through 1K resistor to base\n\nvoid setup() {\n  pinMode(basePin, OUTPUT);\n}\n\nvoid loop() {\n  // Turn on transistor (motor runs)\n  analogWrite(basePin, 200);\n  delay(2000);\n  // Turn off transistor (motor stops)\n  analogWrite(basePin, 0);\n  delay(1000);\n}"
+      }
+    ],
+    [
+      14,
+      {
+        "id": 14,
+        "name": "Capacitors 100nF",
+        "description": "100 nanofarad ceramic capacitor for decoupling",
+        "pinout": "Non-polarized - can be connected either way",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// Capacitor Usage Notes\n// 100nF capacitors are used for:\n// - Decoupling (place near IC power pins)\n// - Noise filtering\n// - Debouncing circuits\n\n// No direct Arduino code - hardware component\n// Typical usage: Between VCC and GND near ICs"
+      }
+    ],
+    [
+      15,
+      {
+        "id": 15,
+        "name": "Capacitors 100uF",
+        "description": "100 microfarad electrolytic capacitor",
+        "pinout": "Polarized - Long leg/marked stripe side: Positive (+), Short leg: Negative (-)",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// Electrolytic Capacitor Usage Notes\n// 100uF capacitors are used for:\n// - Power supply smoothing\n// - Energy storage\n// - Motor noise reduction\n\n// No direct Arduino code - hardware component\n// Connect: Positive to VCC, Negative to GND"
+      }
+    ],
+    [
+      16,
+      {
+        "id": 16,
+        "name": "Capacitors 100pF",
+        "description": "100 picofarad ceramic capacitor",
+        "pinout": "Non-polarized - can be connected either way",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// Small Capacitor Usage Notes\n// 100pF capacitors are used for:\n// - High frequency filtering\n// - RF applications\n// - Crystal oscillator circuits\n\n// No direct Arduino code - hardware component"
+      }
+    ],
+    [
+      17,
+      {
+        "id": 17,
+        "name": "Diodes IN4007",
+        "description": "1N4007 rectifier diode for protection",
+        "pinout": "Band/stripe side: Cathode (-), Other side: Anode (+)",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// Diode Usage for Motor Protection\n// Connect diode in reverse parallel with motor:\n// - Cathode (stripe) to motor positive\n// - Anode to motor negative\n// This protects against back-EMF\n\n// No direct Arduino code - hardware protection component"
+      }
+    ],
+    [
+      18,
+      {
+        "id": 18,
+        "name": "Resistors 220 ohm",
+        "description": "220 ohm resistor for LED current limiting",
+        "pinout": "No polarity - can be connected either way",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// 220 ohm Resistor - LED Current Limiting\n// For standard LEDs with 5V supply:\n// I = (5V - 2V) / 220 ohm = 13.6mA (safe for LEDs)\n\n// Connect in series with LED:\n// Arduino Pin -> 220 ohm -> LED Anode -> LED Cathode -> GND"
+      }
+    ],
+    [
+      19,
+      {
+        "id": 19,
+        "name": "Resistors 560 ohm",
+        "description": "560 ohm resistor",
+        "pinout": "No polarity - can be connected either way",
+        "category": "Electronic",
+        "quantity": 115,
+        "code_snippet": "// 560 ohm Resistor Usage\n// Typical uses:\n// - LED current limiting (lower current than 220 ohm)\n// - Voltage dividers\n// - Signal conditioning"
+      }
+    ],
+    [
+      20,
+      {
+        "id": 20,
+        "name": "Resistors 1 kilohm",
+        "description": "1K ohm resistor",
+        "pinout": "No polarity - can be connected either way",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// 1K ohm Resistor - Transistor Base Limiting\n// For NPN transistor switching:\n// Arduino Pin -> 1K ohm -> Transistor Base\n\n// Also used for pull-down resistors and voltage dividers"
+      }
+    ],
+    [
+      21,
+      {
+        "id": 21,
+        "name": "Resistors 4.7 kilohm",
+        "description": "4.7K ohm resistor",
+        "pinout": "No polarity - can be connected either way",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// 4.7K ohm Resistor Usage\n// Common uses:\n// - I2C pull-up resistors\n// - Voltage dividers\n// - Sensor interfaces"
+      }
+    ],
+    [
+      22,
+      {
+        "id": 22,
+        "name": "Resistors 10 kilohm",
+        "description": "10K ohm resistor",
+        "pinout": "No polarity - can be connected either way",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// 10K ohm Resistor - LDR Voltage Divider\n// Circuit: 5V -> LDR -> A0 -> 10K ohm -> GND\n// This creates a voltage divider for light sensing\n\nconst int sensorPin = A0;\nint lightLevel = analogRead(sensorPin);"
+      }
+    ],
+    [
+      23,
+      {
+        "id": 23,
+        "name": "Resistors 1 megohm",
+        "description": "1M ohm resistor",
+        "pinout": "No polarity - can be connected either way",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// 1M ohm Resistor Usage\n// High resistance applications:\n// - Touch sensors\n// - High impedance inputs\n// - Timing circuits with capacitors"
+      }
+    ],
+    [
+      24,
+      {
+        "id": 24,
+        "name": "Resistors 10 megohm",
+        "description": "10M ohm resistor",
+        "pinout": "No polarity - can be connected either way",
+        "category": "Electronic",
+        "quantity": 50,
+        "code_snippet": "// 10M ohm Resistor Usage\n// Very high resistance applications:\n// - Electret microphone biasing\n// - High impedance buffers\n// - Capacitive touch sensing"
+      }
+    ],
+    [
+      25,
+      {
+        "id": 25,
+        "name": "Analog to Digital Converter (MCP3204)",
+        "description": "12-bit ADC with SPI interface",
+        "pinout": "VDD: 5V, VREF: Reference Voltage, AGND: Analog GND, DGND: Digital GND, CLK: SPI Clock, DOUT: Data Out, DIN: Data In, CS: Chip Select, CH0-CH3: Analog Inputs",
+        "category": "Interface",
+        "quantity": 20,
+        "code_snippet": "// MCP3204 12-bit ADC\n#include <SPI.h>\n\nconst int csPin = 10;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(csPin, OUTPUT);\n  digitalWrite(csPin, HIGH);\n  SPI.begin();\n}\n\nint readADC(int channel) {\n  digitalWrite(csPin, LOW);\n  byte command = 0b00000110 | ((channel & 0x04) >> 2);\n  byte b1 = SPI.transfer(command);\n  byte b2 = SPI.transfer((channel & 0x03) << 6);\n  byte b3 = SPI.transfer(0x00);\n  digitalWrite(csPin, HIGH);\n  return ((b1 & 0x0F) << 8) | b2;\n}\n\nvoid loop() {\n  int value = readADC(0);\n  Serial.println(value);\n  delay(100);\n}"
+      }
+    ],
+    [
+      26,
+      {
+        "id": 26,
+        "name": "Ultrasonic Sensor",
+        "description": "HC-SR04 ultrasonic distance sensor",
+        "pinout": "VCC: 5V, Trig: Trigger Pin, Echo: Echo Pin, GND: Ground",
+        "category": "Sensor",
+        "quantity": 10,
+        "code_snippet": "// HC-SR04 Ultrasonic Distance Sensor\nconst int trigPin = 9;\nconst int echoPin = 10;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n}\n\nvoid loop() {\n  // Send trigger pulse\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n  \n  // Read echo\n  long duration = pulseIn(echoPin, HIGH);\n  float distance = duration * 0.034 / 2;\n  \n  Serial.print(\"Distance: \");\n  Serial.print(distance);\n  Serial.println(\" cm\");\n  delay(100);\n}"
+      }
+    ],
+    [
+      27,
+      {
+        "id": 27,
+        "name": "PIR Motion Sensor",
+        "description": "Passive Infrared motion detector",
+        "pinout": "VCC: 5V, OUT: Digital Output, GND: Ground",
+        "category": "Sensor",
+        "quantity": 25,
+        "code_snippet": "// PIR Motion Sensor\nconst int pirPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(pirPin, INPUT);\n  pinMode(ledPin, OUTPUT);\n  delay(60000);  // Warm-up time (1 min)\n}\n\nvoid loop() {\n  if (digitalRead(pirPin) == HIGH) {\n    Serial.println(\"Motion detected!\");\n    digitalWrite(ledPin, HIGH);\n  } else {\n    Serial.println(\"No motion\");\n    digitalWrite(ledPin, LOW);\n  }\n  delay(500);\n}"
+      }
+    ],
+    [
+      28,
+      {
+        "id": 28,
+        "name": "Temperature Sensor",
+        "description": "LM35 analog temperature sensor",
+        "pinout": "Left: VCC (5V), Middle: Output (A0), Right: GND",
+        "category": "Sensor",
+        "quantity": 35,
+        "code_snippet": "// LM35 Temperature Sensor\nconst int tempPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int reading = analogRead(tempPin);\n  float voltage = reading * (5.0 / 1024.0);\n  float temperature = voltage * 100;  // 10mV per degree\n  \n  Serial.print(\"Temperature: \");\n  Serial.print(temperature);\n  Serial.println(\" C\");\n  delay(1000);\n}"
+      }
+    ],
+    [
+      29,
+      {
+        "id": 29,
+        "name": "DHT11",
+        "description": "Digital temperature and humidity sensor",
+        "pinout": "Pin 1: VCC (3.3-5V), Pin 2: Data, Pin 3: NC, Pin 4: GND. Use 10K pull-up on data pin.",
+        "category": "Sensor",
+        "quantity": 5,
+        "code_snippet": "// DHT11 Temperature & Humidity\n#include <DHT.h>\n\n#define DHTPIN 2\n#define DHTTYPE DHT11\n\nDHT dht(DHTPIN, DHTTYPE);\n\nvoid setup() {\n  Serial.begin(9600);\n  dht.begin();\n}\n\nvoid loop() {\n  float humidity = dht.readHumidity();\n  float temperature = dht.readTemperature();\n  \n  Serial.print(\"Humidity: \");\n  Serial.print(humidity);\n  Serial.print(\"% Temperature: \");\n  Serial.print(temperature);\n  Serial.println(\" C\");\n  delay(2000);\n}"
+      }
+    ],
+    [
+      30,
+      {
+        "id": 30,
+        "name": "Relay Module",
+        "description": "5V relay module for switching high voltage/current loads",
+        "pinout": "VCC: 5V, GND: Ground, IN: Control Signal, COM: Common, NO: Normally Open, NC: Normally Closed",
+        "category": "Actuator",
+        "quantity": 10,
+        "code_snippet": "// Relay Module Control\nconst int relayPin = 7;\n\nvoid setup() {\n  pinMode(relayPin, OUTPUT);\n  digitalWrite(relayPin, HIGH);  // Relay OFF (active LOW)\n}\n\nvoid loop() {\n  // Turn relay ON\n  digitalWrite(relayPin, LOW);\n  Serial.println(\"Relay ON\");\n  delay(3000);\n  \n  // Turn relay OFF\n  digitalWrite(relayPin, HIGH);\n  Serial.println(\"Relay OFF\");\n  delay(3000);\n}"
+      }
+    ],
+    [
+      31,
+      {
+        "id": 31,
+        "name": "ESP01 WiFi Module (Node MCU)",
+        "description": "ESP8266 WiFi module for IoT connectivity",
+        "pinout": "VCC: 3.3V, GND: Ground, TX: Transmit, RX: Receive, CH_PD: Chip Enable, GPIO0, GPIO2, RST: Reset",
+        "category": "Communication",
+        "quantity": 13,
+        "code_snippet": "// ESP01 AT Commands via Software Serial\n#include <SoftwareSerial.h>\n\nSoftwareSerial esp(2, 3);  // RX, TX\n\nvoid setup() {\n  Serial.begin(9600);\n  esp.begin(115200);\n  \n  esp.println(\"AT\");\n  delay(1000);\n  while (esp.available()) {\n    Serial.write(esp.read());\n  }\n}\n\nvoid loop() {\n  if (esp.available()) {\n    Serial.write(esp.read());\n  }\n  if (Serial.available()) {\n    esp.write(Serial.read());\n  }\n}"
+      }
+    ],
+    [
+      32,
+      {
+        "id": 32,
+        "name": "Soil Moisture Sensor",
+        "description": "Capacitive or resistive soil moisture sensor",
+        "pinout": "VCC: 3.3-5V, GND: Ground, AO: Analog Output, DO: Digital Output (threshold)",
+        "category": "Sensor",
+        "quantity": 5,
+        "code_snippet": "// Soil Moisture Sensor\nconst int moisturePin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int moisture = analogRead(moisturePin);\n  int percentage = map(moisture, 1023, 0, 0, 100);\n  \n  Serial.print(\"Moisture: \");\n  Serial.print(percentage);\n  Serial.println(\"%\");\n  \n  if (percentage < 30) {\n    Serial.println(\"Soil is dry - needs water!\");\n  }\n  delay(1000);\n}"
+      }
+    ],
+    [
+      33,
+      {
+        "id": 33,
+        "name": "IR Sensor",
+        "description": "Infrared obstacle/proximity sensor",
+        "pinout": "VCC: 5V, GND: Ground, OUT: Digital Output",
+        "category": "Sensor",
+        "quantity": 15,
+        "code_snippet": "// IR Obstacle Sensor\nconst int irPin = 2;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(irPin, INPUT);\n}\n\nvoid loop() {\n  if (digitalRead(irPin) == LOW) {\n    Serial.println(\"Obstacle detected!\");\n  } else {\n    Serial.println(\"No obstacle\");\n  }\n  delay(200);\n}"
+      }
+    ],
+    [
+      34,
+      {
+        "id": 34,
+        "name": "Humidity Sensor",
+        "description": "Analog humidity sensor module",
+        "pinout": "VCC: 5V, GND: Ground, OUT: Analog Output",
+        "category": "Sensor",
+        "quantity": 5,
+        "code_snippet": "// Humidity Sensor (Analog)\nconst int humidityPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int rawValue = analogRead(humidityPin);\n  float humidity = map(rawValue, 0, 1023, 0, 100);\n  \n  Serial.print(\"Humidity: \");\n  Serial.print(humidity);\n  Serial.println(\"%\");\n  delay(1000);\n}"
+      }
+    ],
+    [
+      35,
+      {
+        "id": 35,
+        "name": "PIC Microcontroller 16F877 IC",
+        "description": "PIC16F877A microcontroller IC",
+        "pinout": "40-pin DIP: MCLR, RA0-RA5, RE0-RE2, VDD, VSS, OSC1, OSC2, RC0-RC7, RD0-RD7, RB0-RB7",
+        "category": "Microcontroller",
+        "quantity": 10,
+        "code_snippet": "// PIC16F877A is programmed separately\n// using MPLAB IDE and a PIC programmer\n\n// Basic blink example (MPLAB C):\n/*\n#include <xc.h>\n#define _XTAL_FREQ 20000000\n\nvoid main() {\n    TRISB = 0x00;\n    while(1) {\n        PORTB = 0xFF;\n        __delay_ms(500);\n        PORTB = 0x00;\n        __delay_ms(500);\n    }\n}\n*/"
+      }
+    ],
+    [
+      36,
+      {
+        "id": 36,
+        "name": "GPS NEO6M",
+        "description": "NEO-6M GPS module with antenna",
+        "pinout": "VCC: 3.3-5V, GND: Ground, TX: GPS Data Out, RX: GPS Data In",
+        "category": "Communication",
+        "quantity": 10,
+        "code_snippet": "// GPS NEO6M Module\n#include <SoftwareSerial.h>\n\nSoftwareSerial gps(4, 3);  // RX, TX\n\nvoid setup() {\n  Serial.begin(9600);\n  gps.begin(9600);\n}\n\nvoid loop() {\n  while (gps.available()) {\n    char c = gps.read();\n    Serial.write(c);\n    // Parse NMEA sentences for lat/long\n  }\n}"
+      }
+    ],
+    [
+      37,
+      {
+        "id": 37,
+        "name": "GSM SIM900A",
+        "description": "GSM/GPRS module for cellular communication",
+        "pinout": "VCC: 4.2V (3.4-4.4V), GND: Ground, TXD: Transmit, RXD: Receive, RST: Reset",
+        "category": "Communication",
+        "quantity": 5,
+        "code_snippet": "// GSM SIM900A Module\n#include <SoftwareSerial.h>\n\nSoftwareSerial gsm(7, 8);  // RX, TX\n\nvoid setup() {\n  Serial.begin(9600);\n  gsm.begin(9600);\n  delay(1000);\n  \n  // Test AT command\n  gsm.println(\"AT\");\n  delay(500);\n}\n\nvoid sendSMS(String number, String message) {\n  gsm.println(\"AT+CMGF=1\");  // Text mode\n  delay(500);\n  gsm.print(\"AT+CMGS=\"\");\n  gsm.print(number);\n  gsm.println(\"\"\");\n  delay(500);\n  gsm.print(message);\n  gsm.write(26);  // Ctrl+Z to send\n}\n\nvoid loop() {\n  if (gsm.available()) Serial.write(gsm.read());\n  if (Serial.available()) gsm.write(Serial.read());\n}"
+      }
+    ],
+    [
+      38,
+      {
+        "id": 38,
+        "name": "RFID Tag",
+        "description": "13.56MHz RFID tags/cards",
+        "pinout": "Passive tag - no connections needed",
+        "category": "Identification",
+        "quantity": 20,
+        "code_snippet": "// RFID Tags are passive\n// They are read using an RFID reader (RC522)\n// Each tag has a unique ID (UID)\n\n// Tag UIDs are typically 4 or 7 bytes\n// Example UID: 0x04 0xA3 0x2B 0x1C"
+      }
+    ],
+    [
+      39,
+      {
+        "id": 39,
+        "name": "RFID Reader",
+        "description": "RC522 RFID reader module",
+        "pinout": "SDA: SPI SS, SCK: SPI Clock, MOSI: SPI MOSI, MISO: SPI MISO, IRQ: Interrupt, GND: Ground, RST: Reset, 3.3V: Power",
+        "category": "Identification",
+        "quantity": 5,
+        "code_snippet": "// RFID RC522 Reader\n#include <SPI.h>\n#include <MFRC522.h>\n\n#define SS_PIN 10\n#define RST_PIN 9\n\nMFRC522 rfid(SS_PIN, RST_PIN);\n\nvoid setup() {\n  Serial.begin(9600);\n  SPI.begin();\n  rfid.PCD_Init();\n  Serial.println(\"Scan RFID card...\");\n}\n\nvoid loop() {\n  if (!rfid.PICC_IsNewCardPresent()) return;\n  if (!rfid.PICC_ReadCardSerial()) return;\n  \n  Serial.print(\"UID: \");\n  for (byte i = 0; i < rfid.uid.size; i++) {\n    Serial.print(rfid.uid.uidByte[i], HEX);\n    Serial.print(\" \");\n  }\n  Serial.println();\n  rfid.PICC_HaltA();\n}"
+      }
+    ],
+    [
+      40,
+      {
+        "id": 40,
+        "name": "Light Sensor LDR",
+        "description": "Light Dependent Resistor module",
+        "pinout": "VCC: 5V, GND: Ground, AO: Analog Out, DO: Digital Out (threshold)",
+        "category": "Sensor",
+        "quantity": 10,
+        "code_snippet": "// LDR Light Sensor Module\nconst int analogPin = A0;\nconst int digitalPin = 2;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(digitalPin, INPUT);\n}\n\nvoid loop() {\n  int analogValue = analogRead(analogPin);\n  int digitalValue = digitalRead(digitalPin);\n  \n  Serial.print(\"Analog: \");\n  Serial.print(analogValue);\n  Serial.print(\" Digital: \");\n  Serial.println(digitalValue);\n  delay(500);\n}"
+      }
+    ],
+    [
+      41,
+      {
+        "id": 41,
+        "name": "MPU-6050 Gyroscope",
+        "description": "6-axis accelerometer and gyroscope",
+        "pinout": "VCC: 3.3-5V, GND: Ground, SCL: I2C Clock, SDA: I2C Data, XDA: Aux I2C Data, XCL: Aux I2C Clock, AD0: Address Select, INT: Interrupt",
+        "category": "Sensor",
+        "quantity": 5,
+        "code_snippet": "// MPU-6050 Accelerometer/Gyroscope\n#include <Wire.h>\n\nconst int MPU = 0x68;\n\nvoid setup() {\n  Serial.begin(9600);\n  Wire.begin();\n  Wire.beginTransmission(MPU);\n  Wire.write(0x6B);\n  Wire.write(0);\n  Wire.endTransmission(true);\n}\n\nvoid loop() {\n  Wire.beginTransmission(MPU);\n  Wire.write(0x3B);\n  Wire.endTransmission(false);\n  Wire.requestFrom(MPU, 14, true);\n  \n  int AcX = Wire.read() << 8 | Wire.read();\n  int AcY = Wire.read() << 8 | Wire.read();\n  int AcZ = Wire.read() << 8 | Wire.read();\n  \n  Serial.print(\"X: \"); Serial.print(AcX);\n  Serial.print(\" Y: \"); Serial.print(AcY);\n  Serial.print(\" Z: \"); Serial.println(AcZ);\n  delay(100);\n}"
+      }
+    ],
+    [
+      42,
+      {
+        "id": 42,
+        "name": "TI Simplelink Sensor Tag Development Kit",
+        "description": "Texas Instruments CC2650 Sensor Tag",
+        "pinout": "Complete development kit with sensors",
+        "category": "Development Kit",
+        "quantity": 1,
+        "code_snippet": "// TI Simplelink Sensor Tag\n// Programmed using Code Composer Studio\n// Supports BLE communication\n\n// Features: Temperature, Humidity, Pressure,\n// Accelerometer, Gyroscope, Magnetometer, Light\n\n// Use TI BLE Stack for programming"
+      }
+    ],
+    [
+      43,
+      {
+        "id": 43,
+        "name": "TI Simplelink Sensor DevPack",
+        "description": "Sensor expansion pack for TI Simplelink",
+        "pinout": "Connects to Simplelink boards via headers",
+        "category": "Development Kit",
+        "quantity": 1,
+        "code_snippet": "// TI Simplelink Sensor DevPack\n// Extension for Simplelink boards\n// Adds additional sensor capabilities\n\n// Programmed via Code Composer Studio"
+      }
+    ],
+    [
+      44,
+      {
+        "id": 44,
+        "name": "Zigbee Wifi VXBB-02",
+        "description": "Zigbee WiFi bridge module",
+        "pinout": "VCC, GND, TX, RX, GPIO pins",
+        "category": "Communication",
+        "quantity": 1,
+        "code_snippet": "// Zigbee VXBB-02 Module\n// Configured via AT commands\n#include <SoftwareSerial.h>\n\nSoftwareSerial zigbee(2, 3);\n\nvoid setup() {\n  Serial.begin(9600);\n  zigbee.begin(9600);\n}\n\nvoid loop() {\n  if (zigbee.available()) {\n    Serial.write(zigbee.read());\n  }\n  if (Serial.available()) {\n    zigbee.write(Serial.read());\n  }\n}"
+      }
+    ],
+    [
+      45,
+      {
+        "id": 45,
+        "name": "Zigbee VXBB-01",
+        "description": "Zigbee communication module",
+        "pinout": "VCC: 3.3V, GND: Ground, TX, RX, GPIO pins",
+        "category": "Communication",
+        "quantity": 2,
+        "code_snippet": "// Zigbee VXBB-01 Module\n#include <SoftwareSerial.h>\n\nSoftwareSerial zigbee(2, 3);\n\nvoid setup() {\n  Serial.begin(9600);\n  zigbee.begin(9600);\n}\n\nvoid sendData(String data) {\n  zigbee.println(data);\n}\n\nvoid loop() {\n  if (zigbee.available()) {\n    Serial.write(zigbee.read());\n  }\n}"
+      }
+    ],
+    [
+      46,
+      {
+        "id": 46,
+        "name": "Zigbee Bluetooth VBBB-01",
+        "description": "Zigbee Bluetooth combo module",
+        "pinout": "VCC: 3.3V, GND: Ground, TX, RX, BT pins",
+        "category": "Communication",
+        "quantity": 2,
+        "code_snippet": "// Zigbee Bluetooth VBBB-01\n#include <SoftwareSerial.h>\n\nSoftwareSerial module(2, 3);\n\nvoid setup() {\n  Serial.begin(9600);\n  module.begin(9600);\n  // Configure via AT commands\n}\n\nvoid loop() {\n  if (module.available()) {\n    Serial.write(module.read());\n  }\n  if (Serial.available()) {\n    module.write(Serial.read());\n  }\n}"
+      }
+    ],
+    [
+      47,
+      {
+        "id": 47,
+        "name": "Dolphin Capacitive Proximity Switch",
+        "description": "Capacitive proximity sensor switch",
+        "pinout": "Brown: VCC (10-30V DC), Blue: GND, Black: Output (NPN)",
+        "category": "Sensor",
+        "quantity": 1,
+        "code_snippet": "// Capacitive Proximity Switch\nconst int sensorPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(sensorPin, INPUT);\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  if (digitalRead(sensorPin) == HIGH) {\n    Serial.println(\"Object detected!\");\n    digitalWrite(ledPin, HIGH);\n  } else {\n    Serial.println(\"No object\");\n    digitalWrite(ledPin, LOW);\n  }\n  delay(100);\n}"
+      }
+    ],
+    [
+      48,
+      {
+        "id": 48,
+        "name": "Water Solenoid Valve G1/180",
+        "description": "Electric solenoid valve for water flow control",
+        "pinout": "Coil terminals (12V DC typical). Use relay module to control.",
+        "category": "Actuator",
+        "quantity": 1,
+        "code_snippet": "// Water Solenoid Valve Control\n// Use relay module to switch valve\n\nconst int relayPin = 7;\n\nvoid setup() {\n  pinMode(relayPin, OUTPUT);\n  digitalWrite(relayPin, HIGH);  // Valve closed\n}\n\nvoid openValve() {\n  digitalWrite(relayPin, LOW);\n  Serial.println(\"Valve OPEN\");\n}\n\nvoid closeValve() {\n  digitalWrite(relayPin, HIGH);\n  Serial.println(\"Valve CLOSED\");\n}\n\nvoid loop() {\n  openValve();\n  delay(5000);\n  closeValve();\n  delay(5000);\n}"
+      }
+    ],
+    [
+      49,
+      {
+        "id": 49,
+        "name": "Water Flow Sensor - YFS201",
+        "description": "Hall effect water flow sensor",
+        "pinout": "Red: VCC (5-24V), Black: GND, Yellow: Pulse Output",
+        "category": "Sensor",
+        "quantity": 1,
+        "code_snippet": "// YFS201 Water Flow Sensor\nvolatile int flowPulses = 0;\nconst int flowPin = 2;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(flowPin, INPUT_PULLUP);\n  attachInterrupt(digitalPinToInterrupt(flowPin), countPulse, RISING);\n}\n\nvoid countPulse() {\n  flowPulses++;\n}\n\nvoid loop() {\n  int pulses = flowPulses;\n  flowPulses = 0;\n  \n  // YFS201: 450 pulses per liter\n  float liters = pulses / 450.0;\n  float flowRate = liters * 60;  // L/min\n  \n  Serial.print(\"Flow: \");\n  Serial.print(flowRate);\n  Serial.println(\" L/min\");\n  delay(1000);\n}"
+      }
+    ]
+  ],
+  "scenarioComponents": [
+    [
+      9003,
+      [
+        401,
+        402,
+        403,
+        404
+      ]
+    ],
+    [
+      1,
+      [
+        6,
+        27,
+        10,
+        5,
+        8
+      ]
+    ],
+    [
+      2,
+      [
+        26,
+        3,
+        11,
+        5,
+        18
+      ]
+    ],
+    [
+      3,
+      [
+        33,
+        33,
+        11,
+        12,
+        10
+      ]
+    ],
+    [
+      4,
+      [
+        27,
+        27,
+        11,
+        10,
+        18
+      ]
+    ],
+    [
+      5,
+      [
+        8,
+        26,
+        3,
+        11,
+        10
+      ]
+    ],
+    [
+      6,
+      [
+        12,
+        9,
+        8,
+        5,
+        30
+      ]
+    ],
+    [
+      7,
+      [
+        6,
+        30,
+        12,
+        9,
+        8
+      ]
+    ],
+    [
+      8,
+      [
+        7,
+        4,
+        13,
+        12,
+        10
+      ]
+    ]
+  ],
+  "snippetUnlocks": [],
+  "activityLogs": [
+    {
+      "id": 29,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
+      "created_at": "2026-03-27T15:41:24.042Z"
+    },
+    {
+      "id": 28,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "created_at": "2026-03-27T15:41:24.019Z"
+    },
+    {
+      "id": 27,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
+      "created_at": "2026-03-27T15:33:27.651Z"
+    },
+    {
+      "id": 26,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "created_at": "2026-03-27T15:33:27.607Z"
+    },
+    {
+      "id": 25,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
+      "created_at": "2026-03-27T15:33:21.675Z"
+    },
+    {
+      "id": 24,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "created_at": "2026-03-27T15:33:21.652Z"
+    },
+    {
+      "id": 23,
+      "participant_id": "TST001",
+      "event_type": "round1_response",
+      "details": "Question 1: Incorrect (0/5 points)",
+      "created_at": "2026-03-27T15:32:58.011Z"
+    },
+    {
+      "id": 22,
+      "participant_id": "TST001",
+      "event_type": "round1_section_override",
+      "details": "Round 1 section set to 3",
+      "created_at": "2026-03-27T15:32:10.466Z"
+    },
+    {
+      "id": 21,
+      "participant_id": "TST001",
+      "event_type": "round1_started",
+      "details": "Round 1 started with 56 questions",
+      "created_at": "2026-03-27T15:31:50.770Z"
+    },
+    {
+      "id": 20,
+      "participant_id": "TST001",
+      "event_type": "round1_section_override",
+      "details": "Round 1 section set to 2",
+      "created_at": "2026-03-27T15:31:43.939Z"
+    },
+    {
+      "id": 19,
+      "participant_id": "UIT001",
+      "event_type": "round1_started",
+      "details": "Round 1 started with 56 questions",
+      "created_at": "2026-03-27T15:30:20.324Z"
+    },
+    {
+      "id": 18,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
+      "created_at": "2026-03-27T15:28:50.460Z"
+    },
+    {
+      "id": 17,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "created_at": "2026-03-27T15:28:50.292Z"
+    },
+    {
+      "id": 16,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
+      "created_at": "2026-03-27T15:27:06.229Z"
+    },
+    {
+      "id": 15,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "created_at": "2026-03-27T15:27:06.102Z"
+    },
+    {
+      "id": 14,
+      "participant_id": "6EUSXP",
+      "event_type": "round1_section_override",
+      "details": "Round 1 section set to 3",
+      "created_at": "2026-03-27T15:26:48.860Z"
+    },
+    {
+      "id": 13,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
+      "created_at": "2026-03-27T15:26:31.340Z"
+    },
+    {
+      "id": 12,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "created_at": "2026-03-27T15:26:31.202Z"
+    },
+    {
+      "id": 11,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
+      "created_at": "2026-03-27T15:25:22.251Z"
+    },
+    {
+      "id": 10,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "created_at": "2026-03-27T15:25:20.589Z"
+    },
+    {
+      "id": 9,
+      "participant_id": "6EUSXP",
+      "event_type": "round1_section_override",
+      "details": "Round 1 section set to 2",
+      "created_at": "2026-03-27T15:25:13.170Z"
+    },
+    {
+      "id": 8,
+      "participant_id": "6EUSXP",
+      "event_type": "round1_section_override",
+      "details": "Round 1 section set to 1",
+      "created_at": "2026-03-27T15:25:03.928Z"
+    },
+    {
+      "id": 7,
+      "participant_id": "6EUSXP",
+      "event_type": "violation",
+      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "created_at": "2026-03-27T15:24:38.939Z"
+    },
+    {
+      "id": 6,
+      "participant_id": "6EUSXP",
+      "event_type": "round1_started",
+      "details": "Round 1 started with 56 questions",
+      "created_at": "2026-03-27T15:24:27.566Z"
+    },
+    {
+      "id": 5,
+      "participant_id": "6EUSXP",
+      "event_type": "participant_created",
+      "details": "New participant created: wrer (round1)",
+      "created_at": "2026-03-27T15:23:51.502Z"
+    },
+    {
+      "id": 4,
+      "participant_id": "TST003",
+      "event_type": "participant_created",
+      "details": "New participant created: Test User Three (round1)",
+      "created_at": "2026-03-27T15:22:24.420Z"
+    },
+    {
+      "id": 2,
+      "participant_id": "TST002",
+      "event_type": "scenario_assigned",
+      "details": "Auto-assigned scenario: The Smart Staircase Lighting",
+      "created_at": "2026-03-27T15:22:24.357Z"
+    },
+    {
+      "id": 3,
+      "participant_id": "TST002",
+      "event_type": "participant_created",
+      "details": "New participant created: Test User Two (round2)",
+      "created_at": "2026-03-27T15:22:24.357Z"
+    },
+    {
+      "id": 1,
+      "participant_id": "TST001",
+      "event_type": "participant_created",
+      "details": "New participant created: Test User One (round1)",
+      "created_at": "2026-03-27T15:22:24.330Z"
+    }
+  ],
+  "violations": [
+    {
+      "id": 15,
+      "participant_id": "6EUSXP",
+      "violation_type": "tab_switch",
+      "severity": "critical",
+      "details": "Participant switched to another browser tab during Round 1.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:41:24.042Z"
+    },
+    {
+      "id": 14,
+      "participant_id": "6EUSXP",
+      "violation_type": "window_blur",
+      "severity": "critical",
+      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:41:24.015Z"
+    },
+    {
+      "id": 13,
+      "participant_id": "6EUSXP",
+      "violation_type": "tab_switch",
+      "severity": "critical",
+      "details": "Participant switched to another browser tab during Round 1.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:33:27.651Z"
+    },
+    {
+      "id": 12,
+      "participant_id": "6EUSXP",
+      "violation_type": "window_blur",
+      "severity": "critical",
+      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:33:27.607Z"
+    },
+    {
+      "id": 11,
+      "participant_id": "6EUSXP",
+      "violation_type": "tab_switch",
+      "severity": "critical",
+      "details": "Participant switched to another browser tab during Round 1.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:33:21.675Z"
+    },
+    {
+      "id": 10,
+      "participant_id": "6EUSXP",
+      "violation_type": "window_blur",
+      "severity": "critical",
+      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:33:21.652Z"
+    },
+    {
+      "id": 9,
+      "participant_id": "6EUSXP",
+      "violation_type": "tab_switch",
+      "severity": "critical",
+      "details": "Participant switched to another browser tab during Round 1.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:28:50.460Z"
+    },
+    {
+      "id": 8,
+      "participant_id": "6EUSXP",
+      "violation_type": "window_blur",
+      "severity": "critical",
+      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:28:50.292Z"
+    },
+    {
+      "id": 7,
+      "participant_id": "6EUSXP",
+      "violation_type": "tab_switch",
+      "severity": "critical",
+      "details": "Participant switched to another browser tab during Round 1.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:27:06.229Z"
+    },
+    {
+      "id": 6,
+      "participant_id": "6EUSXP",
+      "violation_type": "window_blur",
+      "severity": "critical",
+      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:27:06.102Z"
+    },
+    {
+      "id": 5,
+      "participant_id": "6EUSXP",
+      "violation_type": "tab_switch",
+      "severity": "critical",
+      "details": "Participant switched to another browser tab during Round 1.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:26:31.340Z"
+    },
+    {
+      "id": 4,
+      "participant_id": "6EUSXP",
+      "violation_type": "window_blur",
+      "severity": "critical",
+      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:26:31.202Z"
+    },
+    {
+      "id": 3,
+      "participant_id": "6EUSXP",
+      "violation_type": "tab_switch",
+      "severity": "critical",
+      "details": "Participant switched to another browser tab during Round 1.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:25:22.251Z"
+    },
+    {
+      "id": 2,
+      "participant_id": "6EUSXP",
+      "violation_type": "window_blur",
+      "severity": "critical",
+      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:25:20.589Z"
+    },
+    {
+      "id": 1,
+      "participant_id": "6EUSXP",
+      "violation_type": "window_blur",
+      "severity": "critical",
+      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "is_approved": false,
+      "created_at": "2026-03-27T15:24:38.939Z"
+    }
+  ],
+  "initialized": true,
+  "admin_password": "admin123",
+  "password_history": [],
+  "global_timer_duration": 7200,
+  "whitelisted_apps": [
+    "Arduino IDE",
+    "Visual Studio Code",
+    "Notepad++",
+    "Code::Blocks"
+  ],
+  "round1Questions": [
+    [
+      1,
+      {
+        "type": "mcq",
+        "title": "GPIO Voltage",
+        "scenario": "Most Raspberry Pi GPIO pins are logic-level:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "1.8V"
+          },
+          {
+            "id": "B",
+            "text": "3.3V"
+          },
+          {
+            "id": "C",
+            "text": "5V tolerant always"
+          },
+          {
+            "id": "D",
+            "text": "12V industrial"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 1,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      2,
+      {
+        "type": "mcq",
+        "title": "Ground Reference",
+        "scenario": "In mixed modules, common GND is required to:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Increase Wi-Fi range"
+          },
+          {
+            "id": "B",
+            "text": "Share voltage reference between modules"
+          },
+          {
+            "id": "C",
+            "text": "Reduce flash memory use"
+          },
+          {
+            "id": "D",
+            "text": "Enable PWM on all pins"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 2,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      3,
+      {
+        "type": "mcq",
+        "title": "Pull-up Resistor",
+        "scenario": "INPUT_PULLUP on Arduino is commonly used to:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Increase ADC precision"
+          },
+          {
+            "id": "B",
+            "text": "Keep a digital input from floating"
+          },
+          {
+            "id": "C",
+            "text": "Improve Wi-Fi range"
+          },
+          {
+            "id": "D",
+            "text": "Enable hardware PWM"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 3,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      4,
+      {
+        "type": "mcq",
+        "title": "Raspberry Pi Type",
+        "scenario": "Raspberry Pi is best described as a:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Bare-metal sensor only"
+          },
+          {
+            "id": "B",
+            "text": "Single board computer"
+          },
+          {
+            "id": "C",
+            "text": "Only a bootloader chip"
+          },
+          {
+            "id": "D",
+            "text": "Simple analog comparator"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 4,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      5,
+      {
+        "type": "mcq",
+        "title": "LDR Behavior",
+        "scenario": "For a typical LDR, resistance generally:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Increases when light increases"
+          },
+          {
+            "id": "B",
+            "text": "Decreases when light increases"
+          },
+          {
+            "id": "C",
+            "text": "Stays constant with light changes"
+          },
+          {
+            "id": "D",
+            "text": "Becomes negative in darkness"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 5,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      6,
+      {
+        "type": "mcq",
+        "title": "Breadboard Rails",
+        "scenario": "On a standard breadboard, side rails are usually for:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Clock synthesis"
+          },
+          {
+            "id": "B",
+            "text": "Power distribution"
+          },
+          {
+            "id": "C",
+            "text": "SPI framing"
+          },
+          {
+            "id": "D",
+            "text": "EEPROM addressing"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 6,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      7,
+      {
+        "type": "mcq",
+        "title": "Cloud Dashboard",
+        "scenario": "IoT dashboard mainly helps to:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Manufacture PCBs"
+          },
+          {
+            "id": "B",
+            "text": "Visualize and monitor telemetry"
+          },
+          {
+            "id": "C",
+            "text": "Increase battery voltage"
+          },
+          {
+            "id": "D",
+            "text": "Generate C compiler binaries"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 7,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      8,
+      {
+        "type": "mcq",
+        "title": "GPIO Voltage",
+        "scenario": "Most Raspberry Pi GPIO pins are logic-level:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "1.8V"
+          },
+          {
+            "id": "B",
+            "text": "3.3V"
+          },
+          {
+            "id": "C",
+            "text": "5V tolerant always"
+          },
+          {
+            "id": "D",
+            "text": "12V industrial"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 8,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      9,
+      {
+        "type": "mcq",
+        "title": "EEPROM Usage",
+        "scenario": "EEPROM is commonly used to store:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Temporary RAM stack"
+          },
+          {
+            "id": "B",
+            "text": "Persistent configuration values"
+          },
+          {
+            "id": "C",
+            "text": "Live camera frames"
+          },
+          {
+            "id": "D",
+            "text": "Analog waveform output"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 9,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      10,
+      {
+        "type": "mcq",
+        "title": "Cloud Dashboard",
+        "scenario": "IoT dashboard mainly helps to:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Manufacture PCBs"
+          },
+          {
+            "id": "B",
+            "text": "Visualize and monitor telemetry"
+          },
+          {
+            "id": "C",
+            "text": "Increase battery voltage"
+          },
+          {
+            "id": "D",
+            "text": "Generate C compiler binaries"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 10,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      11,
+      {
+        "type": "mcq",
+        "title": "BLE Full Form",
+        "scenario": "BLE stands for:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Binary Logic Engine"
+          },
+          {
+            "id": "B",
+            "text": "Bluetooth Low Energy"
+          },
+          {
+            "id": "C",
+            "text": "Bus Line Encoder"
+          },
+          {
+            "id": "D",
+            "text": "Basic Link Ethernet"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 11,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      12,
+      {
+        "type": "mcq",
+        "title": "EEPROM Usage",
+        "scenario": "EEPROM is commonly used to store:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Temporary RAM stack"
+          },
+          {
+            "id": "B",
+            "text": "Persistent configuration values"
+          },
+          {
+            "id": "C",
+            "text": "Live camera frames"
+          },
+          {
+            "id": "D",
+            "text": "Analog waveform output"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 12,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      13,
+      {
+        "type": "mcq",
+        "title": "GPIO Direction",
+        "scenario": "In Arduino, what does pinMode(pin, OUTPUT) do?",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Sets the pin to read analog voltage"
+          },
+          {
+            "id": "B",
+            "text": "Sets the pin to produce a digital signal"
+          },
+          {
+            "id": "C",
+            "text": "Disables interrupts globally"
+          },
+          {
+            "id": "D",
+            "text": "Configures UART baud rate"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 13,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      14,
+      {
+        "type": "mcq",
+        "title": "Potentiometer",
+        "scenario": "A potentiometer used with analogRead acts as:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Current source"
+          },
+          {
+            "id": "B",
+            "text": "Variable voltage divider"
+          },
+          {
+            "id": "C",
+            "text": "Digital encoder"
+          },
+          {
+            "id": "D",
+            "text": "RF transmitter"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 14,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      15,
+      {
+        "type": "mcq",
+        "title": "Buzzer Use",
+        "scenario": "Piezo buzzer in embedded projects is generally an:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Input sensor"
+          },
+          {
+            "id": "B",
+            "text": "Audio output actuator"
+          },
+          {
+            "id": "C",
+            "text": "Protocol converter"
+          },
+          {
+            "id": "D",
+            "text": "Storage element"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 15,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      16,
+      {
+        "type": "mcq",
+        "title": "Ground Reference",
+        "scenario": "In mixed modules, common GND is required to:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Increase Wi-Fi range"
+          },
+          {
+            "id": "B",
+            "text": "Share voltage reference between modules"
+          },
+          {
+            "id": "C",
+            "text": "Reduce flash memory use"
+          },
+          {
+            "id": "D",
+            "text": "Enable PWM on all pins"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 16,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      17,
+      {
+        "type": "mcq",
+        "title": "Threshold Alert",
+        "scenario": "A threshold-based alert triggers when:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Data equals zero always"
+          },
+          {
+            "id": "B",
+            "text": "Measurement crosses configured limit"
+          },
+          {
+            "id": "C",
+            "text": "MCU enters sleep mode"
+          },
+          {
+            "id": "D",
+            "text": "UART parity is odd"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 17,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      18,
+      {
+        "type": "mcq",
+        "title": "Watchdog",
+        "scenario": "A watchdog timer helps by:",
+        "section": "A",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Generating PWM on extra channels"
+          },
+          {
+            "id": "B",
+            "text": "Resetting the MCU if firmware hangs"
+          },
+          {
+            "id": "C",
+            "text": "Increasing RAM size"
+          },
+          {
+            "id": "D",
+            "text": "Encrypting BLE packets"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 18,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      19,
+      {
+        "type": "mcq",
+        "title": "Digital Read Values",
+        "scenario": "digitalRead() returns:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Only floating values"
+          },
+          {
+            "id": "B",
+            "text": "HIGH or LOW"
+          },
+          {
+            "id": "C",
+            "text": "0 to 1023"
+          },
+          {
+            "id": "D",
+            "text": "Signed 16-bit value always"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 19,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      20,
+      {
+        "type": "mcq",
+        "title": "Setup Function",
+        "scenario": "In Arduino, setup() is mainly for:",
+        "section": "A",
+        "difficulty": "Hard",
+        "score": 5,
+        "timeLimit": 60,
+        "options": [
+          {
+            "id": "A",
+            "text": "Repeated sensing forever"
+          },
+          {
+            "id": "B",
+            "text": "One-time initialization"
+          },
+          {
+            "id": "C",
+            "text": "Automatic cloud upload"
+          },
+          {
+            "id": "D",
+            "text": "Compiling sketches at runtime"
+          }
+        ],
+        "correctAnswer": "B",
+        "id": 20,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      21,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Healthcare IoT - Q1",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhy is Bluetooth Low Energy (BLE) used instead of Wi-Fi for wearable patches?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "BLE consumes significantly less power, extending wearable battery life"
+          },
+          {
+            "id": "B",
+            "text": "BLE has higher data rate than Wi-Fi"
+          },
+          {
+            "id": "C",
+            "text": "BLE has longer range than Wi-Fi"
+          },
+          {
+            "id": "D",
+            "text": "BLE is required by HIPAA regulations"
+          }
+        ],
+        "correctAnswer": "A",
+        "scenario_group": "smart_healthcare",
+        "id": 21,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      22,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Healthcare IoT - Q2",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhat does HL7 FHIR define in the context of this system?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "Encryption algorithm for patient data"
+          },
+          {
+            "id": "B",
+            "text": "A standard format for exchanging electronic health information"
+          },
+          {
+            "id": "C",
+            "text": "Wireless protocol for BLE devices"
+          },
+          {
+            "id": "D",
+            "text": "Alert threshold values for ICU monitors"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "smart_healthcare",
+        "id": 22,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      23,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Healthcare IoT - Q3",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhat regulation primarily governs patient data privacy in this US hospital system?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "GDPR"
+          },
+          {
+            "id": "B",
+            "text": "ISO 27001"
+          },
+          {
+            "id": "C",
+            "text": "HIPAA"
+          },
+          {
+            "id": "D",
+            "text": "PCI-DSS"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "smart_healthcare",
+        "id": 23,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      24,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Healthcare IoT - Q4",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nMotion artefacts in wearable ECG sensors cause false alerts because:",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "BLE signal is disrupted by movement"
+          },
+          {
+            "id": "B",
+            "text": "The EHR system cannot process movement data"
+          },
+          {
+            "id": "C",
+            "text": "AES-256 encryption adds processing delay"
+          },
+          {
+            "id": "D",
+            "text": "Patient movement introduces noise that mimics abnormal waveforms"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "smart_healthcare",
+        "id": 24,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      25,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Healthcare IoT - Q5",
+        "scenario": "Story and Problem Statement:\nA hospital ICU deploys an IoT patient monitoring platform. Wearable patches measure ECG, SpO2, respiratory rate, and skin temperature. These patches use Bluetooth Low Energy (BLE) to stream data to bedside hubs, which aggregate readings and forward them over hospital Wi-Fi to an on-premise edge server. The edge server runs anomaly detection algorithms and triggers alerts on nurses' tablets via push notifications when parameters exceed clinical thresholds. All data is HL7 FHIR-compliant and integrated with the hospital's Electronic Health Record (EHR) system. Data is encrypted end-to-end using AES-256. The system must comply with HIPAA regulations. Engineers face challenges with BLE interference in the RF-dense ICU, false-positive alerts from motion artefacts during patient movement, and secure remote access for physicians reviewing data off-site.\n\nQuestion:\nWhat is the primary purpose of AES-256 encryption in this system?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "To ensure patient data is unreadable if intercepted or breached"
+          },
+          {
+            "id": "B",
+            "text": "To compress patient data for faster transmission"
+          },
+          {
+            "id": "C",
+            "text": "To authenticate nurses' tablets"
+          },
+          {
+            "id": "D",
+            "text": "To comply with HL7 FHIR standards"
+          }
+        ],
+        "correctAnswer": "A",
+        "scenario_group": "smart_healthcare",
+        "id": 25,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      26,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Traffic IoT - Q1",
+        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhy are edge computing nodes used at intersections instead of sending all data to the cloud?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "Edge processing reduces latency for real-time decisions"
+          },
+          {
+            "id": "B",
+            "text": "Cloud storage is too expensive"
+          },
+          {
+            "id": "C",
+            "text": "Cloud cannot process video data"
+          },
+          {
+            "id": "D",
+            "text": "Edge nodes replace inductive loop sensors"
+          }
+        ],
+        "correctAnswer": "A",
+        "scenario_group": "smart_traffic",
+        "id": 26,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      27,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Traffic IoT - Q2",
+        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhat technology do emergency vehicles use to communicate with traffic signals in this system?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "Bluetooth 5.0"
+          },
+          {
+            "id": "B",
+            "text": "DSRC (Dedicated Short-Range Communication) at 5.9 GHz"
+          },
+          {
+            "id": "C",
+            "text": "Zigbee mesh"
+          },
+          {
+            "id": "D",
+            "text": "LoRaWAN"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "smart_traffic",
+        "id": 27,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      28,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Traffic IoT - Q3",
+        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhat is a spoofing attack in the context of V2I communication?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "Overloading the traffic controller with requests"
+          },
+          {
+            "id": "B",
+            "text": "Intercepting and reading V2I packets"
+          },
+          {
+            "id": "C",
+            "text": "A fake vehicle/device transmitting false identity or data to infrastructure"
+          },
+          {
+            "id": "D",
+            "text": "Jamming the DSRC frequency band"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "smart_traffic",
+        "id": 28,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      29,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Traffic IoT - Q4",
+        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhy is LiDAR used alongside inductive loop sensors in this system?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "LiDAR is cheaper than loops"
+          },
+          {
+            "id": "B",
+            "text": "LiDAR works only at night"
+          },
+          {
+            "id": "C",
+            "text": "LiDAR replaces fibre backhaul"
+          },
+          {
+            "id": "D",
+            "text": "LiDAR provides 3D spatial data including speed and object classification"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "smart_traffic",
+        "id": 29,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      30,
+      {
+        "type": "scenario-mcq",
+        "title": "Smart Traffic IoT - Q5",
+        "scenario": "Story and Problem Statement:\nA smart traffic management system is deployed at urban intersections across a city. Inductive loop sensors and LiDAR units detect vehicle presence and speed. Overhead edge computing nodes (NVIDIA Jetson-based) run real-time computer vision models to count vehicles and detect accidents, reducing latency compared to cloud-only processing. Traffic controllers communicate using the NTCIP (National Transportation Communications for ITS Protocol) standard over a fibre backhaul. Emergency vehicles carry V2I (Vehicle-to-Infrastructure) transponders operating on DSRC (5.9 GHz) to pre-empt signal phases. The system publishes real-time congestion data via REST APIs consumed by navigation apps. Security engineers are concerned about spoofing attacks on V2I communication. Data retention policies require all incident footage to be stored encrypted for 30 days.\n\nQuestion:\nWhat is the purpose of a REST API in this traffic system?",
+        "section": "B",
+        "difficulty": "Medium",
+        "score": 8,
+        "timeLimit": 90,
+        "options": [
+          {
+            "id": "A",
+            "text": "To expose real-time traffic data to external apps over HTTP"
+          },
+          {
+            "id": "B",
+            "text": "To configure traffic light hardware directly"
+          },
+          {
+            "id": "C",
+            "text": "To encrypt stored footage"
+          },
+          {
+            "id": "D",
+            "text": "To manage V2I transponder pairing"
+          }
+        ],
+        "correctAnswer": "A",
+        "scenario_group": "smart_traffic",
+        "id": 30,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      31,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q1",
+        "scenario": "What does PIR stand for?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Printed Infrared"
+          },
+          {
+            "id": "B",
+            "text": "Passive Infrared"
+          },
+          {
+            "id": "C",
+            "text": "Pulsed Infrared"
+          },
+          {
+            "id": "D",
+            "text": "Programmable Infrared"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 31,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      32,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q2",
+        "scenario": "What component produces the sound alert in this circuit?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "LED"
+          },
+          {
+            "id": "B",
+            "text": "Resistor"
+          },
+          {
+            "id": "C",
+            "text": "Piezo Buzzer"
+          },
+          {
+            "id": "D",
+            "text": "Capacitor"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 32,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      33,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q3",
+        "scenario": "What colour are the 5V power wires in this circuit?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Black"
+          },
+          {
+            "id": "B",
+            "text": "Green"
+          },
+          {
+            "id": "C",
+            "text": "Blue"
+          },
+          {
+            "id": "D",
+            "text": "Red"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 33,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      34,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q4",
+        "scenario": "What signal does the PIR sensor output when motion is detected?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Analog voltage"
+          },
+          {
+            "id": "B",
+            "text": "PWM"
+          },
+          {
+            "id": "C",
+            "text": "Digital HIGH (5V)"
+          },
+          {
+            "id": "D",
+            "text": "I2C data"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 34,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      35,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q5",
+        "scenario": "Which component detects the presence of a person in this circuit?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Buzzer"
+          },
+          {
+            "id": "B",
+            "text": "Arduino Uno"
+          },
+          {
+            "id": "C",
+            "text": "Resistor"
+          },
+          {
+            "id": "D",
+            "text": "PIR Sensor"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 35,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      36,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q6",
+        "scenario": "The dome-shaped lens on the PIR sensor that focuses infrared radiation is called:",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Parabolic lens"
+          },
+          {
+            "id": "B",
+            "text": "Fresnel lens"
+          },
+          {
+            "id": "C",
+            "text": "Concave mirror"
+          },
+          {
+            "id": "D",
+            "text": "Diffraction grating"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 36,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      37,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q7",
+        "scenario": "How many pins does a typical PIR sensor module have?",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "2"
+          },
+          {
+            "id": "B",
+            "text": "4"
+          },
+          {
+            "id": "C",
+            "text": "3"
+          },
+          {
+            "id": "D",
+            "text": "6"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 37,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      38,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q8",
+        "scenario": "Which Arduino pinMode() is set for the pin receiving the PIR OUTPUT?",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "OUTPUT"
+          },
+          {
+            "id": "B",
+            "text": "ANALOG"
+          },
+          {
+            "id": "C",
+            "text": "INPUT_PULLUP"
+          },
+          {
+            "id": "D",
+            "text": "INPUT"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 38,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      39,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q9",
+        "scenario": "After detecting motion the PIR stays HIGH for a few seconds because of:",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "delay() in Arduino"
+          },
+          {
+            "id": "B",
+            "text": "Internal re-trigger time delay of the module"
+          },
+          {
+            "id": "C",
+            "text": "Buzzer feedback loop"
+          },
+          {
+            "id": "D",
+            "text": "Capacitor discharge"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 39,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      40,
+      {
+        "type": "simulation",
+        "title": "Circuit 1 — PIR Motion Sensor with Buzzer - Q10",
+        "scenario": "What is the typical maximum motion-detection range of a PIR sensor?",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "20 cm"
+          },
+          {
+            "id": "B",
+            "text": "Up to 7 meters"
+          },
+          {
+            "id": "C",
+            "text": "Exactly 1 meter"
+          },
+          {
+            "id": "D",
+            "text": "50 meters"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_1_pir_buzzer",
+        "imageUrl": "/circuit_pics/Picture1.png",
+        "id": 40,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      41,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q1",
+        "scenario": "What does LDR stand for?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Low Density Resistor"
+          },
+          {
+            "id": "B",
+            "text": "Light Dependent Resistor"
+          },
+          {
+            "id": "C",
+            "text": "Laser Detection Relay"
+          },
+          {
+            "id": "D",
+            "text": "Linear Digital Resistor"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 41,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      42,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q2",
+        "scenario": "What type of Arduino pin reads the LDR value in this circuit?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Digital pin"
+          },
+          {
+            "id": "B",
+            "text": "GND pin"
+          },
+          {
+            "id": "C",
+            "text": "Analog pin (A0)"
+          },
+          {
+            "id": "D",
+            "text": "TX pin"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 42,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      43,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q3",
+        "scenario": "What output component is visible at the top-left of this circuit?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Green LED"
+          },
+          {
+            "id": "B",
+            "text": "Buzzer"
+          },
+          {
+            "id": "C",
+            "text": "Red LED"
+          },
+          {
+            "id": "D",
+            "text": "Infrared sensor"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 43,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      44,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q4",
+        "scenario": "What happens to LDR resistance when exposed to bright light?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Increases"
+          },
+          {
+            "id": "B",
+            "text": "Stays constant"
+          },
+          {
+            "id": "C",
+            "text": "Decreases"
+          },
+          {
+            "id": "D",
+            "text": "Becomes infinite"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 44,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      45,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q5",
+        "scenario": "Which Arduino function reads the LDR analog value?",
+        "section": "C",
+        "difficulty": "Easy",
+        "score": 5,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "digitalRead()"
+          },
+          {
+            "id": "B",
+            "text": "analogRead()"
+          },
+          {
+            "id": "C",
+            "text": "pulseIn()"
+          },
+          {
+            "id": "D",
+            "text": "Serial.read()"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 45,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      46,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q6",
+        "scenario": "What is the full range of values returned by analogRead() on Arduino Uno?",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "0-255"
+          },
+          {
+            "id": "B",
+            "text": "0-100"
+          },
+          {
+            "id": "C",
+            "text": "0-4095"
+          },
+          {
+            "id": "D",
+            "text": "0-1023"
+          }
+        ],
+        "correctAnswer": "D",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 46,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      47,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q7",
+        "scenario": "Why is a fixed resistor paired with the LDR in this circuit?",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "To power the LDR"
+          },
+          {
+            "id": "B",
+            "text": "To form a voltage divider for analog reading"
+          },
+          {
+            "id": "C",
+            "text": "To filter visible light"
+          },
+          {
+            "id": "D",
+            "text": "To protect the 5V pin"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 47,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      48,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q8",
+        "scenario": "When the room is completely dark, analogRead(A0) returns a value close to:",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "0"
+          },
+          {
+            "id": "B",
+            "text": "512"
+          },
+          {
+            "id": "C",
+            "text": "1023"
+          },
+          {
+            "id": "D",
+            "text": "-1"
+          }
+        ],
+        "correctAnswer": "C",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 48,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      49,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q9",
+        "scenario": "Which real-world IoT application best uses this LDR circuit?",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "Heart rate monitor"
+          },
+          {
+            "id": "B",
+            "text": "Automatic street light"
+          },
+          {
+            "id": "C",
+            "text": "Motor speed control"
+          },
+          {
+            "id": "D",
+            "text": "GPS tracking"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 49,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      50,
+      {
+        "type": "simulation",
+        "title": "Circuit 2 — LDR Light Sensor with LED Control - Q10",
+        "scenario": "If the LDR is placed under direct bright sunlight, analogRead() returns a value close to:",
+        "section": "C",
+        "difficulty": "Hard",
+        "score": 8,
+        "timeLimit": 75,
+        "options": [
+          {
+            "id": "A",
+            "text": "1023"
+          },
+          {
+            "id": "B",
+            "text": "0"
+          },
+          {
+            "id": "C",
+            "text": "512"
+          },
+          {
+            "id": "D",
+            "text": "Negative"
+          }
+        ],
+        "correctAnswer": "B",
+        "scenario_group": "circuit_2_ldr_led",
+        "imageUrl": "/circuit_pics/Picture2.png",
+        "id": 50,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      51,
+      {
+        "type": "matching",
+        "title": "Interactive Challenge Q1: IoT Architecture Layer Arrangement",
+        "scenario": "Arrange the IoT layers from top (user level) to bottom (physical device level).",
+        "section": "D",
+        "difficulty": "Medium",
+        "score": 4,
+        "timeLimit": 180,
+        "matchingPairs": [
+          {
+            "id": "application",
+            "left": "Position 1 (Top)",
+            "right": "Application Layer"
+          },
+          {
+            "id": "middleware",
+            "left": "Position 2",
+            "right": "Middleware Layer"
+          },
+          {
+            "id": "network",
+            "left": "Position 3",
+            "right": "Network Layer"
+          },
+          {
+            "id": "perception",
+            "left": "Position 4 (Bottom)",
+            "right": "Perception Layer"
+          }
+        ],
+        "correctAnswer": "{\"application\":\"application\",\"middleware\":\"middleware\",\"network\":\"network\",\"perception\":\"perception\"}",
+        "id": 51,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      52,
+      {
+        "type": "component-matching",
+        "title": "Interactive Challenge Q2: Component Function Matching",
+        "scenario": "Match each component to its primary function.",
+        "section": "D",
+        "difficulty": "Medium",
+        "score": 4,
+        "timeLimit": 240,
+        "matchingPairs": [
+          {
+            "id": "A",
+            "left": "DHT22",
+            "right": "Measures temperature and humidity"
+          },
+          {
+            "id": "B",
+            "left": "MQ-135",
+            "right": "Detects gas, smoke, or air quality"
+          },
+          {
+            "id": "C",
+            "left": "Relay Module",
+            "right": "Switches high-voltage devices using low-voltage signal"
+          },
+          {
+            "id": "D",
+            "left": "Servo Motor",
+            "right": "Rotates to specific angles for precise movement"
+          },
+          {
+            "id": "E",
+            "left": "PIR Sensor",
+            "right": "Detects motion using infrared"
+          },
+          {
+            "id": "F",
+            "left": "Ultrasonic Sensor",
+            "right": "Measures distance using sound waves"
+          },
+          {
+            "id": "G",
+            "left": "ESP32",
+            "right": "Microcontroller with built-in Wi-Fi and Bluetooth"
+          },
+          {
+            "id": "H",
+            "left": "Breadboard",
+            "right": "Temporary platform for circuit prototyping"
+          }
+        ],
+        "correctAnswer": "{\"A\":\"A\",\"B\":\"B\",\"C\":\"C\",\"D\":\"D\",\"E\":\"E\",\"F\":\"F\",\"G\":\"G\",\"H\":\"H\"}",
+        "id": 52,
+        "created_at": "2026-03-27T15:31:43.865Z"
+      }
+    ],
+    [
+      53,
+      {
+        "type": "component-matching",
+        "title": "Interactive Challenge Q3: Interface and Connection Type Matching",
+        "scenario": "Match each component to the interface/connection type used with the microcontroller.",
+        "section": "D",
+        "difficulty": "Medium",
+        "score": 4,
+        "timeLimit": 240,
+        "matchingPairs": [
+          {
+            "id": "A",
+            "left": "LED",
+            "right": "Digital Output"
+          },
+          {
+            "id": "B",
+            "left": "DHT22",
+            "right": "OneWire / Digital Input"
+          },
+          {
+            "id": "C",
+            "left": "Servo Motor",
+            "right": "Analog Output (PWM)"
+          },
+          {
+            "id": "D",
+            "left": "MQ-135 Gas Sensor",
+            "right": "Analog Input"
+          },
+          {
+            "id": "E",
+            "left": "Push Button",
+            "right": "Digital Input"
+          },
+          {
+            "id": "F",
+            "left": "HC-SR04 Ultrasonic Sensor",
+            "right": "Trigger-Echo (GPIO)"
+          },
+          {
+            "id": "G",
+            "left": "16x2 LCD Display (with I2C)",
+            "right": "I2C"
+          },
+          {
+            "id": "H",
+            "left": "PIR Sensor",
+            "right": "Digital Input"
+          }
+        ],
+        "correctAnswer": "{\"A\":\"A\",\"B\":\"B\",\"C\":\"C\",\"D\":\"D\",\"E\":\"E\",\"F\":\"F\",\"G\":\"G\",\"H\":\"H\"}",
+        "id": 53,
+        "created_at": "2026-03-27T15:31:43.866Z"
+      }
+    ],
+    [
+      54,
+      {
+        "type": "matching",
+        "title": "Interactive Challenge Q4: Code Logic Sequencing",
+        "scenario": "Arrange blocks in correct order for an IoT program (Wi-Fi + DHT22 + HTTP upload).",
+        "section": "D",
+        "difficulty": "Hard",
+        "score": 4,
+        "timeLimit": 360,
+        "matchingPairs": [
+          {
+            "id": "D",
+            "left": "Step 1",
+            "right": "#include <DHT.h>"
+          },
+          {
+            "id": "H",
+            "left": "Step 2",
+            "right": "#define DHTPIN 4"
+          },
+          {
+            "id": "I",
+            "left": "Step 3",
+            "right": "#define DHTTYPE DHT22"
+          },
+          {
+            "id": "K",
+            "left": "Step 4",
+            "right": "DHT dht(DHTPIN, DHTTYPE);"
+          },
+          {
+            "id": "J",
+            "left": "Step 5",
+            "right": "WiFi.begin(ssid, password);"
+          },
+          {
+            "id": "F",
+            "left": "Step 6",
+            "right": "dht.begin();"
+          },
+          {
+            "id": "B",
+            "left": "Step 7",
+            "right": "float temperature = dht.readTemperature();"
+          },
+          {
+            "id": "E",
+            "left": "Step 8",
+            "right": "if (isnan(temperature)) { Serial.println(\"Failed\"); return; }"
+          },
+          {
+            "id": "C",
+            "left": "Step 9",
+            "right": "Serial.println(temperature);"
+          },
+          {
+            "id": "G",
+            "left": "Step 10",
+            "right": "http.POST(temperature);"
+          },
+          {
+            "id": "A",
+            "left": "Step 11",
+            "right": "delay(5000);"
+          }
+        ],
+        "correctAnswer": "{\"D\":\"D\",\"H\":\"H\",\"I\":\"I\",\"K\":\"K\",\"J\":\"J\",\"F\":\"F\",\"B\":\"B\",\"E\":\"E\",\"C\":\"C\",\"G\":\"G\",\"A\":\"A\"}",
+        "id": 54,
+        "created_at": "2026-03-27T15:31:43.866Z"
+      }
+    ],
+    [
+      55,
+      {
+        "type": "matching",
+        "title": "Interactive Challenge Q5: Sensor-Actuator Scenario Mapping",
+        "scenario": "Match each scenario with the correct sensor and actuator pair.",
+        "section": "D",
+        "difficulty": "Hard",
+        "score": 4,
+        "timeLimit": 300,
+        "matchingPairs": [
+          {
+            "id": "AP",
+            "left": "Smart Irrigation System",
+            "right": "Soil Moisture Sensor + Water Pump / Solenoid Valve"
+          },
+          {
+            "id": "BQ",
+            "left": "Automatic Street Light",
+            "right": "LDR + LED / Street Light"
+          },
+          {
+            "id": "CR",
+            "left": "Smoke Detection and Alarm",
+            "right": "MQ-135 / Smoke Sensor + Buzzer"
+          },
+          {
+            "id": "DS",
+            "left": "Smart Parking System",
+            "right": "Ultrasonic Sensor + Servo Motor / Gate"
+          },
+          {
+            "id": "ET",
+            "left": "Temperature-Controlled Fan",
+            "right": "DHT22 / Temperature Sensor + DC Fan / Relay Module"
+          }
+        ],
+        "correctAnswer": "{\"AP\":\"AP\",\"BQ\":\"BQ\",\"CR\":\"CR\",\"DS\":\"DS\",\"ET\":\"ET\"}",
+        "id": 55,
+        "created_at": "2026-03-27T15:31:43.866Z"
+      }
+    ],
+    [
+      56,
+      {
+        "type": "matching",
+        "title": "Interactive Challenge Q6: Protocol and Communication Match (Bonus)",
+        "scenario": "Bonus: Match each use case to the best communication protocol.",
+        "section": "D",
+        "difficulty": "Hard",
+        "score": 4,
+        "timeLimit": 240,
+        "matchingPairs": [
+          {
+            "id": "A1",
+            "left": "Send sensor data to cloud every 2 seconds (low bandwidth)",
+            "right": "MQTT"
+          },
+          {
+            "id": "B2",
+            "left": "Connect 3 sensors to one MCU using 2 wires",
+            "right": "I2C"
+          },
+          {
+            "id": "C3",
+            "left": "Control LED from smartphone app (one-time command)",
+            "right": "HTTP / REST API"
+          },
+          {
+            "id": "D4",
+            "left": "Short-range communication between two ESP32 modules",
+            "right": "UART / Serial"
+          },
+          {
+            "id": "B5",
+            "left": "Connect OLED display to ESP32",
+            "right": "I2C"
+          },
+          {
+            "id": "E6",
+            "left": "Stream video from camera module to web server",
+            "right": "Wi-Fi / TCP/IP"
+          }
+        ],
+        "correctAnswer": "{\"A1\":\"A1\",\"B2\":\"B2\",\"C3\":\"C3\",\"D4\":\"D4\",\"B5\":\"B5\",\"E6\":\"E6\"}",
+        "id": 56,
+        "created_at": "2026-03-27T15:31:43.866Z"
+      }
+    ]
+  ],
+  "round1Responses": [
+    {
+      "id": 1,
+      "participant_id": "TST001",
+      "question_id": 1,
+      "answer": "A",
+      "is_correct": false,
+      "score_obtained": 0,
+      "time_taken": 5,
+      "answered_at": "2026-03-27T15:32:58.011Z"
+    }
+  ],
+  "round1Results": [],
+  "round1Sessions": [
+    [
+      "TST001",
+      {
+        "participant_id": "TST001",
+        "question_ids": [
+          1,
+          3,
+          9,
+          5,
+          15,
+          19,
+          10,
+          11,
+          8,
+          7,
+          17,
+          4,
+          6,
+          14,
+          13,
+          2,
+          16,
+          20,
+          18,
+          12,
+          26,
+          27,
+          28,
+          29,
+          30,
+          21,
+          22,
+          23,
+          24,
+          25,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          54,
+          56,
+          55,
+          51,
+          52,
+          53
+        ],
+        "started_at": "2026-03-27T15:31:50.769Z",
+        "expires_at": "2026-03-27T16:31:50.769Z",
+        "submitted": false
+      }
+    ]
+  ],
+  "round1SectionAccess": [
+    [
+      "TST001",
+      3
+    ]
+  ]
+}

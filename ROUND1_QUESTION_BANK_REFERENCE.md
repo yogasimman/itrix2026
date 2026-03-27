@@ -415,7 +415,7 @@ This file is generated from the curated bank and is used as the event reference 
 ## Hard MCQ (50)
 
 ### H1. Applied 1: GPIO Direction
-- Question: Practical check: In Arduino, what does pinMode(pin, OUTPUT) do?
+- Question: Applied Question: In Arduino, what does pinMode(pin, OUTPUT) do?
 - A. Sets the pin to read analog voltage
 - B. Sets the pin to produce a digital signal
 - C. Disables interrupts globally
@@ -423,7 +423,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H2. Applied 2: ADC Width
-- Question: Practical check: On Arduino Uno, analogRead() usually returns values in which range?
+- Question: Applied Question: On Arduino Uno, analogRead() usually returns values in which range?
 - A. 0 to 255
 - B. 0 to 1023
 - C. 0 to 2047
@@ -431,7 +431,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H3. Applied 3: PWM Meaning
-- Question: Practical check: PWM is mainly used in embedded systems to:
+- Question: Applied Question: PWM is mainly used in embedded systems to:
 - A. Encrypt serial traffic
 - B. Approximate analog output using duty cycle
 - C. Increase CPU clock speed
@@ -439,7 +439,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H4. Applied 4: Pull-up Resistor
-- Question: Practical check: INPUT_PULLUP on Arduino is commonly used to:
+- Question: Applied Question: INPUT_PULLUP on Arduino is commonly used to:
 - A. Increase ADC precision
 - B. Keep a digital input from floating
 - C. Improve Wi-Fi range
@@ -447,7 +447,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H5. Applied 5: I2C Wires
-- Question: Practical check: The two primary I2C signal lines are:
+- Question: Applied Question: The two primary I2C signal lines are:
 - A. TX and RX
 - B. MOSI and MISO
 - C. SDA and SCL
@@ -455,7 +455,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: C
 
 ### H6. Applied 6: SPI Role
-- Question: Practical check: In SPI communication, CS pin is used to:
+- Question: Applied Question: In SPI communication, CS pin is used to:
 - A. Control ADC reference level
 - B. Select which slave device is active
 - C. Reset the microcontroller
@@ -463,7 +463,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H7. Applied 7: UART Basics
-- Question: Practical check: UART communication typically uses which pair?
+- Question: Applied Question: UART communication typically uses which pair?
 - A. SDA/SCL
 - B. TX/RX
 - C. MISO/MOSI
@@ -471,7 +471,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H8. Applied 8: LDR Behavior
-- Question: Practical check: For a typical LDR, resistance generally:
+- Question: Applied Question: For a typical LDR, resistance generally:
 - A. Increases when light increases
 - B. Decreases when light increases
 - C. Stays constant with light changes
@@ -479,7 +479,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H9. Applied 9: DHT Sensor
-- Question: Practical check: DHT11/DHT22 sensors are used to measure:
+- Question: Applied Question: DHT11/DHT22 sensors are used to measure:
 - A. Distance and velocity
 - B. Temperature and humidity
 - C. Voltage and current
@@ -487,7 +487,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H10. Applied 10: Ultrasonic Timing
-- Question: Practical check: HC-SR04 distance is computed from:
+- Question: Applied Question: HC-SR04 distance is computed from:
 - A. Current consumption of trigger pin
 - B. Echo pulse duration
 - C. Ambient light level
@@ -495,7 +495,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H11. Applied 11: Servo Control
-- Question: Practical check: Standard hobby servo position is commonly controlled using:
+- Question: Applied Question: Standard hobby servo position is commonly controlled using:
 - A. I2C packet count
 - B. PWM pulse width
 - C. ADC resolution bits
@@ -503,7 +503,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H12. Applied 12: Relay Purpose
-- Question: Practical check: A relay module in IoT prototypes is mainly used to:
+- Question: Applied Question: A relay module in IoT prototypes is mainly used to:
 - A. Amplify analog sensor voltage
 - B. Switch higher-voltage/current loads
 - C. Convert AC to DC automatically
@@ -511,7 +511,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H13. Applied 13: Debounce
-- Question: Practical check: Button debounce is required because mechanical switches:
+- Question: Applied Question: Button debounce is required because mechanical switches:
 - A. Have floating-point rounding errors
 - B. Create rapid transient toggles when pressed
 - C. Need analog calibration daily
@@ -519,7 +519,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H14. Applied 14: Watchdog
-- Question: Practical check: A watchdog timer helps by:
+- Question: Applied Question: A watchdog timer helps by:
 - A. Generating PWM on extra channels
 - B. Resetting the MCU if firmware hangs
 - C. Increasing RAM size
@@ -527,7 +527,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H15. Applied 15: Raspberry Pi Type
-- Question: Practical check: Raspberry Pi is best described as a:
+- Question: Applied Question: Raspberry Pi is best described as a:
 - A. Bare-metal sensor only
 - B. Single board computer
 - C. Only a bootloader chip
@@ -535,7 +535,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H16. Applied 16: GPIO Voltage
-- Question: Practical check: Most Raspberry Pi GPIO pins are logic-level:
+- Question: Applied Question: Most Raspberry Pi GPIO pins are logic-level:
 - A. 1.8V
 - B. 3.3V
 - C. 5V tolerant always
@@ -543,7 +543,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H17. Applied 17: MQTT Pattern
-- Question: Practical check: MQTT primarily follows which communication model?
+- Question: Applied Question: MQTT primarily follows which communication model?
 - A. Peer-to-peer block exchange
 - B. Publish/Subscribe through broker
 - C. Master-only serial polling
@@ -551,7 +551,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H18. Applied 18: Topic in MQTT
-- Question: Practical check: In MQTT, a topic is:
+- Question: Applied Question: In MQTT, a topic is:
 - A. A battery chemistry type
 - B. A routing string for messages
 - C. A firmware checksum
@@ -559,7 +559,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H19. Applied 19: QoS 0
-- Question: Practical check: MQTT QoS 0 means:
+- Question: Applied Question: MQTT QoS 0 means:
 - A. Exactly once delivery
 - B. At least once delivery
 - C. Best effort delivery
@@ -567,7 +567,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: C
 
 ### H20. Applied 20: Wi-Fi Module
-- Question: Practical check: ESP32 is popular in IoT because it has built-in:
+- Question: Applied Question: ESP32 is popular in IoT because it has built-in:
 - A. GPU tensor cores
 - B. Wi-Fi and Bluetooth
 - C. 48V PoE injector
@@ -575,7 +575,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H21. Applied 21: HTTP Method
-- Question: Practical check: To send sensor data to REST API, the common method is:
+- Question: Applied Question: To send sensor data to REST API, the common method is:
 - A. TRACE
 - B. POST
 - C. OPTIONS only
@@ -583,7 +583,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H22. Applied 22: JSON Role
-- Question: Practical check: JSON in IoT cloud communication is typically used for:
+- Question: Applied Question: JSON in IoT cloud communication is typically used for:
 - A. Power conversion
 - B. Data serialization
 - C. Noise filtering
@@ -591,7 +591,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H23. Applied 23: Breadboard Rails
-- Question: Practical check: On a standard breadboard, side rails are usually for:
+- Question: Applied Question: On a standard breadboard, side rails are usually for:
 - A. Clock synthesis
 - B. Power distribution
 - C. SPI framing
@@ -599,7 +599,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H24. Applied 24: Diode Protection
-- Question: Practical check: A flyback diode is used with DC motors to:
+- Question: Applied Question: A flyback diode is used with DC motors to:
 - A. Increase rotation speed
 - B. Suppress back EMF spikes
 - C. Reduce UART latency
@@ -607,7 +607,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H25. Applied 25: Buzzer Use
-- Question: Practical check: Piezo buzzer in embedded projects is generally an:
+- Question: Applied Question: Piezo buzzer in embedded projects is generally an:
 - A. Input sensor
 - B. Audio output actuator
 - C. Protocol converter
@@ -615,7 +615,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H26. Applied 26: Temperature Sensor
-- Question: Practical check: LM35 output is generally proportional to:
+- Question: Applied Question: LM35 output is generally proportional to:
 - A. Humidity
 - B. Temperature
 - C. Distance
@@ -623,7 +623,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H27. Applied 27: Potentiometer
-- Question: Practical check: A potentiometer used with analogRead acts as:
+- Question: Applied Question: A potentiometer used with analogRead acts as:
 - A. Current source
 - B. Variable voltage divider
 - C. Digital encoder
@@ -631,7 +631,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H28. Applied 28: Serial Monitor
-- Question: Practical check: Serial.begin(9600) sets:
+- Question: Applied Question: Serial.begin(9600) sets:
 - A. ADC resolution
 - B. UART baud rate
 - C. I2C address
@@ -639,7 +639,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H29. Applied 29: Raspberry Pi OS
-- Question: Practical check: Raspberry Pi typically runs:
+- Question: Applied Question: Raspberry Pi typically runs:
 - A. Bare C only
 - B. Linux-based OS
 - C. Only Arduino sketch format
@@ -647,7 +647,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H30. Applied 30: Node-RED
-- Question: Practical check: Node-RED is commonly used to:
+- Question: Applied Question: Node-RED is commonly used to:
 - A. Solder PCB layers
 - B. Create visual IoT workflows
 - C. Fabricate sensors
@@ -655,7 +655,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H31. Applied 31: BLE Full Form
-- Question: Practical check: BLE stands for:
+- Question: Applied Question: BLE stands for:
 - A. Binary Logic Engine
 - B. Bluetooth Low Energy
 - C. Bus Line Encoder
@@ -663,7 +663,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H32. Applied 32: Actuator Example
-- Question: Practical check: Which is an actuator?
+- Question: Applied Question: Which is an actuator?
 - A. LDR
 - B. Ultrasonic sensor
 - C. Servo motor
@@ -671,7 +671,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: C
 
 ### H33. Applied 33: Sensor Example
-- Question: Practical check: Which is a sensor?
+- Question: Applied Question: Which is a sensor?
 - A. Relay
 - B. DHT22
 - C. Buzzer
@@ -679,7 +679,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H34. Applied 34: Digital Read Values
-- Question: Practical check: digitalRead() returns:
+- Question: Applied Question: digitalRead() returns:
 - A. Only floating values
 - B. HIGH or LOW
 - C. 0 to 1023
@@ -687,7 +687,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H35. Applied 35: Loop Function
-- Question: Practical check: In Arduino, loop() function:
+- Question: Applied Question: In Arduino, loop() function:
 - A. Runs once after reset
 - B. Runs repeatedly after setup()
 - C. Only runs on interrupt
@@ -695,7 +695,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H36. Applied 36: Setup Function
-- Question: Practical check: In Arduino, setup() is mainly for:
+- Question: Applied Question: In Arduino, setup() is mainly for:
 - A. Repeated sensing forever
 - B. One-time initialization
 - C. Automatic cloud upload
@@ -703,7 +703,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H37. Applied 37: I2C Pullups
-- Question: Practical check: I2C lines usually require:
+- Question: Applied Question: I2C lines usually require:
 - A. Series capacitors only
 - B. Pull-up resistors
 - C. H-bridge drivers
@@ -711,7 +711,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H38. Applied 38: GPIO Expander
-- Question: Practical check: GPIO expander is used when:
+- Question: Applied Question: GPIO expander is used when:
 - A. Need more digital pins than MCU has
 - B. Need faster ADC conversion
 - C. Need camera ISP
@@ -719,7 +719,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: A
 
 ### H39. Applied 39: Cloud Dashboard
-- Question: Practical check: IoT dashboard mainly helps to:
+- Question: Applied Question: IoT dashboard mainly helps to:
 - A. Manufacture PCBs
 - B. Visualize and monitor telemetry
 - C. Increase battery voltage
@@ -727,7 +727,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H40. Applied 40: OTA Meaning
-- Question: Practical check: OTA firmware update means:
+- Question: Applied Question: OTA firmware update means:
 - A. Over-the-air update
 - B. Only terminal access
 - C. Offline timing adjustment
@@ -735,7 +735,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: A
 
 ### H41. Applied 41: Ground Reference
-- Question: Practical check: In mixed modules, common GND is required to:
+- Question: Applied Question: In mixed modules, common GND is required to:
 - A. Increase Wi-Fi range
 - B. Share voltage reference between modules
 - C. Reduce flash memory use
@@ -743,7 +743,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H42. Applied 42: NVIDIA SBC Example
-- Question: Practical check: Which board is a GPU-capable SBC often used for edge AI?
+- Question: Applied Question: Which board is a GPU-capable SBC often used for edge AI?
 - A. Arduino Nano
 - B. Jetson Nano
 - C. ATmega328P DIP chip
@@ -751,7 +751,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H43. Applied 43: Edge AI
-- Question: Practical check: Edge AI means running inference:
+- Question: Applied Question: Edge AI means running inference:
 - A. Only in remote cloud
 - B. On or near the device
 - C. Inside battery charger
@@ -759,7 +759,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H44. Applied 44: I2C Address
-- Question: Practical check: If two I2C devices have same fixed address, common workaround is:
+- Question: Applied Question: If two I2C devices have same fixed address, common workaround is:
 - A. Increase baud rate
 - B. Use I2C multiplexer
 - C. Switch to pull-down resistors
@@ -767,7 +767,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H45. Applied 45: Sampling Rate
-- Question: Practical check: Sampling rate of a sensor defines:
+- Question: Applied Question: Sampling rate of a sensor defines:
 - A. Power supply polarity
 - B. How often data is measured
 - C. Pin mode direction
@@ -775,7 +775,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H46. Applied 46: Latency
-- Question: Practical check: In IoT systems, latency refers to:
+- Question: Applied Question: In IoT systems, latency refers to:
 - A. Battery weight
 - B. Delay between event and response
 - C. ADC pin count
@@ -783,7 +783,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H47. Applied 47: Threshold Alert
-- Question: Practical check: A threshold-based alert triggers when:
+- Question: Applied Question: A threshold-based alert triggers when:
 - A. Data equals zero always
 - B. Measurement crosses configured limit
 - C. MCU enters sleep mode
@@ -791,7 +791,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: B
 
 ### H48. Applied 48: Raspberry Pi Camera
-- Question: Practical check: Raspberry Pi camera module is typically connected through:
+- Question: Applied Question: Raspberry Pi camera module is typically connected through:
 - A. CSI interface
 - B. PWM pin
 - C. I2C only
@@ -799,7 +799,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: A
 
 ### H49. Applied 49: Basic RTOS Use
-- Question: Practical check: A small RTOS helps embedded apps by:
+- Question: Applied Question: A small RTOS helps embedded apps by:
 - A. Adding deterministic task scheduling
 - B. Increasing analog voltage
 - C. Replacing sensors
@@ -807,7 +807,7 @@ This file is generated from the curated bank and is used as the event reference 
 - Correct: A
 
 ### H50. Applied 50: EEPROM Usage
-- Question: Practical check: EEPROM is commonly used to store:
+- Question: Applied Question: EEPROM is commonly used to store:
 - A. Temporary RAM stack
 - B. Persistent configuration values
 - C. Live camera frames
@@ -2159,4 +2159,5 @@ void loop() {
   - digitalwrite(led_pin, low)
   - notone(buzzer_pin)
   - doorlock.write(0)
+
 

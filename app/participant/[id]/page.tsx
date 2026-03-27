@@ -439,7 +439,7 @@ export default function ParticipantDashboard({
                 {round2HintSummary && (
                   <Badge variant="outline" className="gap-1 border-amber-300/35 bg-amber-300/10 text-amber-100">
                     <AlertTriangle className="h-3 w-3" />
-                    Components Accessed: {round2HintSummary.hintsUsedCount}/{round2HintSummary.totalComponents} | Penalty: {round2HintSummary.totalPenalty}/{round2HintSummary.maxPenalty} | Score: {round2HintSummary.finalScore}
+                    Hint Packs Used: {round2HintSummary.hintsUsedCount}/{round2HintSummary.totalComponents} | Penalty: {round2HintSummary.totalPenalty}/{round2HintSummary.maxPenalty}
                   </Badge>
                 )}
               </div>
@@ -518,7 +518,7 @@ export default function ParticipantDashboard({
               <CardContent>
                 <p className="mb-6 text-sm text-cyan-100/75">
                   These are the components assigned to your scenario. Click
-                  &quot;Unlock Starter Hint Pack&quot; to access basic code plus component documentation. Each component access contributes to penalty scoring.
+                  &quot;Unlock Starter Hint Pack&quot; to access basic code plus component documentation. Hint usage is tracked for your submission.
                 </p>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {components.map((component) => (

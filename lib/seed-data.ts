@@ -851,20 +851,13 @@ export const scenarios = [
 export function seedDatabase() {
   // Initialize the database
   initializeDatabase();
-  
-  // Check if already seeded
-  const existingComponents = getAllComponents();
-  if (existingComponents.length > 0) {
-    console.log('Database already seeded');
-    return;
-  }
-  
-  // Add all components
+
+  // Always upsert canonical components and scenarios.
+  // This keeps persistent stores recoverable if tests or manual edits polluted state.
   for (const component of components) {
     addComponent(component);
   }
-  
-  // Add all scenarios and their component mappings
+
   for (const scenario of scenarios) {
     addScenario({
       id: scenario.id,
@@ -881,6 +874,7 @@ export function seedDatabase() {
     
     setScenarioComponents(scenario.id, componentIds);
   }
-  
-  console.log('Database seeded successfully');
+
+  const existingComponents = getAllComponents();
+  console.log(`Database seeded successfully (${existingComponents.length} components, ${scenarios.length} canonical scenarios)`);
 }

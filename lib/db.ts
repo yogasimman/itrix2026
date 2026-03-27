@@ -124,6 +124,7 @@ export interface Round1Question {
   codeSnippet?: string;
   sourceNodes?: string[];
   targetNodes?: string[];
+  imageUrl?: string;
   expectedConnections?: Array<{
     from: string;
     to: string;
@@ -213,7 +214,11 @@ interface DataStore {
 declare global {
   // eslint-disable-next-line no-var
   var __iotStore: DataStore | undefined;
+  // eslint-disable-next-line no-var
+  var __iotStoreLoaded: boolean;
 }
+
+const IS_TEST_ENV = process.env.NODE_ENV === 'test' || Boolean(process.env.VITEST);
 
 function getStore(): DataStore {
   if (!global.__iotStore) {
@@ -236,6 +241,12 @@ function getStore(): DataStore {
       round1Sessions: new Map(),
       round1SectionAccess: new Map(),
     };
+    
+    // Auto-load persisted data on first access
+    if (!global.__iotStoreLoaded && !IS_TEST_ENV) {
+      loadPersistedData();
+      global.__iotStoreLoaded = true;
+    }
   }
   
   // Ensure all required fields exist (safety check)
@@ -270,8 +281,114 @@ function getStore(): DataStore {
   return global.__iotStore;
 }
 
+// Persistence functions  
+function loadPersistedData(): void {
+  if (IS_TEST_ENV) {
+    return;
+  }
+  try {
+    const { resolve } = require('path');
+    const dataDir = resolve(process.cwd(), '.data');
+    const persistenceFile = resolve(dataDir, 'store.json');
+    
+    const fs = require('fs');
+    if (fs.existsSync(persistenceFile)) {
+      const data = fs.readFileSync(persistenceFile, 'utf-8');
+      const parsed = JSON.parse(data);
+      const store = global.__iotStore!;
+      
+      if (parsed.participants && Array.isArray(parsed.participants)) {
+        store.participants = new Map(parsed.participants);
+      }
+      if (parsed.scenarios && Array.isArray(parsed.scenarios)) {
+        store.scenarios = new Map(parsed.scenarios);
+      }
+      if (parsed.components && Array.isArray(parsed.components)) {
+        store.components = new Map(parsed.components);
+      }
+      if (parsed.scenarioComponents && Array.isArray(parsed.scenarioComponents)) {
+        store.scenarioComponents = new Map(parsed.scenarioComponents);
+      }
+      if (parsed.round1Questions && Array.isArray(parsed.round1Questions)) {
+        store.round1Questions = new Map(parsed.round1Questions);
+      }
+      if (parsed.round1Results && Array.isArray(parsed.round1Results)) {
+        store.round1Results = new Map(parsed.round1Results);
+      }
+      if (parsed.round1Sessions && Array.isArray(parsed.round1Sessions)) {
+        store.round1Sessions = new Map(parsed.round1Sessions);
+      }
+      if (parsed.round1SectionAccess && Array.isArray(parsed.round1SectionAccess)) {
+        store.round1SectionAccess = new Map(parsed.round1SectionAccess);
+      }
+      if (parsed.snippetUnlocks) store.snippetUnlocks = parsed.snippetUnlocks;
+      if (parsed.activityLogs) store.activityLogs = parsed.activityLogs;
+      if (parsed.violations) store.violations = parsed.violations;
+      if (parsed.password_history) store.password_history = parsed.password_history;
+      if (parsed.round1Responses) store.round1Responses = parsed.round1Responses;
+      if (parsed.initialized !== undefined) store.initialized = parsed.initialized;
+      if (parsed.admin_password) store.admin_password = parsed.admin_password;
+      if (parsed.global_timer_duration !== undefined) store.global_timer_duration = parsed.global_timer_duration;
+      if (parsed.whitelisted_apps && Array.isArray(parsed.whitelisted_apps)) {
+        store.whitelisted_apps = new Set(parsed.whitelisted_apps);
+      }
+    }
+  } catch (error) {
+    // Silently fail on first run
+  }
+}
+
+function persistStore(): void {
+  if (IS_TEST_ENV) {
+    return;
+  }
+  try {
+    const { resolve } = require('path');
+    const store = getStore();
+    const dataDir = resolve(process.cwd(), '.data');
+    const fs = require('fs');
+    
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    
+    const persistenceFile = resolve(dataDir, 'store.json');
+    const data = {
+      participants: Array.from(store.participants.entries()),
+      scenarios: Array.from(store.scenarios.entries()),
+      components: Array.from(store.components.entries()),
+      scenarioComponents: Array.from(store.scenarioComponents.entries()),
+      snippetUnlocks: store.snippetUnlocks,
+      activityLogs: store.activityLogs,
+      violations: store.violations,
+      initialized: store.initialized,
+      admin_password: store.admin_password,
+      password_history: store.password_history,
+      global_timer_duration: store.global_timer_duration,
+      whitelisted_apps: Array.from(store.whitelisted_apps),
+      round1Questions: Array.from(store.round1Questions.entries()),
+      round1Responses: store.round1Responses,
+      round1Results: Array.from(store.round1Results.entries()),
+      round1Sessions: Array.from(store.round1Sessions.entries()),
+      round1SectionAccess: Array.from(store.round1SectionAccess.entries()),
+    };
+    
+    fs.writeFileSync(persistenceFile, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (error) {
+    // Silently fail
+  }
+}
+
 const ROUND2_BASE_SCORE = 100;
 const ROUND2_MAX_HINT_PENALTY = 30;
+const ROUND2_CANONICAL_TEAMS = new Set([1, 2, 3, 4, 5, 6, 7, 8]);
+
+function isCanonicalRound2Scenario(scenario: Scenario | undefined): scenario is Scenario {
+  if (!scenario) {
+    return false;
+  }
+  return typeof scenario.team_number === 'number' && ROUND2_CANONICAL_TEAMS.has(scenario.team_number);
+}
 
 function getRound2ScenarioContext(participantId: string): { scenario: Scenario; componentIds: number[] } {
   const store = getStore();
@@ -284,7 +401,7 @@ function getRound2ScenarioContext(participantId: string): { scenario: Scenario; 
   }
 
   const scenario = store.scenarios.get(participant.scenario_id);
-  if (!scenario) {
+  if (!isCanonicalRound2Scenario(scenario)) {
     throw new Error('Scenario not found');
   }
 
@@ -435,6 +552,7 @@ export function createParticipant(name: string, id: string, teamName?: string, a
     round2_completed: false,
   };
   store.participants.set(id, participant);
+    persistStore();
   return participant;
 }
 
@@ -486,6 +604,7 @@ export function updateParticipant(participantId: string, updates: Partial<Partic
   if (participant) {
     Object.assign(participant, updates);
     store.participants.set(participantId, participant);
+      persistStore();
   }
 }
 
@@ -495,15 +614,19 @@ export function deleteParticipant(participantId: string): void {
   store.snippetUnlocks = store.snippetUnlocks.filter(s => s.participant_id !== participantId);
   store.activityLogs = store.activityLogs.filter(a => a.participant_id !== participantId);
   store.violations = store.violations.filter(v => v.participant_id !== participantId);
+    persistStore();
 }
 
 // Scenario functions
 export function getScenario(id: number): Scenario | undefined {
-  return getStore().scenarios.get(id);
+  const scenario = getStore().scenarios.get(id);
+  return isCanonicalRound2Scenario(scenario) ? scenario : undefined;
 }
 
 export function getAllScenarios(): Scenario[] {
-  return Array.from(getStore().scenarios.values());
+  return Array.from(getStore().scenarios.values())
+    .filter((scenario) => isCanonicalRound2Scenario(scenario))
+    .sort((a, b) => (a.team_number || 0) - (b.team_number || 0));
 }
 
 export function addScenario(scenario: Scenario): void {
@@ -698,7 +821,7 @@ export function getStats() {
     activeParticipants: participants.filter(p => p.is_active === 1).length,
     lockedParticipants: participants.filter(p => p.is_locked === 1).length,
     totalComponents: store.components.size,
-    totalScenarios: store.scenarios.size,
+    totalScenarios: getAllScenarios().length,
     totalViolations: store.violations.length,
     totalSnippetUnlocks: store.snippetUnlocks.length,
   };
@@ -801,6 +924,12 @@ function shuffled<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
+function questionOrderByTitle(a: Round1Question, b: Round1Question): number {
+  const numA = Number((a.title.match(/Q(\d+)$/i) || [])[1] || 0);
+  const numB = Number((b.title.match(/Q(\d+)$/i) || [])[1] || 0);
+  return numA - numB;
+}
+
 export function startOrGetRound1Session(participantId: string, perParticipantQuestionCount = 12): Round1Session {
   const store = getStore();
   const existing = store.round1Sessions.get(participantId);
@@ -825,8 +954,10 @@ export function startOrGetRound1Session(participantId: string, perParticipantQue
   const all = Array.from(store.round1Questions.values());
 
   // Required structure:
-  // 20 MCQ (10 Easy + 10 Hard), 10 scenario-based (2 scenarios x 5),
-  // 2 connection-evaluation questions, and 2 snippet-coding questions.
+  // Section A: 20 MCQ (10 Easy + 10 Hard)
+  // Section B: 2 scenario groups x 5 questions each
+  // Section C: 20 image-based circuit MCQs (2 circuits x 10)
+  // Section D: 6 interactive challenge questions
   const easyMcq = shuffled(all.filter((q) => q.type === 'mcq' && q.difficulty === 'Easy'));
   const hardMcq = shuffled(all.filter((q) => q.type === 'mcq' && q.difficulty === 'Hard'));
   const selectedMcq = shuffled([...easyMcq.slice(0, 10), ...hardMcq.slice(0, 10)]);
@@ -839,20 +970,20 @@ export function startOrGetRound1Session(participantId: string, perParticipantQue
     selectedMcq.push(...fallbackMcq);
   }
 
-  const scenarioQuestions = all.filter((q) => q.type === 'scenario-mcq' && Boolean(q.scenario_group));
-  const grouped = new Map<string, Round1Question[]>();
+  const scenarioQuestions = all.filter((q) => q.section === 'B' && Boolean(q.scenario_group));
+  const groupedScenarios = new Map<string, Round1Question[]>();
   scenarioQuestions.forEach((q) => {
     const key = q.scenario_group as string;
-    if (!grouped.has(key)) {
-      grouped.set(key, []);
+    if (!groupedScenarios.has(key)) {
+      groupedScenarios.set(key, []);
     }
-    grouped.get(key)!.push(q);
+    groupedScenarios.get(key)!.push(q);
   });
 
-  const selectedScenarioGroups = shuffled(Array.from(grouped.keys())).slice(0, 2);
+  const selectedScenarioGroups = shuffled(Array.from(groupedScenarios.keys())).slice(0, 2);
   const selectedScenarioQuestions: Round1Question[] = [];
   selectedScenarioGroups.forEach((groupId) => {
-    selectedScenarioQuestions.push(...shuffled(grouped.get(groupId) || []).slice(0, 5));
+    selectedScenarioQuestions.push(...(groupedScenarios.get(groupId) || []).sort(questionOrderByTitle).slice(0, 5));
   });
 
   if (selectedScenarioQuestions.length < 10) {
@@ -863,23 +994,67 @@ export function startOrGetRound1Session(participantId: string, perParticipantQue
     selectedScenarioQuestions.push(...fallbackScenario);
   }
 
-  const connectionQuestion = shuffled(
-    all.filter((q) => q.type === 'connection-evaluation')
-  ).slice(0, 2);
+  const circuitQuestions = all.filter((q) => q.section === 'C' && Boolean(q.scenario_group));
+  const groupedCircuits = new Map<string, Round1Question[]>();
+  circuitQuestions.forEach((q) => {
+    const key = q.scenario_group as string;
+    if (!groupedCircuits.has(key)) {
+      groupedCircuits.set(key, []);
+    }
+    groupedCircuits.get(key)!.push(q);
+  });
 
-  const snippetQuestion = shuffled(
-    all.filter((q) => q.type === 'snippet-coding')
-  ).slice(0, 2);
+  const selectedCircuitGroups = shuffled(Array.from(groupedCircuits.keys())).slice(0, 2);
+  const selectedCircuitQuestions: Round1Question[] = [];
+  selectedCircuitGroups.forEach((groupId) => {
+    selectedCircuitQuestions.push(...(groupedCircuits.get(groupId) || []).sort(questionOrderByTitle).slice(0, 10));
+  });
+
+  if (selectedCircuitQuestions.length < 20) {
+    const selectedIds = new Set(selectedCircuitQuestions.map((q) => q.id));
+    const fallbackCircuit = shuffled(
+      circuitQuestions.filter((q) => !selectedIds.has(q.id))
+    ).slice(0, 20 - selectedCircuitQuestions.length);
+    selectedCircuitQuestions.push(...fallbackCircuit);
+  }
+
+  const sectionDQuestions = shuffled(
+    all.filter((q) => q.section === 'D')
+  ).slice(0, 6);
 
   const questions = [
     ...selectedMcq.slice(0, 20),
     ...selectedScenarioQuestions.slice(0, 10),
-    ...connectionQuestion,
-    ...snippetQuestion,
+    ...selectedCircuitQuestions.slice(0, 20),
+    ...sectionDQuestions,
   ];
 
+  if (questions.length === 0) {
+    const fallbackCount = Math.min(
+      perParticipantQuestionCount > 0 ? perParticipantQuestionCount : 56,
+      all.length
+    );
+    const fallback = shuffled(all).slice(0, fallbackCount);
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
+
+    const session: Round1Session = {
+      participant_id: participantId,
+      question_ids: fallback.map((q) => q.id),
+      started_at: now.toISOString(),
+      expires_at: expiresAt.toISOString(),
+      submitted: false,
+    };
+    store.round1Sessions.set(participantId, session);
+    if (!store.round1SectionAccess.has(participantId)) {
+      store.round1SectionAccess.set(participantId, 0);
+    }
+    logActivity(participantId, 'round1_started', `Round 1 started with ${session.question_ids.length} questions`);
+    return session;
+  }
+
   const requestedCount = Math.min(
-    perParticipantQuestionCount > 0 ? perParticipantQuestionCount : 34,
+    perParticipantQuestionCount > 0 ? perParticipantQuestionCount : 56,
     questions.length
   );
   const finalQuestions = questions.slice(0, requestedCount);
@@ -994,7 +1169,38 @@ export function recordRound1Response(
       }
       return JSON.stringify(value);
     };
-    isCorrect = normalize(answer) === normalize(question.correctAnswer);
+    const normalizedAnswer = normalize(answer);
+    const normalizedCorrect = normalize(question.correctAnswer);
+    isCorrect = normalizedAnswer === normalizedCorrect;
+
+    if (!isCorrect && question.section === 'D' && question.title.includes('Code Logic Sequencing')) {
+      try {
+        const submitted = typeof answer === 'string' ? JSON.parse(answer) : (answer as Record<string, string>);
+        const expected = typeof question.correctAnswer === 'string'
+          ? JSON.parse(question.correctAnswer)
+          : (question.correctAnswer as Record<string, string>);
+
+        const keys = Object.keys(expected || {});
+        let errors = 0;
+        keys.forEach((key) => {
+          if (!submitted || submitted[key] !== expected[key]) {
+            errors += 1;
+          }
+        });
+
+        if (errors <= 2) {
+          scoreObtained = 3;
+        } else if (errors <= 4) {
+          scoreObtained = 2;
+        } else if (errors <= 6) {
+          scoreObtained = 1;
+        } else {
+          scoreObtained = 0;
+        }
+      } catch {
+        scoreObtained = 0;
+      }
+    }
   } else if (question.type === 'simulation') {
     isCorrect = answer === question.correctAnswer;
   } else if (question.type === 'connection-evaluation') {

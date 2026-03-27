@@ -64,4 +64,41 @@ describe('Round1Question UI', () => {
     expect(html).toContain('Interactive drag-wiring view loads in browser runtime.');
     expect(html).toContain('Connect sensor pins to Arduino pins just like a wiring lab.');
   });
+
+  it('renders snippet coding section with code input and execute control', () => {
+    const onAnswerChange = vi.fn();
+
+    const html = renderToStaticMarkup(
+      <Round1Question
+        question={{
+          id: 41,
+          type: 'snippet-coding',
+          title: 'Basic Snippet Coding 1: Reverse From Wiring',
+          scenario: 'Write a basic Arduino sketch using the given wiring map.',
+          section: 'D',
+          difficulty: 'Medium',
+          score: 20,
+          timeLimit: 300,
+          sourceNodes: ['pir.out', 'buzzer.signal', 'led.anode', 'servo.signal'],
+          targetNodes: ['arduino.d2', 'arduino.d8', 'arduino.d7', 'arduino.d9'],
+          expectedConnections: [
+            { from: 'pir.out', to: 'arduino.d2' },
+            { from: 'buzzer.signal', to: 'arduino.d8' },
+            { from: 'led.anode', to: 'arduino.d7' },
+            { from: 'servo.signal', to: 'arduino.d9' },
+          ],
+          codeSnippet: 'const int PIR_PIN = 2;\nconst int BUZZER_PIN = 8;\nconst int LED_PIN = 7;\nconst int SERVO_PIN = 9;',
+        }}
+        questionNumber={1}
+        totalQuestions={2}
+        currentAnswer={'void setup() {}\nvoid loop() {}'}
+        onAnswerChange={onAnswerChange}
+        showNavigation={false}
+      />
+    );
+
+    expect(html).toContain('Write Arduino snippet');
+    expect(html).toContain('Execute Check');
+    expect(html).toContain('Reference Wiring (read-only)');
+  });
 });

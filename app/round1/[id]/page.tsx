@@ -36,6 +36,7 @@ interface Round1QuestionData {
   matchingPairs?: Array<{ id: string; left: string; right: string }>;
   correctAnswer?: string | string[];
   codeSnippet?: string;
+  imageUrl?: string;
   sourceNodes?: string[];
   targetNodes?: string[];
   expectedConnections?: Array<{ from: string; to: string }>;
@@ -64,17 +65,17 @@ const SEGMENTS: SegmentMeta[] = [
   {
     id: "scenario",
     title: "Segment 2: Scenario",
-    subtitle: "2 scenarios with 5 questions each.",
+    subtitle: "2 random scenarios with 5 questions each.",
   },
   {
     id: "connection",
-    title: "Segment 3: Connecting Elements",
-    subtitle: "Map sensors/actuators to board pins based on code.",
+    title: "Segment 3: Image-Based Circuit Q&A",
+    subtitle: "2 random circuits are selected; answer 10 questions per circuit image.",
   },
   {
     id: "snippet",
-    title: "Segment 4: Basic Snippet Coding",
-    subtitle: "Write a basic Arduino snippet from the provided connection map.",
+    title: "Segment 4: Interactive Knowledge Challenge",
+    subtitle: "Arrangement, matching, sequencing, and mapping challenges (includes bonus).",
   },
 ];
 
@@ -88,9 +89,9 @@ const SEGMENT_INDEX: Record<SegmentId, number> = {
 const SEGMENT_BY_INDEX: SegmentId[] = ["mcq", "scenario", "connection", "snippet"];
 
 function getSegmentId(question: Round1QuestionData): SegmentId {
-  if (question.type === "mcq") return "mcq";
-  if (question.type === "scenario-mcq") return "scenario";
-  if (question.type === "connection-evaluation") return "connection";
+  if (question.section === "A") return "mcq";
+  if (question.section === "B") return "scenario";
+  if (question.section === "C") return "connection";
   return "snippet";
 }
 
@@ -99,6 +100,24 @@ function isAnswered(value: string | string[] | undefined): boolean {
   if (Array.isArray(value)) return value.length > 0;
   if (typeof value === "string") return value.trim().length > 0;
   return false;
+}
+
+function parseScenarioContent(rawScenario: string): { context: string; questionText: string } {
+  const cleaned = rawScenario?.trim() || "";
+  const matched = cleaned.match(/^Story and Problem Statement:\s*([\s\S]*?)\n+Question:\s*([\s\S]*)$/i);
+
+  if (!matched) {
+    return { context: "", questionText: cleaned };
+  }
+
+  return {
+    context: matched[1].trim(),
+    questionText: matched[2].trim(),
+  };
+}
+
+function getScenarioGroupTitle(questionTitle: string): string {
+  return questionTitle.replace(/\s-\sQ\d+$/i, "").trim();
 }
 
 export default function Round1QuizPage() {
@@ -205,9 +224,9 @@ export default function Round1QuizPage() {
         setAnswersByQuestionId(existingAnswers);
 
         const answeredIds = new Set(Object.keys(existingAnswers).map((id) => Number(id)));
-        const scenarioQuestions = data.questions.filter((q: Round1QuestionData) => q.type === "scenario-mcq");
-        const connectionQuestions = data.questions.filter((q: Round1QuestionData) => q.type === "connection-evaluation");
-        const snippetQuestions = data.questions.filter((q: Round1QuestionData) => q.type === "snippet-coding");
+        const scenarioQuestions = data.questions.filter((q: Round1QuestionData) => q.section === "B");
+        const connectionQuestions = data.questions.filter((q: Round1QuestionData) => q.section === "C");
+        const snippetQuestions = data.questions.filter((q: Round1QuestionData) => q.section === "D");
 
         const hasScenarioAnswer = scenarioQuestions.some((q: Round1QuestionData) => answeredIds.has(q.id));
         const hasAllConnectionAnswers =
@@ -334,14 +353,73 @@ export default function Round1QuizPage() {
   };
 
   const groupedScenarioQuestions = useMemo(() => {
-    const groups = new Map<string, Round1QuestionData[]>();
+    const groups = new Map<string, { title: string; context: string; questions: Round1QuestionData[] }>();
     activeQuestions.forEach((question) => {
       const key = question.scenario_group || "scenario";
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key)!.push(question);
+
+      const parsed = parseScenarioContent(question.scenario);
+      if (!groups.has(key)) {
+        groups.set(key, {
+          title: getScenarioGroupTitle(question.title),
+          context: parsed.context,
+          questions: [],
+        });
+      }
+
+      const current = groups.get(key)!;
+      if (!current.context && parsed.context) {
+        current.context = parsed.context;
+      }
+
+      current.questions.push({
+        ...question,
+        title: "",
+        scenario: parsed.questionText,
+      });
     });
-    return Array.from(groups.entries());
+
+    return Array.from(groups.entries()).map(([groupId, group]) => ({ groupId, ...group }));
   }, [activeQuestions]);
+
+  const groupedCircuitQuestions = useMemo(() => {
+    const groups = new Map<string, { imageUrl: string; questions: Round1QuestionData[] }>();
+    activeQuestions.forEach((question) => {
+      const key = question.scenario_group || "circuit";
+      if (!groups.has(key)) {
+        groups.set(key, {
+          imageUrl: question.imageUrl || "",
+          questions: [],
+        });
+      }
+
+      const current = groups.get(key)!;
+      if (!current.imageUrl && question.imageUrl) {
+        current.imageUrl = question.imageUrl;
+      }
+
+      current.questions.push({
+        ...question,
+      });
+    });
+
+    return Array.from(groups.entries()).map(([groupId, group]) => ({ groupId, ...group }));
+  }, [activeQuestions]);
+
+  const connectionQuestionsForDisplay = useMemo(() => {
+    let runningIndex = 0;
+    return groupedCircuitQuestions.flatMap((group) =>
+      group.questions.map((question, index) => {
+        runningIndex += 1;
+        return {
+          question: {
+            ...question,
+            imageUrl: index === 0 ? group.imageUrl : undefined,
+          },
+          questionNumber: runningIndex,
+        };
+      })
+    );
+  }, [groupedCircuitQuestions]);
 
   const activeSegmentStats = segmentCompletion[activeSegment];
   const activeProgress = activeSegmentStats.total > 0 ? (activeSegmentStats.answered / activeSegmentStats.total) * 100 : 0;
@@ -524,7 +602,7 @@ export default function Round1QuizPage() {
               </CardContent>
             </Card>
 
-            {activeSegment !== "scenario" && activeQuestions.map((question, index) => (
+            {activeSegment !== "scenario" && activeSegment !== "connection" && activeQuestions.map((question, index) => (
               <div key={question.id} id={`question-${question.id}`}>
                 <Round1Question
                   question={question}
@@ -539,19 +617,35 @@ export default function Round1QuizPage() {
               </div>
             ))}
 
-            {activeSegment === "scenario" && groupedScenarioQuestions.map(([groupId, groupQuestions], groupIndex) => (
-              <div key={groupId} className="space-y-4">
+            {activeSegment === "connection" && connectionQuestionsForDisplay.map(({ question, questionNumber }) => (
+              <div key={question.id} id={`question-${question.id}`}>
+                <Round1Question
+                  question={question}
+                  questionNumber={questionNumber}
+                  totalQuestions={activeQuestions.length}
+                  currentAnswer={answersByQuestionId[question.id]}
+                  onAnswerChange={(answer) => handleAnswerChange(question, answer)}
+                  isSaving={isSavingAnswer}
+                  readOnly={committedSegments[activeSegment]}
+                  showNavigation={false}
+                />
+              </div>
+            ))}
+
+            {activeSegment === "scenario" && groupedScenarioQuestions.map((group, groupIndex) => (
+              <div key={group.groupId} className="space-y-4">
                 <Card className="border-cyan-200/20 bg-slate-950/55">
                   <CardHeader>
-                    <CardTitle className="text-base text-cyan-50">Scenario Group {groupIndex + 1}</CardTitle>
+                    <CardTitle className="text-base text-cyan-50">Scenario {groupIndex + 1}</CardTitle>
+                    {group.context ? <p className="text-sm text-cyan-100/75">{group.context}</p> : null}
                   </CardHeader>
                 </Card>
-                {groupQuestions.map((question, index) => (
+                {group.questions.map((question, index) => (
                   <div key={question.id} id={`question-${question.id}`}>
                     <Round1Question
                       question={question}
                       questionNumber={index + 1}
-                      totalQuestions={groupQuestions.length}
+                      totalQuestions={group.questions.length}
                       currentAnswer={answersByQuestionId[question.id]}
                       onAnswerChange={(answer) => handleAnswerChange(question, answer)}
                       isSaving={isSavingAnswer}
@@ -581,8 +675,8 @@ export default function Round1QuizPage() {
                   disabled={isSavingAnswer}
                 >
                   {activeSegment === "mcq" && "Move to Scenario Section"}
-                  {activeSegment === "scenario" && "Move to Connecting Elements Section"}
-                  {activeSegment === "connection" && "Move to Basic Snippet Coding Section"}
+                  {activeSegment === "scenario" && "Move to Image-Based Circuit Q&A Section"}
+                  {activeSegment === "connection" && "Move to Interactive Knowledge Challenge Section"}
                   {activeSegment === "snippet" && "Complete Segment and Review Submit"}
                 </Button>
               </CardContent>
