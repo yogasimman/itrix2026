@@ -172,6 +172,14 @@ export interface Round1ResponseReviewItem {
   type: QuestionType;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   score: number;
+  options?: QuestionOption[];
+  matchingPairs?: MatchingPair[];
+  imageUrl?: string;
+  codeSnippet?: string;
+  sourceNodes?: string[];
+  targetNodes?: string[];
+  expectedConnections?: Array<{ from: string; to: string }>;
+  explanation?: string;
   answer?: string | string[];
   correct_answer?: string | string[];
   is_correct: boolean;
@@ -1381,6 +1389,14 @@ export function getRound1ResponseReview(participantId: string): Round1ResponseRe
         type: question.type,
         difficulty: question.difficulty,
         score: question.score,
+        options: question.options,
+        matchingPairs: question.matchingPairs,
+        imageUrl: question.imageUrl,
+        codeSnippet: question.codeSnippet,
+        sourceNodes: question.sourceNodes,
+        targetNodes: question.targetNodes,
+        expectedConnections: question.expectedConnections,
+        explanation: question.explanation,
         answer: response?.answer,
         correct_answer: question.correctAnswer,
         is_correct: response?.is_correct || false,

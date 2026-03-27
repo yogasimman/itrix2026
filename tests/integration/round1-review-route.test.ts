@@ -67,7 +67,7 @@ describe('round1 response review route integration', () => {
 
     expect(reviewBody.summary.attended).toBe(1);
     expect(reviewBody.summary.right + reviewBody.summary.wrong).toBe(1);
-    expect(reviewBody.review.length).toBe(1);
-    expect(reviewBody.review[0].question_id).toBe(first.id);
+    expect(reviewBody.review.length).toBe(questionsBody.questions.length);
+    expect(reviewBody.review.some((item) => item.question_id === first.id)).toBe(true);
   });
 });

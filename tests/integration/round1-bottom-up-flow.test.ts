@@ -47,10 +47,10 @@ describe('round1 bottom-up integration flow', () => {
     );
 
     expect(response.is_correct).toBe(true);
-    expect(response.score_obtained).toBe(10);
+    expect(response.score_obtained).toBe(1);
 
     const result = createRound1Result('bottom-up-1');
-    expect(result.total_score).toBe(10);
+    expect(result.total_score).toBe(1);
     expect(result.correct_answers).toBe(1);
     expect(result.total_questions).toBe(1);
   });

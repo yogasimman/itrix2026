@@ -29,7 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Spinner } from "@/components/ui/spinner";
-import { UserCheck, Users, BarChart3, CheckCircle, Clock, Trophy, ListChecks } from "lucide-react";
+import { UserCheck, Users, BarChart3, CheckCircle, Clock, Trophy, ListChecks, ChevronLeft, ChevronRight } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -60,8 +60,15 @@ interface Round1ReviewItem {
   title: string;
   scenario: string;
   section: "A" | "B" | "C" | "D";
+  type: string;
+  difficulty: "Easy" | "Medium" | "Hard";
   answer?: string | string[];
   correct_answer?: string | string[];
+  options?: Array<{ id: string; text: string }>;
+  matchingPairs?: Array<{ id: string; left: string; right: string }>;
+  imageUrl?: string;
+  codeSnippet?: string;
+  answered_at?: string;
   is_correct: boolean;
   score_obtained: number;
   score: number;
@@ -88,6 +95,48 @@ function formatAnswer(value: string | string[] | undefined): string {
     // keep plain string
   }
   return value;
+}
+
+function parseAnswerLike(value: string | string[] | undefined): string | string[] | Record<string, string> | undefined {
+  if (value === undefined) return undefined;
+  if (Array.isArray(value)) return value;
+  if (!value) return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function answerContainsOption(value: string | string[] | undefined, optionId: string): boolean {
+  const parsed = parseAnswerLike(value);
+  if (Array.isArray(parsed)) return parsed.includes(optionId);
+  if (typeof parsed === "string") return parsed === optionId;
+  return false;
+}
+
+function toDisplayAnswer(item: Round1ReviewItem, value: string | string[] | undefined): string {
+  if (value === undefined) return "Not answered";
+  const parsed = parseAnswerLike(value);
+  const optionTextById = new Map((item.options || []).map((opt) => [opt.id, opt.text]));
+
+  if (Array.isArray(parsed)) {
+    if (parsed.length === 0) return "Not answered";
+    return parsed.map((entry) => optionTextById.get(entry) || entry).join(", ");
+  }
+
+  if (typeof parsed === "object" && parsed !== null) {
+    const entries = Object.entries(parsed);
+    if (entries.length === 0) return "Not answered";
+    return entries.map(([left, right]) => `${left} -> ${right}`).join("\n");
+  }
+
+  if (!parsed) return "Not answered";
+  if (typeof parsed === "string" && optionTextById.has(parsed)) {
+    return `${parsed} - ${optionTextById.get(parsed)}`;
+  }
+
+  return String(parsed);
 }
 
 function buildTeamLeaderboard(participants: ParticipantData[]): TeamEntry[] {
@@ -128,6 +177,7 @@ export function Round1Management() {
   const [reviewParticipantName, setReviewParticipantName] = useState<string | null>(null);
   const [reviewParticipantTeam, setReviewParticipantTeam] = useState<string | null>(null);
   const [reviewData, setReviewData] = useState<Round1ReviewPayload | null>(null);
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
   const [promoteThreshold, setPromoteThreshold] = useState("60");
   const [promoting, setPromoting] = useState(false);
 
@@ -175,6 +225,7 @@ export function Round1Management() {
     setReviewParticipantName(participant?.name || null);
     setReviewParticipantTeam(participant?.team_name || null);
     setReviewData(null);
+    setCurrentReviewIndex(0);
     setReviewOpen(true);
     setReviewLoading(true);
     try {
@@ -264,11 +315,13 @@ export function Round1Management() {
 
   const rankColors = ["text-yellow-500", "text-slate-400", "text-amber-700"];
   const rankLabels = ["1st", "2nd", "3rd"];
+  const reviewItems = reviewData?.review || [];
+  const activeReview = reviewItems[currentReviewIndex];
 
   return (
     <div className="space-y-6">
       <Dialog open={reviewOpen} onOpenChange={setReviewOpen}>
-        <DialogContent className="max-h-[90vh] w-[96vw] max-w-[96vw] sm:!max-w-[96vw] lg:!max-w-6xl overflow-hidden border-cyan-200/25 bg-slate-950/95 text-cyan-50">
+        <DialogContent className="h-[92vh] w-[97vw] max-w-[97vw] sm:!max-w-[97vw] overflow-hidden border-cyan-200/25 bg-slate-950/95 p-4 text-cyan-50 md:p-6" showCloseButton>
           <DialogHeader>
             <DialogTitle className="text-xl">Round 1 Answer Review</DialogTitle>
             <DialogDescription className="text-cyan-100/75">
@@ -281,7 +334,7 @@ export function Round1Management() {
               <Spinner className="h-6 w-6" />
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="flex h-full min-h-0 flex-col gap-4">
               <div className="flex flex-wrap gap-3">
                 <Card className="min-w-[180px] flex-1 basis-[220px] border-cyan-200/20 bg-slate-900/75">
                   <CardContent className="p-4">
@@ -303,60 +356,166 @@ export function Round1Management() {
                 </Card>
               </div>
 
-              <div className="max-h-[58vh] overflow-y-auto rounded-lg border border-cyan-200/20 bg-slate-900/55">
-                <Table className="w-full table-fixed">
-                  <TableHeader className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur">
-                    <TableRow className="border-cyan-200/15">
-                      <TableHead className="w-[34%] text-cyan-100">Question</TableHead>
-                      <TableHead className="w-[10%] text-cyan-100">Section</TableHead>
-                      <TableHead className="w-[22%] text-cyan-100">Your Answer</TableHead>
-                      <TableHead className="w-[22%] text-cyan-100">Correct Answer</TableHead>
-                      <TableHead className="w-[7%] text-cyan-100">Status</TableHead>
-                      <TableHead className="w-[5%] text-cyan-100">Score</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {(reviewData?.review || []).length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={6} className="py-8 text-center text-cyan-100/65">
-                          No attended questions for this participant yet.
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      (reviewData?.review || []).map((item) => (
-                        <TableRow key={item.question_id} className="border-cyan-200/10">
-                          <TableCell>
-                            <div className="space-y-1">
-                              <p className="font-medium leading-snug">{item.title || `Question ${item.question_id}`}</p>
-                              <p className="line-clamp-2 text-xs text-cyan-100/65">{item.scenario}</p>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="border-cyan-300/35 bg-cyan-300/10 text-cyan-100">
-                              {item.section}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="align-top">
-                            <p className="whitespace-pre-wrap break-all text-xs leading-relaxed text-cyan-50/95">{formatAnswer(item.answer)}</p>
-                          </TableCell>
-                          <TableCell className="align-top">
-                            <p className="whitespace-pre-wrap break-all text-xs leading-relaxed text-cyan-50/95">{formatAnswer(item.correct_answer)}</p>
-                          </TableCell>
-                          <TableCell>
+              {reviewItems.length === 0 ? (
+                <div className="rounded-lg border border-cyan-200/20 bg-slate-900/55 py-8 text-center text-cyan-100/65">
+                  No questions assigned for this participant yet.
+                </div>
+              ) : (
+                <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-12">
+                  <Card className="min-h-0 border-cyan-200/20 bg-slate-900/60 lg:col-span-3">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">Question Navigator</CardTitle>
+                      <CardDescription className="text-xs text-cyan-100/70">
+                        Jump to any question for this participant.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="max-h-[56vh] space-y-2 overflow-y-auto pr-1">
+                      {reviewItems.map((item, index) => (
+                        <button
+                          key={item.question_id}
+                          type="button"
+                          onClick={() => setCurrentReviewIndex(index)}
+                          className={`w-full rounded-md border px-3 py-2 text-left text-xs transition ${
+                            index === currentReviewIndex
+                              ? "border-cyan-300/45 bg-cyan-300/15"
+                              : "border-cyan-200/15 bg-slate-950/55 hover:bg-slate-900"
+                          }`}
+                        >
+                          <div className="mb-1 flex items-center justify-between gap-2">
+                            <span className="font-medium">Q{index + 1}</span>
                             <Badge
                               variant="outline"
-                              className={item.is_correct ? "border-emerald-300/35 bg-emerald-400/20 text-emerald-100" : "border-rose-300/35 bg-rose-400/20 text-rose-100"}
+                              className={item.is_correct ? "border-emerald-300/40 text-emerald-200" : "border-rose-300/40 text-rose-200"}
                             >
                               {item.is_correct ? "Right" : "Wrong"}
                             </Badge>
-                          </TableCell>
-                          <TableCell className="font-medium">{item.score_obtained}/{item.score}</TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+                          </div>
+                          <p className="line-clamp-2 text-cyan-100/75">{item.title || `Question ${item.question_id}`}</p>
+                        </button>
+                      ))}
+                    </CardContent>
+                  </Card>
+
+                  {activeReview ? (
+                    <Card className="min-h-0 border-cyan-200/20 bg-slate-900/60 lg:col-span-9">
+                      <CardHeader className="space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant="outline" className="border-cyan-300/35 bg-cyan-300/10 text-cyan-100">
+                              Question {currentReviewIndex + 1} of {reviewItems.length}
+                            </Badge>
+                            <Badge variant="outline" className="border-cyan-300/35 bg-cyan-300/10 text-cyan-100">
+                              Section {activeReview.section}
+                            </Badge>
+                            <Badge variant="outline" className="border-cyan-300/35 bg-cyan-300/10 text-cyan-100">
+                              {activeReview.type}
+                            </Badge>
+                            <Badge variant="outline" className="border-cyan-300/35 bg-cyan-300/10 text-cyan-100">
+                              {activeReview.difficulty}
+                            </Badge>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={currentReviewIndex === 0}
+                              onClick={() => setCurrentReviewIndex((prev) => Math.max(0, prev - 1))}
+                            >
+                              <ChevronLeft className="mr-1 h-4 w-4" />
+                              Previous
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={currentReviewIndex === reviewItems.length - 1}
+                              onClick={() => setCurrentReviewIndex((prev) => Math.min(reviewItems.length - 1, prev + 1))}
+                            >
+                              Next
+                              <ChevronRight className="ml-1 h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <CardTitle className="text-lg">{activeReview.title || `Question ${activeReview.question_id}`}</CardTitle>
+                          <CardDescription className="mt-2 whitespace-pre-wrap rounded-lg border border-cyan-200/20 bg-slate-950/40 p-3 text-cyan-100/85">
+                            {activeReview.scenario}
+                          </CardDescription>
+                        </div>
+                      </CardHeader>
+
+                      <CardContent className="space-y-4 overflow-y-auto pb-4">
+                        {activeReview.imageUrl ? (
+                          <div className="overflow-hidden rounded-lg border border-cyan-200/20 bg-slate-950/55">
+                            <img src={activeReview.imageUrl} alt="Question diagram" className="max-h-[320px] w-full object-contain" />
+                          </div>
+                        ) : null}
+
+                        {(activeReview.options || []).length > 0 ? (
+                          <div className="space-y-2 rounded-lg border border-cyan-200/20 bg-slate-950/40 p-3">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-cyan-100/70">Options</p>
+                            {(activeReview.options || []).map((option) => {
+                              const isYourOption = answerContainsOption(activeReview.answer, option.id);
+                              const isCorrectOption = answerContainsOption(activeReview.correct_answer, option.id);
+                              return (
+                                <div key={option.id} className="rounded-md border border-cyan-200/15 bg-slate-900/65 p-2 text-sm">
+                                  <div className="mb-1 flex flex-wrap items-center gap-2">
+                                    <span className="font-medium">{option.id}</span>
+                                    {isYourOption ? <Badge className="bg-cyan-500/20 text-cyan-100">Your choice</Badge> : null}
+                                    {isCorrectOption ? <Badge className="bg-emerald-500/20 text-emerald-100">Correct</Badge> : null}
+                                  </div>
+                                  <p className="text-cyan-50/95">{option.text}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : null}
+
+                        <div className="grid gap-3 md:grid-cols-2">
+                          <Card className="border-cyan-200/20 bg-slate-950/45">
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-sm">Your Answer</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <pre className="whitespace-pre-wrap break-all text-xs leading-relaxed text-cyan-50/95">
+                                {toDisplayAnswer(activeReview, activeReview.answer)}
+                              </pre>
+                            </CardContent>
+                          </Card>
+                          <Card className="border-cyan-200/20 bg-slate-950/45">
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-sm">Correct Answer</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <pre className="whitespace-pre-wrap break-all text-xs leading-relaxed text-cyan-50/95">
+                                {toDisplayAnswer(activeReview, activeReview.correct_answer)}
+                              </pre>
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className={activeReview.is_correct ? "border-emerald-300/35 bg-emerald-400/20 text-emerald-100" : "border-rose-300/35 bg-rose-400/20 text-rose-100"}
+                          >
+                            {activeReview.is_correct ? "Right" : "Wrong"}
+                          </Badge>
+                          <Badge variant="outline" className="border-cyan-300/35 bg-cyan-300/10 text-cyan-100">
+                            Score: {activeReview.score_obtained}/{activeReview.score}
+                          </Badge>
+                          <span className="text-xs text-cyan-100/70">
+                            Answered At: {activeReview.answered_at ? new Date(activeReview.answered_at).toLocaleString() : "Not answered"}
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ) : null}
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
