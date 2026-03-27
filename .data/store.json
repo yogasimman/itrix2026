@@ -312,7 +312,28 @@
         "pinout": "Standard SD interface - VCC, GND, MISO, MOSI, SCK, CS",
         "category": "Storage",
         "quantity": 10,
-        "code_snippet": "// Micro SD Card with Arduino\n#include <SPI.h>\n#include <SD.h>\n\nconst int chipSelect = 10;\n\nvoid setup() {\n  Serial.begin(9600);\n  if (!SD.begin(chipSelect)) {\n    Serial.println(\"Card failed!\");\n    return;\n  }\n  Serial.println(\"Card initialized.\");\n}\n\nvoid loop() {\n  File dataFile = SD.open(\"datalog.txt\", FILE_WRITE);\n  if (dataFile) {\n    dataFile.println(\"Hello World!\");\n    dataFile.close();\n  }\n}"
+        "code_snippet": "// Micro SD Card with Arduino\n#include <SPI.h>\n#include <SD.h>\n\nconst int chipSelect = 10;\n\nvoid setup() {\n  Serial.begin(9600);\n  if (!SD.begin(chipSelect)) {\n    Serial.println(\"Card failed!\");\n    return;\n  }\n  Serial.println(\"Card initialized.\");\n}\n\nvoid loop() {\n  File dataFile = SD.open(\"datalog.txt\", FILE_WRITE);\n  if (dataFile) {\n    dataFile.println(\"Hello World!\");\n    dataFile.close();\n  }\n}",
+        "complexity_level": "Intermediate",
+        "estimated_setup_time": 15,
+        "setup_instructions": "1. Insert Micro SD Card into SD Card reader\n2. Connect SD Card Module to Arduino:\n   - VCC → Arduino 5V\n   - GND → Arduino GND\n   - MOSI → Arduino Pin 11\n   - MISO → Arduino Pin 12\n   - SCK → Arduino Pin 13\n   - CS → Arduino Pin 10\n3. Format SD Card as FAT32 if needed\n4. Load SD library example in Arduino IDE\n5. Verify CS pin matches your setup\n6. Test with basic file read/write operations",
+        "default_pins": {
+          "VCC": 5,
+          "GND": 0,
+          "MOSI": 11,
+          "MISO": 12,
+          "SCK": 13,
+          "CS": 10
+        },
+        "connection_diagram": "SD Module → SPI Bus (Pins 10-13) with 5V supply",
+        "warnings": [
+          "Use 3.3V regulator if SD module operates at 3.3V",
+          "Maximum SPI frequency: 4 MHz",
+          "Ensure CS pin is always pulled high before communication"
+        ],
+        "required_libraries": [
+          "SD.h",
+          "SPI.h"
+        ]
       }
     ],
     [
@@ -324,7 +345,17 @@
         "pinout": "USB interface",
         "category": "Interface",
         "quantity": 10,
-        "code_snippet": "// USB Card Reader - Used externally with PC\n// No Arduino code required - plug into USB port"
+        "code_snippet": "// USB Card Reader - Used externally with PC\n// No Arduino code required - plug into USB port",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 5,
+        "setup_instructions": "1. No Arduino connection required\n2. Use standard USB port on development PC\n3. Connect USB 3.1 Gen 1 Cable from Card Reader to PC\n4. Insert SD/MicroSD Card into reader slot\n5. Card appears as mass storage device\n6. Use system file manager for file access",
+        "connection_diagram": "Direct USB connection to computer",
+        "warnings": [
+          "Ensure USB 3.1 compatibility with your system",
+          "Do not hot-swap cards while active",
+          "Close all file access before ejecting card"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -336,7 +367,24 @@
         "pinout": "Orange: Signal (PWM), Red: VCC (5V), Brown: GND",
         "category": "Actuator",
         "quantity": 10,
-        "code_snippet": "// Small Servo Motor Control\n#include <Servo.h>\n\nServo myservo;\nint pos = 0;\n\nvoid setup() {\n  myservo.attach(9);  // Servo on pin 9\n}\n\nvoid loop() {\n  // Sweep from 0 to 180 degrees\n  for (pos = 0; pos <= 180; pos += 1) {\n    myservo.write(pos);\n    delay(15);\n  }\n  // Sweep back\n  for (pos = 180; pos >= 0; pos -= 1) {\n    myservo.write(pos);\n    delay(15);\n  }\n}"
+        "code_snippet": "// Small Servo Motor Control\n#include <Servo.h>\n\nServo myservo;\nint pos = 0;\n\nvoid setup() {\n  myservo.attach(9);  // Servo on pin 9\n}\n\nvoid loop() {\n  // Sweep from 0 to 180 degrees\n  for (pos = 0; pos <= 180; pos += 1) {\n    myservo.write(pos);\n    delay(15);\n  }\n  // Sweep back\n  for (pos = 180; pos >= 0; pos -= 1) {\n    myservo.write(pos);\n    delay(15);\n  }\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 10,
+        "setup_instructions": "1. Identify servo connections:\n   - Orange: Signal (PWM)\n   - Red: Power (5V)\n   - Brown: Ground\n2. Connect to Arduino:\n   - Signal → Arduino Pin 9 (PWM pin)\n   - Power → Arduino 5V\n   - Ground → Arduino GND\n3. Include Servo library\n4. Create Servo object and attach to pin\n5. Use servo.write(angle) to set position (0-180 degrees)\n6. Test sweep motion before integration",
+        "default_pins": {
+          "Signal": 9,
+          "Power": 5,
+          "Ground": 0
+        },
+        "connection_diagram": "Three-wire servo connector to Arduino PWM pin 9, 5V, and GND",
+        "warnings": [
+          "Use PWM-capable pins only (3, 5, 6, 9, 10, 11)",
+          "Servo stalls at full torque - protect from over-load",
+          "Position updates less than 20ms may cause jitter"
+        ],
+        "required_libraries": [
+          "Servo.h"
+        ]
       }
     ],
     [
@@ -348,7 +396,23 @@
         "pinout": "Two terminals: Motor+ and Motor-",
         "category": "Actuator",
         "quantity": 20,
-        "code_snippet": "// DC Motor Control with Transistor\nconst int motorPin = 9;\n\nvoid setup() {\n  pinMode(motorPin, OUTPUT);\n}\n\nvoid loop() {\n  // Motor ON\n  analogWrite(motorPin, 200);  // PWM speed control\n  delay(2000);\n  // Motor OFF\n  analogWrite(motorPin, 0);\n  delay(1000);\n}"
+        "code_snippet": "// DC Motor Control with Transistor\nconst int motorPin = 9;\n\nvoid setup() {\n  pinMode(motorPin, OUTPUT);\n}\n\nvoid loop() {\n  // Motor ON\n  analogWrite(motorPin, 200);  // PWM speed control\n  delay(2000);\n  // Motor OFF\n  analogWrite(motorPin, 0);\n  delay(1000);\n}",
+        "complexity_level": "Intermediate",
+        "estimated_setup_time": 20,
+        "setup_instructions": "1. Use motor driver module (L298N recommended)\n2. Connect Motor Driver to Arduino:\n   - IN1 → Arduino Pin 8\n   - IN2 → Arduino Pin 9\n   - EN → Arduino Pin 5 (PWM for speed)\n   - GND → Arduino GND\n3. Connect motor power from external supply:\n   - Motor+ → OUT1 (Motor Driver)\n   - Motor- → OUT2 (Motor Driver)\n4. Use analogWrite() for speed control (0-255)\n5. Digital pins control direction\n6. Test under no-load first",
+        "default_pins": {
+          "IN1": 8,
+          "IN2": 9,
+          "Enable": 5
+        },
+        "connection_diagram": "DC Motor ↔ L298N Motor Driver ↔ Arduino + External Power Supply",
+        "warnings": [
+          "Use external power supply for motor (do not use Arduino 5V alone)",
+          "Add flyback diode across motor terminals",
+          "Keep motor current separate from Arduino circuit",
+          "Test motor direction before securing in place"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -360,7 +424,21 @@
         "pinout": "Positive (+), Negative (-)",
         "category": "Output",
         "quantity": 20,
-        "code_snippet": "// Piezo Buzzer Tones\nconst int buzzerPin = 8;\n\nvoid setup() {\n  pinMode(buzzerPin, OUTPUT);\n}\n\nvoid loop() {\n  // Play tone at 1000Hz for 500ms\n  tone(buzzerPin, 1000, 500);\n  delay(1000);\n  // Play tone at 2000Hz for 500ms\n  tone(buzzerPin, 2000, 500);\n  delay(1000);\n}"
+        "code_snippet": "// Piezo Buzzer Tones\nconst int buzzerPin = 8;\n\nvoid setup() {\n  pinMode(buzzerPin, OUTPUT);\n}\n\nvoid loop() {\n  // Play tone at 1000Hz for 500ms\n  tone(buzzerPin, 1000, 500);\n  delay(1000);\n  // Play tone at 2000Hz for 500ms\n  tone(buzzerPin, 2000, 500);\n  delay(1000);\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 5,
+        "setup_instructions": "1. Connect Piezo to Arduino:\n   - Positive (+) → Arduino Pin 8\n   - Negative (-) → Arduino GND\n2. Use tone() function for beeping\n3. Syntax: tone(pin, frequency, duration)\n4. Frequency range: 20Hz to 20,000Hz\n5. Test with simple melody patterns\n6. Add capacitor (0.1µF) across terminals if noise occurs",
+        "default_pins": {
+          "Positive": 8,
+          "Negative": 0
+        },
+        "connection_diagram": "Piezo Capsule directly to digital pin with 220Ω resistor (optional)",
+        "warnings": [
+          "Limit volume - can be loud (>80dB)",
+          "Best frequency range: 2000Hz - 5000Hz",
+          "Do not exceed duty cycle limits to prevent damage"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -372,7 +450,22 @@
         "pinout": "Two terminals (no polarity) - use with 10K resistor as voltage divider",
         "category": "Sensor",
         "quantity": 22,
-        "code_snippet": "// LDR Light Sensor\nconst int ldrPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int lightValue = analogRead(ldrPin);\n  Serial.print(\"Light: \");\n  Serial.println(lightValue);\n  \n  if (lightValue < 300) {\n    Serial.println(\"Dark environment\");\n  } else {\n    Serial.println(\"Bright environment\");\n  }\n  delay(500);\n}"
+        "code_snippet": "// LDR Light Sensor\nconst int ldrPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int lightValue = analogRead(ldrPin);\n  Serial.print(\"Light: \");\n  Serial.println(lightValue);\n  \n  if (lightValue < 300) {\n    Serial.println(\"Dark environment\");\n  } else {\n    Serial.println(\"Bright environment\");\n  }\n  delay(500);\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 10,
+        "setup_instructions": "1. Create voltage divider circuit:\n   - LDR one terminal → Arduino 5V\n   - LDR other terminal → 10K resistor → Arduino GND\n   - Analog input → Arduino A0 (from junction between LDR and resistor)\n2. In Arduino code:\n   - Read with analogRead(A0)\n   - Returns 0-1023 based on light intensity\n3. Calibrate thresholds for your lighting conditions\n4. Values: Dark <300, Dim 300-600, Bright >600 (typical)\n5. Add delay between readings to reduce noise",
+        "default_pins": {
+          "Signal": "A0",
+          "VCC": 5,
+          "GND": 0
+        },
+        "connection_diagram": "LDR in voltage divider with 10K resistor to Arduino analog pin",
+        "warnings": [
+          "LDR sensitivity varies with light spectrum",
+          "Use consistent lighting conditions for calibration",
+          "Add capacitor (0.1µF) for noise filtering if needed"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -384,7 +477,22 @@
         "pinout": "Left: GND, Middle: Signal (A0), Right: VCC",
         "category": "Input",
         "quantity": 15,
-        "code_snippet": "// Potentiometer Reading\nconst int potPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int potValue = analogRead(potPin);  // 0-1023\n  int mappedValue = map(potValue, 0, 1023, 0, 255);\n  \n  Serial.print(\"Raw: \");\n  Serial.print(potValue);\n  Serial.print(\" Mapped: \");\n  Serial.println(mappedValue);\n  delay(200);\n}"
+        "code_snippet": "// Potentiometer Reading\nconst int potPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int potValue = analogRead(potPin);  // 0-1023\n  int mappedValue = map(potValue, 0, 1023, 0, 255);\n  \n  Serial.print(\"Raw: \");\n  Serial.print(potValue);\n  Serial.print(\" Mapped: \");\n  Serial.println(mappedValue);\n  delay(200);\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 5,
+        "setup_instructions": "1. Connect Potentiometer to Arduino:\n   - Left pin → Arduino GND\n   - Middle pin → Arduino A0\n   - Right pin → Arduino 5V\n2. Read with analogRead(A0)\n3. Value range: 0-1023 (low to high resistance)\n4. Map values with map() function if needed\n5. Use map(value, 0, 1023, minOut, maxOut) for scaling\n6. Test full rotation for consistency",
+        "default_pins": {
+          "GND": 0,
+          "Signal": "A0",
+          "VCC": 5
+        },
+        "connection_diagram": "Potentiometer middle pin to analog input, outer pins to power/ground",
+        "warnings": [
+          "Never exceed 5V on analog inputs",
+          "Add 0.1µF capacitor to signal pin for noise reduction",
+          "Check potentiometer range (usually 0-270°)"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -396,7 +504,20 @@
         "pinout": "4 pins - 2 pairs internally connected. Connect one side to GND, other to digital pin with INPUT_PULLUP",
         "category": "Input",
         "quantity": 35,
-        "code_snippet": "// Pushbutton with Internal Pull-up\nconst int buttonPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  // LOW when pressed (pull-up configuration)\n  if (digitalRead(buttonPin) == LOW) {\n    digitalWrite(ledPin, HIGH);\n  } else {\n    digitalWrite(ledPin, LOW);\n  }\n}"
+        "code_snippet": "// Pushbutton with Internal Pull-up\nconst int buttonPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  // LOW when pressed (pull-up configuration)\n  if (digitalRead(buttonPin) == LOW) {\n    digitalWrite(ledPin, HIGH);\n  } else {\n    digitalWrite(ledPin, LOW);\n  }\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 5,
+        "setup_instructions": "1. Connect one side of pushbutton to Arduino digital pin (e.g., D2)\n2. Connect the opposite side to GND\n3. Use INPUT_PULLUP in code to avoid floating input\n4. Read LOW as pressed and HIGH as released\n5. Debounce button in software using millis()",
+        "default_pins": {
+          "Signal": 2,
+          "GND": 0
+        },
+        "connection_diagram": "Pushbutton between digital input and GND with INPUT_PULLUP",
+        "warnings": [
+          "Without debouncing, multiple false triggers may occur",
+          "Do not leave digital input floating"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -420,7 +541,20 @@
         "pinout": "Long leg: Anode (+), Short leg: Cathode (-). Use 220 ohm resistor.",
         "category": "Output",
         "quantity": 50,
-        "code_snippet": "// Red LED with PWM Fade\nconst int ledPin = 9;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  // Fade in\n  for (int i = 0; i <= 255; i++) {\n    analogWrite(ledPin, i);\n    delay(10);\n  }\n  // Fade out\n  for (int i = 255; i >= 0; i--) {\n    analogWrite(ledPin, i);\n    delay(10);\n  }\n}"
+        "code_snippet": "// Red LED with PWM Fade\nconst int ledPin = 9;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  // Fade in\n  for (int i = 0; i <= 255; i++) {\n    analogWrite(ledPin, i);\n    delay(10);\n  }\n  // Fade out\n  for (int i = 255; i >= 0; i--) {\n    analogWrite(ledPin, i);\n    delay(10);\n  }\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 5,
+        "setup_instructions": "1. Connect LED anode through 220 ohm resistor to Arduino digital pin\n2. Connect LED cathode to GND\n3. Set pinMode(pin, OUTPUT)\n4. Use digitalWrite or PWM for blink/fade effects",
+        "default_pins": {
+          "Anode": 9,
+          "Cathode": 0
+        },
+        "connection_diagram": "Arduino output -> 220 ohm resistor -> LED anode, LED cathode -> GND",
+        "warnings": [
+          "Always use current-limiting resistor",
+          "Reversed polarity prevents LED from lighting"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -432,7 +566,19 @@
         "pinout": "Long leg: Anode (+), Short leg: Cathode (-). Use 220 ohm resistor.",
         "category": "Output",
         "quantity": 50,
-        "code_snippet": "// Green LED Status Indicator\nconst int greenLed = 10;\n\nvoid setup() {\n  pinMode(greenLed, OUTPUT);\n}\n\nvoid loop() {\n  // Blink pattern: 2 short, 1 long\n  for (int i = 0; i < 2; i++) {\n    digitalWrite(greenLed, HIGH);\n    delay(200);\n    digitalWrite(greenLed, LOW);\n    delay(200);\n  }\n  digitalWrite(greenLed, HIGH);\n  delay(1000);\n  digitalWrite(greenLed, LOW);\n  delay(500);\n}"
+        "code_snippet": "// Green LED Status Indicator\nconst int greenLed = 10;\n\nvoid setup() {\n  pinMode(greenLed, OUTPUT);\n}\n\nvoid loop() {\n  // Blink pattern: 2 short, 1 long\n  for (int i = 0; i < 2; i++) {\n    digitalWrite(greenLed, HIGH);\n    delay(200);\n    digitalWrite(greenLed, LOW);\n    delay(200);\n  }\n  digitalWrite(greenLed, HIGH);\n  delay(1000);\n  digitalWrite(greenLed, LOW);\n  delay(500);\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 5,
+        "setup_instructions": "1. Connect LED anode via 220 ohm resistor to Arduino digital pin\n2. Connect cathode to GND\n3. Configure the pin as OUTPUT in setup()\n4. Use HIGH/LOW or PWM as needed",
+        "default_pins": {
+          "Anode": 10,
+          "Cathode": 0
+        },
+        "connection_diagram": "Arduino output -> resistor -> green LED -> GND",
+        "warnings": [
+          "Use resistor to avoid overcurrent"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -444,7 +590,19 @@
         "pinout": "Long leg: Anode (+), Short leg: Cathode (-). Use 220 ohm resistor.",
         "category": "Output",
         "quantity": 50,
-        "code_snippet": "// Yellow LED Warning Signal\nconst int yellowLed = 11;\n\nvoid setup() {\n  pinMode(yellowLed, OUTPUT);\n}\n\nvoid loop() {\n  // Fast warning blink\n  digitalWrite(yellowLed, HIGH);\n  delay(100);\n  digitalWrite(yellowLed, LOW);\n  delay(100);\n}"
+        "code_snippet": "// Yellow LED Warning Signal\nconst int yellowLed = 11;\n\nvoid setup() {\n  pinMode(yellowLed, OUTPUT);\n}\n\nvoid loop() {\n  // Fast warning blink\n  digitalWrite(yellowLed, HIGH);\n  delay(100);\n  digitalWrite(yellowLed, LOW);\n  delay(100);\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 5,
+        "setup_instructions": "1. Connect LED anode via 220 ohm resistor to Arduino digital pin\n2. Connect cathode to GND\n3. Configure pin as OUTPUT in setup()\n4. Drive HIGH/LOW for status indication",
+        "default_pins": {
+          "Anode": 11,
+          "Cathode": 0
+        },
+        "connection_diagram": "Arduino output -> resistor -> yellow LED -> GND",
+        "warnings": [
+          "Use resistor to avoid LED damage"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -516,7 +674,15 @@
         "pinout": "No polarity - can be connected either way",
         "category": "Electronic",
         "quantity": 50,
-        "code_snippet": "// 220 ohm Resistor - LED Current Limiting\n// For standard LEDs with 5V supply:\n// I = (5V - 2V) / 220 ohm = 13.6mA (safe for LEDs)\n\n// Connect in series with LED:\n// Arduino Pin -> 220 ohm -> LED Anode -> LED Cathode -> GND"
+        "code_snippet": "// 220 ohm Resistor - LED Current Limiting\n// For standard LEDs with 5V supply:\n// I = (5V - 2V) / 220 ohm = 13.6mA (safe for LEDs)\n\n// Connect in series with LED:\n// Arduino Pin -> 220 ohm -> LED Anode -> LED Cathode -> GND",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 3,
+        "setup_instructions": "1. Place resistor in series with LED or signal path\n2. Confirm value using color bands (Red-Red-Brown)\n3. Use resistor in current limiting and divider circuits",
+        "connection_diagram": "Series protection or voltage divider usage",
+        "warnings": [
+          "Incorrect resistance value can overdrive components"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -612,7 +778,22 @@
         "pinout": "VCC: 5V, Trig: Trigger Pin, Echo: Echo Pin, GND: Ground",
         "category": "Sensor",
         "quantity": 10,
-        "code_snippet": "// HC-SR04 Ultrasonic Distance Sensor\nconst int trigPin = 9;\nconst int echoPin = 10;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n}\n\nvoid loop() {\n  // Send trigger pulse\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n  \n  // Read echo\n  long duration = pulseIn(echoPin, HIGH);\n  float distance = duration * 0.034 / 2;\n  \n  Serial.print(\"Distance: \");\n  Serial.print(distance);\n  Serial.println(\" cm\");\n  delay(100);\n}"
+        "code_snippet": "// HC-SR04 Ultrasonic Distance Sensor\nconst int trigPin = 9;\nconst int echoPin = 10;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n}\n\nvoid loop() {\n  // Send trigger pulse\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n  \n  // Read echo\n  long duration = pulseIn(echoPin, HIGH);\n  float distance = duration * 0.034 / 2;\n  \n  Serial.print(\"Distance: \");\n  Serial.print(distance);\n  Serial.println(\" cm\");\n  delay(100);\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 10,
+        "setup_instructions": "1. Connect HC-SR04 VCC to 5V and GND to ground\n2. Connect Trig to digital output pin and Echo to digital input pin\n3. Send 10us pulse on Trig to start measurement\n4. Read echo pulse width and convert to distance",
+        "default_pins": {
+          "Trig": 9,
+          "Echo": 10,
+          "VCC": 5,
+          "GND": 0
+        },
+        "connection_diagram": "HC-SR04 Trig/Echo to digital pins with 5V power",
+        "warnings": [
+          "Keep sensor clear from angled surfaces for stable readings",
+          "Echo pin timing can block if no echo is received"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -624,7 +805,21 @@
         "pinout": "VCC: 5V, OUT: Digital Output, GND: Ground",
         "category": "Sensor",
         "quantity": 25,
-        "code_snippet": "// PIR Motion Sensor\nconst int pirPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(pirPin, INPUT);\n  pinMode(ledPin, OUTPUT);\n  delay(60000);  // Warm-up time (1 min)\n}\n\nvoid loop() {\n  if (digitalRead(pirPin) == HIGH) {\n    Serial.println(\"Motion detected!\");\n    digitalWrite(ledPin, HIGH);\n  } else {\n    Serial.println(\"No motion\");\n    digitalWrite(ledPin, LOW);\n  }\n  delay(500);\n}"
+        "code_snippet": "// PIR Motion Sensor\nconst int pirPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(pirPin, INPUT);\n  pinMode(ledPin, OUTPUT);\n  delay(60000);  // Warm-up time (1 min)\n}\n\nvoid loop() {\n  if (digitalRead(pirPin) == HIGH) {\n    Serial.println(\"Motion detected!\");\n    digitalWrite(ledPin, HIGH);\n  } else {\n    Serial.println(\"No motion\");\n    digitalWrite(ledPin, LOW);\n  }\n  delay(500);\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 8,
+        "setup_instructions": "1. Connect VCC to 5V, GND to ground, and OUT to digital input pin\n2. Wait warm-up period (~30-60 seconds) after powering sensor\n3. Read OUT pin HIGH for motion, LOW for idle\n4. Tune sensitivity/time-delay potentiometers if available",
+        "default_pins": {
+          "OUT": 2,
+          "VCC": 5,
+          "GND": 0
+        },
+        "connection_diagram": "PIR OUT to digital input with 5V/GND supply",
+        "warnings": [
+          "Initial warm-up can produce unstable output",
+          "Avoid placing near heat sources"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -660,7 +855,21 @@
         "pinout": "VCC: 5V, GND: Ground, IN: Control Signal, COM: Common, NO: Normally Open, NC: Normally Closed",
         "category": "Actuator",
         "quantity": 10,
-        "code_snippet": "// Relay Module Control\nconst int relayPin = 7;\n\nvoid setup() {\n  pinMode(relayPin, OUTPUT);\n  digitalWrite(relayPin, HIGH);  // Relay OFF (active LOW)\n}\n\nvoid loop() {\n  // Turn relay ON\n  digitalWrite(relayPin, LOW);\n  Serial.println(\"Relay ON\");\n  delay(3000);\n  \n  // Turn relay OFF\n  digitalWrite(relayPin, HIGH);\n  Serial.println(\"Relay OFF\");\n  delay(3000);\n}"
+        "code_snippet": "// Relay Module Control\nconst int relayPin = 7;\n\nvoid setup() {\n  pinMode(relayPin, OUTPUT);\n  digitalWrite(relayPin, HIGH);  // Relay OFF (active LOW)\n}\n\nvoid loop() {\n  // Turn relay ON\n  digitalWrite(relayPin, LOW);\n  Serial.println(\"Relay ON\");\n  delay(3000);\n  \n  // Turn relay OFF\n  digitalWrite(relayPin, HIGH);\n  Serial.println(\"Relay OFF\");\n  delay(3000);\n}",
+        "complexity_level": "Intermediate",
+        "estimated_setup_time": 12,
+        "setup_instructions": "1. Connect relay module VCC and GND to Arduino power rails\n2. Connect IN pin to chosen digital output pin\n3. Connect load through COM and NO/NC terminals as required\n4. Use digitalWrite to switch relay state",
+        "default_pins": {
+          "IN": 7,
+          "VCC": 5,
+          "GND": 0
+        },
+        "connection_diagram": "Arduino digital output controls relay IN; load wired via COM/NO",
+        "warnings": [
+          "Handle high-voltage loads with proper isolation",
+          "Many relay modules are active LOW"
+        ],
+        "required_libraries": []
       }
     ],
     [
@@ -696,7 +905,21 @@
         "pinout": "VCC: 5V, GND: Ground, OUT: Digital Output",
         "category": "Sensor",
         "quantity": 15,
-        "code_snippet": "// IR Obstacle Sensor\nconst int irPin = 2;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(irPin, INPUT);\n}\n\nvoid loop() {\n  if (digitalRead(irPin) == LOW) {\n    Serial.println(\"Obstacle detected!\");\n  } else {\n    Serial.println(\"No obstacle\");\n  }\n  delay(200);\n}"
+        "code_snippet": "// IR Obstacle Sensor\nconst int irPin = 2;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(irPin, INPUT);\n}\n\nvoid loop() {\n  if (digitalRead(irPin) == LOW) {\n    Serial.println(\"Obstacle detected!\");\n  } else {\n    Serial.println(\"No obstacle\");\n  }\n  delay(200);\n}",
+        "complexity_level": "Beginner",
+        "estimated_setup_time": 8,
+        "setup_instructions": "1. Connect VCC to 5V, GND to GND, and OUT to a digital input pin\n2. Place sensor so emitter/receiver faces door path or obstacle path\n3. Read digital output state for beam obstruction detection\n4. Calibrate sensitivity potentiometer if available",
+        "default_pins": {
+          "OUT": 2,
+          "VCC": 5,
+          "GND": 0
+        },
+        "connection_diagram": "IR sensor OUT to digital input, powered by 5V and GND",
+        "warnings": [
+          "Strong ambient sunlight can affect reliability",
+          "Align sensor direction for repeatable detection"
+        ],
+        "required_libraries": []
       }
     ],
     [

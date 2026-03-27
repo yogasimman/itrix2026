@@ -5,12 +5,11 @@ import { useEffect, useState, useCallback, useRef } from "react";
 interface Round1ProctoringProps {
   participantId: string;
   enabled: boolean;
-  enforceFullscreen?: boolean;
 }
 
-export function Round1Proctoring({ participantId, enabled, enforceFullscreen = true }: Round1ProctoringProps) {
+export function Round1Proctoring({ participantId, enabled }: Round1ProctoringProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [warningType, setWarningType] = useState<"fullscreen" | "tab" | null>(null);
+  const [showWarning, setShowWarning] = useState(false);
   const [violationCount, setViolationCount] = useState(0);
   const lastViolationTime = useRef<Record<string, number>>({});
 
@@ -39,114 +38,44 @@ export function Round1Proctoring({ participantId, enabled, enforceFullscreen = t
     try {
       await document.documentElement.requestFullscreen();
       setIsFullscreen(true);
-      setWarningType(null);
-    } catch (e) {
-      // Fullscreen may be blocked in iframe/embedded contexts — not critical
+      setShowWarning(false);
+    } catch {
+      // Fullscreen may be blocked in embedded/iframe contexts
     }
   }, []);
 
-  // Enter fullscreen when quiz becomes enabled
+  // Enter fullscreen when quiz becomes active
   useEffect(() => {
-    if (!enabled || !enforceFullscreen) return;
+    if (!enabled) return;
     const timeout = setTimeout(() => {
       enterFullscreen();
     }, 500);
     return () => clearTimeout(timeout);
-  }, [enabled, enterFullscreen, enforceFullscreen]);
+  }, [enabled, enterFullscreen]);
 
-  // Fullscreen change listener
+  // Listen for fullscreen changes — only detect exit
   useEffect(() => {
-    if (!enabled || !enforceFullscreen) return;
+    if (!enabled) return;
     const handleFSChange = () => {
       const inFS = !!document.fullscreenElement;
       setIsFullscreen(inFS);
       if (!inFS) {
-        setWarningType("fullscreen");
+        setShowWarning(true);
         logViolation(
           "fullscreen_exit",
-          "Participant exited fullscreen mode during Round 1. Only this quiz site is permitted — no external applications allowed.",
+          "Participant exited fullscreen mode during Round 1.",
           "critical"
         );
       }
     };
     document.addEventListener("fullscreenchange", handleFSChange);
     return () => document.removeEventListener("fullscreenchange", handleFSChange);
-  }, [enabled, logViolation, enforceFullscreen]);
-
-  // Tab visibility change listener
-  useEffect(() => {
-    if (!enabled) return;
-    const handleVisibility = () => {
-      if (document.hidden) {
-        setWarningType("tab");
-        logViolation(
-          "tab_switch",
-          "Participant switched to another browser tab during Round 1.",
-          "critical"
-        );
-      } else {
-        if (warningType === "tab") setWarningType(null);
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
-    return () => document.removeEventListener("visibilitychange", handleVisibility);
-  }, [enabled, logViolation, warningType]);
-
-  // Window blur — switching to another app
-  useEffect(() => {
-    if (!enabled) return;
-    const handleBlur = () => {
-      logViolation(
-        "window_blur",
-        "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-        "critical"
-      );
-    };
-    window.addEventListener("blur", handleBlur);
-    return () => window.removeEventListener("blur", handleBlur);
-  }, [enabled, logViolation]);
-
-  // Keyboard shortcuts — block and log
-  useEffect(() => {
-    if (!enabled) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Alt+Tab / Cmd+Tab
-      if ((e.altKey || e.metaKey) && e.key === "Tab") {
-        e.preventDefault();
-        logViolation("alt_tab", "Participant attempted to switch windows via Alt+Tab / Cmd+Tab.", "critical");
-        return;
-      }
-      // Ctrl/Cmd + T, N, W (new tab / new window / close tab)
-      if ((e.ctrlKey || e.metaKey) && ["t", "n", "w"].includes(e.key.toLowerCase())) {
-        e.preventDefault();
-        logViolation(
-          "browser_shortcut",
-          `Participant attempted browser shortcut: ${e.ctrlKey ? "Ctrl" : "Cmd"}+${e.key.toUpperCase()}`,
-          "critical"
-        );
-        return;
-      }
-      // Escape key — will trigger fullscreen exit; log proactively
-      if (e.key === "Escape") {
-        logViolation(
-          "escape_key",
-          "Participant pressed Escape (attempted to exit fullscreen).",
-          "critical"
-        );
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown, true);
-    return () => document.removeEventListener("keydown", handleKeyDown, true);
   }, [enabled, logViolation]);
 
   if (!enabled) return null;
 
-  if (!enforceFullscreen) {
-    return null;
-  }
-
-  // Fullscreen entry prompt (before fullscreen is active, no violation yet)
-  if (!isFullscreen && warningType === null) {
+  // Fullscreen entry prompt (initial state before fullscreen is active)
+  if (!isFullscreen && !showWarning) {
     return (
       <div className="fixed inset-0 z-[9999] bg-background/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center">
         <div className="max-w-md space-y-6">
@@ -158,46 +87,39 @@ export function Round1Proctoring({ participantId, enabled, enforceFullscreen = t
           <div>
             <h1 className="text-2xl font-bold mb-2">Fullscreen Required</h1>
             <p className="text-muted-foreground text-sm">
-              Round 1 requires fullscreen mode. Only this quiz site is permitted during the exam — no other applications are allowed.
+              Round 1 must be taken in fullscreen mode. Click below to begin your exam.
             </p>
           </div>
           <button
             onClick={enterFullscreen}
             className="w-full bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
           >
-            Enter Fullscreen & Begin
+            Enter Fullscreen &amp; Begin
           </button>
         </div>
       </div>
     );
   }
 
-  // Violation warning overlay
-  if (warningType !== null) {
-    const messages = {
-      fullscreen: {
-        title: "FULLSCREEN VIOLATION",
-        body: "You have exited fullscreen mode. This is not permitted during Round 1.",
-      },
-      tab: {
-        title: "TAB SWITCH DETECTED",
-        body: "You have switched to another browser tab. This is not permitted during Round 1.",
-      },
-    };
-    const msg = messages[warningType];
+  // Violation warning overlay shown after fullscreen exit
+  if (showWarning) {
     return (
       <div className="fixed inset-0 z-[9999] bg-red-600/95 flex flex-col items-center justify-center p-8 text-white text-center">
         <div className="max-w-lg space-y-6">
           <div className="text-7xl">⚠️</div>
           <div>
-            <h1 className="text-3xl font-bold mb-3">{msg.title}</h1>
-            <p className="text-lg opacity-90 mb-2">{msg.body}</p>
+            <h1 className="text-3xl font-bold mb-3">FULLSCREEN VIOLATION</h1>
+            <p className="text-lg opacity-90 mb-2">
+              You have exited fullscreen mode. This is not permitted during Round 1.
+            </p>
             <p className="text-sm opacity-80">
-              This incident has been recorded and sent to the invigilator. Only this quiz site is permitted during Round 1 — no other applications are allowed.
+              This incident has been recorded and sent to the invigilator.
             </p>
           </div>
           <div className="bg-white/20 rounded-lg px-4 py-2 inline-block">
-            <span className="text-sm font-medium">Violations recorded this session: {violationCount}</span>
+            <span className="text-sm font-medium">
+              Violations recorded this session: {violationCount}
+            </span>
           </div>
           <button
             onClick={enterFullscreen}

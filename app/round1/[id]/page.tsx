@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { Brain, CheckCircle2, Clock3, Layers3, Radar } from "lucide-react";
 
 import { Round1Question } from "@/components/round1-question";
@@ -123,11 +123,9 @@ function getScenarioGroupTitle(questionTitle: string): string {
 export default function Round1QuizPage() {
   const params = useParams<{ id: string }>();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const fallbackId = pathname?.split("/").filter(Boolean).at(-1);
   const participantId = params?.id || fallbackId;
   const router = useRouter();
-  const enforceFullscreen = process.env.NODE_ENV === "production" && searchParams.get("proctor") !== "off";
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -266,6 +264,10 @@ export default function Round1QuizPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "lock" }),
       });
+      // Exit fullscreen on final submission
+      if (document.fullscreenElement) {
+        try { await document.exitFullscreen(); } catch { /* ignore */ }
+      }
       setQuizState("completed");
     }
     setIsFinalizing(false);
@@ -451,7 +453,7 @@ export default function Round1QuizPage() {
   return (
     <main className="relative min-h-screen bg-background p-4">
       <div className="iot-grid-overlay" />
-      {participantId && <Round1Proctoring participantId={participantId} enabled={true} enforceFullscreen={enforceFullscreen} />}
+      {participantId && <Round1Proctoring participantId={participantId} enabled={true} />}
 
       <div className="relative mx-auto max-w-7xl space-y-6 py-6">
         <Card className="border-cyan-200/20 bg-slate-950/65 backdrop-blur-lg">

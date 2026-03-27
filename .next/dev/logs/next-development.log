@@ -1,46 +1,26 @@
-{"timestamp":"00:00:00.961","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:00:04.141","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:00:10.088","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target .js-kpi not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:10.089","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target .js-kpi not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:00:10.094","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:10.094","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:00:10.173","source":"Browser","level":"WARN","message":"GSAP target .js-kpi not found. https://gsap.com"}
-{"timestamp":"00:00:10.173","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
-{"timestamp":"00:00:13.597","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
-{"timestamp":"00:00:13.599","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:13.600","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:00:15.092","source":"Browser","level":"WARN","message":"THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."}
-{"timestamp":"00:00:15.172","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mTHREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:15.172","source":"Browser","level":"WARN","message":"\u001b[33mTHREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.\u001b[39m"}
-{"timestamp":"00:00:19.469","source":"Browser","level":"LOG","message":"THREE.WebGLRenderer: Context Lost."}
-{"timestamp":"00:00:24.630","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target .js-kpi not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:24.631","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target .js-kpi not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:00:24.631","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:24.631","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:00:24.745","source":"Browser","level":"WARN","message":"GSAP target .js-kpi not found. https://gsap.com"}
-{"timestamp":"00:00:24.746","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
-{"timestamp":"00:00:24.746","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
-{"timestamp":"00:00:24.746","source":"Browser","level":"WARN","message":"GSAP target .js-kpi not found. https://gsap.com"}
-{"timestamp":"00:00:24.746","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
-{"timestamp":"00:00:24.789","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:24.789","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:00:24.804","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target .js-kpi not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:24.805","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target .js-kpi not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:00:24.812","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:24.812","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:00:24.835","source":"Browser","level":"WARN","message":"THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."}
-{"timestamp":"00:00:24.836","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mTHREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:24.836","source":"Browser","level":"WARN","message":"\u001b[33mTHREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.\u001b[39m"}
-{"timestamp":"00:00:25.097","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
-{"timestamp":"00:00:25.097","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
-{"timestamp":"00:00:25.097","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:01:52.128","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:01:52.326","source":"Browser","level":"WARN","message":"GSAP target .js-kpi not found. https://gsap.com"}
-{"timestamp":"00:01:52.326","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
-{"timestamp":"00:01:52.338","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target .js-kpi not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(app/home-client.tsx:109:16)\\u001b[22m\""}
-{"timestamp":"00:01:52.338","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target .js-kpi not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:01:52.343","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(app/home-client.tsx:109:16)\\u001b[22m\""}
-{"timestamp":"00:01:52.343","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
-{"timestamp":"00:01:52.934","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
-{"timestamp":"00:01:52.937","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\""}
-{"timestamp":"00:01:52.937","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
+{"timestamp":"00:00:07.603","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:10.722","source":"Server","level":"LOG","message":"○ Compiling / ..."}
+{"timestamp":"00:00:20.012","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:00:21.699","source":"Browser","level":"WARN","message":"GSAP target .js-kpi not found. https://gsap.com"}
+{"timestamp":"00:00:21.699","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
+{"timestamp":"00:00:22.228","source":"Server","level":"LOG","message":"Database seeded successfully (53 components, 8 canonical scenarios)"}
+{"timestamp":"00:00:22.278","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target .js-kpi not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
+{"timestamp":"00:00:22.278","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target .js-kpi not found. https://gsap.com\u001b[39m"}
+{"timestamp":"00:00:22.284","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
+{"timestamp":"00:00:22.291","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
+{"timestamp":"00:00:22.292","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
+{"timestamp":"00:00:22.771","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
+{"timestamp":"00:00:22.771","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
+{"timestamp":"00:00:24.097","source":"Browser","level":"WARN","message":"THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."}
+{"timestamp":"00:00:24.105","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mTHREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.\\u001b[39m\" \"\\u001b[2m(https://31dc036e-b29e-4b74-9c06-d5f6fa87901d-00-1pc7yj8yoxpvt.kirk.replit.dev/__replco/static/devtools/injected.js:37:27)\\u001b[22m\""}
+{"timestamp":"00:00:24.106","source":"Browser","level":"WARN","message":"\u001b[33mTHREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.\u001b[39m"}
+{"timestamp":"00:00:39.738","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:00:39.970","source":"Browser","level":"WARN","message":"GSAP target .js-kpi not found. https://gsap.com"}
+{"timestamp":"00:00:39.970","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
+{"timestamp":"00:00:40.244","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target .js-kpi not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(app/home-client.tsx:109:16)\\u001b[22m\""}
+{"timestamp":"00:00:40.244","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target .js-kpi not found. https://gsap.com\u001b[39m"}
+{"timestamp":"00:00:40.250","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\" \"\\u001b[2m(app/home-client.tsx:109:16)\\u001b[22m\""}
+{"timestamp":"00:00:40.250","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
+{"timestamp":"00:00:40.648","source":"Browser","level":"WARN","message":"GSAP target  not found. https://gsap.com"}
+{"timestamp":"00:00:40.662","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mGSAP target  not found. https://gsap.com\\u001b[39m\""}
+{"timestamp":"00:00:40.662","source":"Browser","level":"WARN","message":"\u001b[33mGSAP target  not found. https://gsap.com\u001b[39m"}
