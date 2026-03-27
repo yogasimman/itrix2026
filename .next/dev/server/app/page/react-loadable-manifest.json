@@ -1,14 +1,14 @@
 {
-  "[project]/Documents/itrix2026/components/iot-ambient-canvas.tsx [app-client] (ecmascript, next/dynamic entry)": {
-    "id": "[project]/Documents/itrix2026/components/iot-ambient-canvas.tsx [app-client] (ecmascript, next/dynamic entry)",
+  "[project]/components/iot-ambient-canvas.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/components/iot-ambient-canvas.tsx [app-client] (ecmascript, next/dynamic entry)",
     "files": [
-      "static/chunks/0hkt_three_build_three_core_0owsq_c.js",
-      "static/chunks/0hkt_three_build_three_module_0hqz6q_.js",
-      "static/chunks/0hkt_three_build_three_module_0mx7qbm.js",
-      "static/chunks/0hkt_@react-three_fiber_dist_0geis7j._.js",
-      "static/chunks/0hkt_0q4agdx._.js",
-      "static/chunks/Documents_itrix2026_components_iot-ambient-canvas_tsx_0a222.4._.js",
-      "static/chunks/Documents_itrix2026_components_iot-ambient-canvas_tsx_0v7024a._.js"
+      "static/chunks/node_modules_three_build_three_core_0qefhn6.js",
+      "static/chunks/node_modules_three_build_three_module_024z3_h.js",
+      "static/chunks/node_modules_three_build_three_module_12n2-ho.js",
+      "static/chunks/node_modules_@react-three_fiber_dist_0_8us68._.js",
+      "static/chunks/node_modules_0dd2id4._.js",
+      "static/chunks/components_iot-ambient-canvas_tsx_0znfglw._.js",
+      "static/chunks/components_iot-ambient-canvas_tsx_0v5ruud._.js"
     ]
   }
 }

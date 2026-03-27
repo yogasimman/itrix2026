@@ -21,6 +21,7 @@ const nextConfig = {
     "*.janeway.replit.dev",
     "*.spock.replit.dev",
     "*.worf.replit.dev",
+    "*.riker.replit.dev",
     "*.repl.co",
   ],
 }
