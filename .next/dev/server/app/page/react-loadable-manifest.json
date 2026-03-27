@@ -1,1 +1,14 @@
-{}
+{
+  "[project]/components/iot-ambient-canvas.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/components/iot-ambient-canvas.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_three_build_three_core_0qefhn6.js",
+      "static/chunks/node_modules_three_build_three_module_024z3_h.js",
+      "static/chunks/node_modules_three_build_three_module_12n2-ho.js",
+      "static/chunks/node_modules_@react-three_fiber_dist_0_8us68._.js",
+      "static/chunks/node_modules_0dd2id4._.js",
+      "static/chunks/components_iot-ambient-canvas_tsx_0znfglw._.js",
+      "static/chunks/components_iot-ambient-canvas_tsx_06rvp78._.js"
+    ]
+  }
+}
