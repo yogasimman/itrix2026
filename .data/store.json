@@ -1,164 +1,32 @@
 {
   "participants": [
     [
-      "TST001",
+      "BUQ7NT",
       {
-        "id": "TST001",
-        "name": "Test User One",
-        "team_name": "Alpha Team",
-        "phone": "9000000001",
-        "email": "tst001@test.com",
-        "year": "3",
+        "id": "BUQ7NT",
+        "name": "s",
+        "member1_name": "s",
+        "member1_phone": "s",
+        "member1_email": "s",
+        "member1_college": "ss",
+        "member1_department": "ss",
+        "team_name": "s",
+        "college": "ss",
+        "department": "ss",
+        "phone": "s",
+        "email": "s",
         "assigned_round": "round1",
         "scenario_id": null,
         "timer_duration": 7200,
         "timer_started_at": null,
         "is_active": 0,
         "is_locked": 0,
-        "created_at": "2026-03-27T15:22:24.328Z",
-        "round1_score": 0,
-        "round1_completed": false,
-        "round2_score": 0,
-        "round2_completed": false
-      }
-    ],
-    [
-      "TST002",
-      {
-        "id": "TST002",
-        "name": "Test User Two",
-        "team_name": "Beta Team",
-        "phone": "9000000002",
-        "email": "tst002@test.com",
-        "year": "2",
-        "assigned_round": "round2",
-        "scenario_id": 4,
-        "timer_duration": 7200,
-        "timer_started_at": null,
-        "is_active": 0,
-        "is_locked": 0,
-        "created_at": "2026-03-27T15:22:24.346Z",
-        "round1_score": 0,
-        "round1_completed": false,
-        "round2_score": 0,
-        "round2_completed": false
-      }
-    ],
-    [
-      "TST003",
-      {
-        "id": "TST003",
-        "name": "Test User Three",
-        "team_name": "Gamma Team",
-        "phone": "9000000003",
-        "email": "tst003@test.com",
-        "year": "4",
-        "assigned_round": "round1",
-        "scenario_id": null,
-        "timer_duration": 7200,
-        "timer_started_at": null,
-        "is_active": 0,
-        "is_locked": 0,
-        "created_at": "2026-03-27T15:22:24.382Z",
-        "round1_score": 0,
-        "round1_completed": false,
-        "round2_score": 0,
-        "round2_completed": false
-      }
-    ],
-    [
-      "6EUSXP",
-      {
-        "id": "6EUSXP",
-        "name": "wrer",
-        "team_name": "wrewr",
-        "phone": "wrwe",
-        "email": "wfewfwr",
-        "assigned_round": "round1",
-        "scenario_id": null,
-        "timer_duration": 7200,
-        "timer_started_at": null,
-        "is_active": 0,
-        "is_locked": 0,
-        "created_at": "2026-03-27T15:23:51.497Z",
-        "round1_score": 0,
-        "round1_completed": false,
-        "round2_score": 0,
-        "round2_completed": false
-      }
-    ],
-    [
-      "GG5GFJ",
-      {
-        "id": "GG5GFJ",
-        "name": "wwre",
-        "team_name": "werewr",
-        "phone": "ewrewr",
-        "email": "sfdsfds",
-        "assigned_round": "round1",
-        "scenario_id": null,
-        "timer_duration": 7200,
-        "timer_started_at": null,
-        "is_active": 0,
-        "is_locked": 0,
-        "created_at": "2026-03-27T15:42:19.588Z",
-        "round1_score": 0,
-        "round1_completed": false,
-        "round2_score": 0,
-        "round2_completed": false
-      }
-    ],
-    [
-      "JF6DJM",
-      {
-        "id": "JF6DJM",
-        "name": "r1",
-        "team_name": "e",
-        "phone": "e",
-        "email": "e",
-        "year": "e",
-        "assigned_round": "round1",
-        "scenario_id": null,
-        "timer_duration": 7200,
-        "timer_started_at": null,
-        "is_active": 0,
-        "is_locked": 1,
-        "created_at": "2026-03-27T16:58:09.327Z",
-        "round1_score": 0,
+        "created_at": "2026-03-27T20:51:29.529Z",
+        "round1_score": 4,
         "round1_completed": true,
         "round2_score": 0,
         "round2_completed": false,
-        "round1_completed_at": "2026-03-27T19:20:56.396Z"
-      }
-    ],
-    [
-      "TESTXX",
-      {
-        "id": "TESTXX",
-        "name": "Test Admin",
-        "member1_name": "Test Admin",
-        "member1_phone": "9999999999",
-        "member1_email": "test@test.com",
-        "member1_college": "Test College",
-        "member1_department": "CSE",
-        "member1_year": "3",
-        "team_name": "Test Team",
-        "college": "Test College",
-        "department": "CSE",
-        "phone": "9999999999",
-        "email": "test@test.com",
-        "year": "3",
-        "assigned_round": "round1",
-        "scenario_id": null,
-        "timer_duration": 7200,
-        "timer_started_at": null,
-        "is_active": 0,
-        "is_locked": 0,
-        "created_at": "2026-03-27T20:43:44.784Z",
-        "round1_score": 0,
-        "round1_completed": false,
-        "round2_score": 0,
-        "round2_completed": false
+        "round1_completed_at": "2026-03-27T20:54:33.788Z"
       }
     ]
   ],
@@ -1209,130 +1077,102 @@
   "snippetUnlocks": [],
   "activityLogs": [
     {
-      "id": 37,
-      "participant_id": "JF6DJM",
-      "event_type": "violation",
-      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
-      "created_at": "2026-03-27T19:34:45.716Z"
-    },
-    {
-      "id": 36,
-      "participant_id": "JF6DJM",
-      "event_type": "round1_response",
-      "details": "Question 61: Correct (4/4 points)",
-      "created_at": "2026-03-27T19:34:37.575Z"
-    },
-    {
-      "id": 35,
-      "participant_id": "JF6DJM",
-      "event_type": "round1_response",
-      "details": "Question 62: Incorrect (6/8 points)",
-      "created_at": "2026-03-27T19:34:28.598Z"
-    },
-    {
-      "id": 34,
-      "participant_id": "JF6DJM",
-      "event_type": "round1_response",
-      "details": "Question 61: Correct (4/4 points)",
-      "created_at": "2026-03-27T19:34:20.876Z"
-    },
-    {
-      "id": 33,
-      "participant_id": "JF6DJM",
-      "event_type": "round1_started",
-      "details": "Round 1 started with 66 questions",
-      "created_at": "2026-03-27T19:34:09.652Z"
-    },
-    {
-      "id": 32,
-      "participant_id": "JF6DJM",
+      "id": 15,
+      "participant_id": "BUQ7NT",
       "event_type": "locked",
       "details": "Dashboard locked - time expired",
-      "created_at": "2026-03-27T19:20:56.754Z"
+      "created_at": "2026-03-27T20:54:34.090Z"
     },
     {
-      "id": 31,
-      "participant_id": "JF6DJM",
+      "id": 14,
+      "participant_id": "BUQ7NT",
       "event_type": "round1_completed",
-      "details": "Round 1 completed with score: 0",
-      "created_at": "2026-03-27T19:20:56.396Z"
+      "details": "Round 1 completed with score: 4",
+      "created_at": "2026-03-27T20:54:33.788Z"
     },
     {
-      "id": 30,
-      "participant_id": "JF6DJM",
+      "id": 13,
+      "participant_id": "BUQ7NT",
+      "event_type": "violation",
+      "details": "fullscreen_exit: Participant exited fullscreen mode during Round 1.",
+      "created_at": "2026-03-27T20:54:25.999Z"
+    },
+    {
+      "id": 12,
+      "participant_id": "BUQ7NT",
+      "event_type": "violation",
+      "details": "fullscreen_exit: Participant exited fullscreen mode during Round 1.",
+      "created_at": "2026-03-27T20:54:01.109Z"
+    },
+    {
+      "id": 11,
+      "participant_id": "BUQ7NT",
+      "event_type": "violation",
+      "details": "fullscreen_exit: Participant exited fullscreen mode during Round 1.",
+      "created_at": "2026-03-27T20:53:44.886Z"
+    },
+    {
+      "id": 10,
+      "participant_id": "BUQ7NT",
+      "event_type": "violation",
+      "details": "fullscreen_exit: Participant exited fullscreen mode during Round 1.",
+      "created_at": "2026-03-27T20:53:32.925Z"
+    },
+    {
+      "id": 9,
+      "participant_id": "BUQ7NT",
+      "event_type": "violation",
+      "details": "fullscreen_exit: Participant exited fullscreen mode during Round 1.",
+      "created_at": "2026-03-27T20:52:44.239Z"
+    },
+    {
+      "id": 8,
+      "participant_id": "BUQ7NT",
+      "event_type": "round1_response",
+      "details": "Question 61: Correct (4/4 points)",
+      "created_at": "2026-03-27T20:52:41.264Z"
+    },
+    {
+      "id": 7,
+      "participant_id": "BUQ7NT",
+      "event_type": "round1_response",
+      "details": "Question 61: Incorrect (3/4 points)",
+      "created_at": "2026-03-27T20:52:39.313Z"
+    },
+    {
+      "id": 6,
+      "participant_id": "BUQ7NT",
+      "event_type": "round1_response",
+      "details": "Question 61: Incorrect (2/4 points)",
+      "created_at": "2026-03-27T20:52:37.829Z"
+    },
+    {
+      "id": 5,
+      "participant_id": "BUQ7NT",
+      "event_type": "round1_response",
+      "details": "Question 61: Incorrect (1/4 points)",
+      "created_at": "2026-03-27T20:52:34.368Z"
+    },
+    {
+      "id": 4,
+      "participant_id": "BUQ7NT",
+      "event_type": "round1_response",
+      "details": "Question 4: Incorrect (0/1 points)",
+      "created_at": "2026-03-27T20:52:19.230Z"
+    },
+    {
+      "id": 3,
+      "participant_id": "BUQ7NT",
       "event_type": "round1_started",
       "details": "Round 1 started with 66 questions",
-      "created_at": "2026-03-27T19:20:14.948Z"
+      "created_at": "2026-03-27T20:51:55.344Z"
     },
     {
-      "id": 29,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
-      "created_at": "2026-03-27T15:41:24.042Z"
-    },
-    {
-      "id": 28,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "created_at": "2026-03-27T15:41:24.019Z"
-    },
-    {
-      "id": 27,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
-      "created_at": "2026-03-27T15:33:27.651Z"
-    },
-    {
-      "id": 26,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "created_at": "2026-03-27T15:33:27.607Z"
-    },
-    {
-      "id": 25,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
-      "created_at": "2026-03-27T15:33:21.675Z"
-    },
-    {
-      "id": 24,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "created_at": "2026-03-27T15:33:21.652Z"
-    },
-    {
-      "id": 23,
-      "participant_id": "TST001",
-      "event_type": "round1_response",
-      "details": "Question 1: Incorrect (0/5 points)",
-      "created_at": "2026-03-27T15:32:58.011Z"
-    },
-    {
-      "id": 22,
-      "participant_id": "TST001",
-      "event_type": "round1_section_override",
-      "details": "Round 1 section set to 3",
-      "created_at": "2026-03-27T15:32:10.466Z"
-    },
-    {
-      "id": 21,
-      "participant_id": "TST001",
-      "event_type": "round1_started",
-      "details": "Round 1 started with 56 questions",
-      "created_at": "2026-03-27T15:31:50.770Z"
-    },
-    {
-      "id": 20,
-      "participant_id": "TST001",
-      "event_type": "round1_section_override",
-      "details": "Round 1 section set to 2",
-      "created_at": "2026-03-27T15:31:43.939Z"
+      "id": 2,
+      "participant_id": "BUQ7NT",
+      "event_type": "participant_created",
+      "details": "New participant created: s (round1)",
+      "created_at": "2026-03-27T20:51:29.538Z"
     },
     {
       "id": 19,
@@ -1342,297 +1182,58 @@
       "created_at": "2026-03-27T15:30:20.324Z"
     },
     {
-      "id": 18,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
-      "created_at": "2026-03-27T15:28:50.460Z"
-    },
-    {
-      "id": 17,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "created_at": "2026-03-27T15:28:50.292Z"
-    },
-    {
       "id": 16,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
-      "created_at": "2026-03-27T15:27:06.229Z"
-    },
-    {
-      "id": 15,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "created_at": "2026-03-27T15:27:06.102Z"
-    },
-    {
-      "id": 14,
-      "participant_id": "6EUSXP",
-      "event_type": "round1_section_override",
-      "details": "Round 1 section set to 3",
-      "created_at": "2026-03-27T15:26:48.860Z"
-    },
-    {
-      "id": 13,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
-      "created_at": "2026-03-27T15:26:31.340Z"
-    },
-    {
-      "id": 12,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "created_at": "2026-03-27T15:26:31.202Z"
-    },
-    {
-      "id": 11,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "tab_switch: Participant switched to another browser tab during Round 1.",
-      "created_at": "2026-03-27T15:25:22.251Z"
-    },
-    {
-      "id": 10,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "created_at": "2026-03-27T15:25:20.589Z"
-    },
-    {
-      "id": 9,
-      "participant_id": "6EUSXP",
-      "event_type": "round1_section_override",
-      "details": "Round 1 section set to 2",
-      "created_at": "2026-03-27T15:25:13.170Z"
-    },
-    {
-      "id": 8,
-      "participant_id": "6EUSXP",
-      "event_type": "round1_section_override",
-      "details": "Round 1 section set to 1",
-      "created_at": "2026-03-27T15:25:03.928Z"
-    },
-    {
-      "id": 7,
-      "participant_id": "6EUSXP",
-      "event_type": "violation",
-      "details": "window_blur: Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "created_at": "2026-03-27T15:24:38.939Z"
-    },
-    {
-      "id": 6,
-      "participant_id": "6EUSXP",
-      "event_type": "round1_started",
-      "details": "Round 1 started with 56 questions",
-      "created_at": "2026-03-27T15:24:27.566Z"
-    },
-    {
-      "id": 5,
-      "participant_id": "6EUSXP",
-      "event_type": "participant_created",
-      "details": "New participant created: wrer (round1)",
-      "created_at": "2026-03-27T15:23:51.502Z"
-    },
-    {
-      "id": 4,
-      "participant_id": "TST003",
-      "event_type": "participant_created",
-      "details": "New participant created: Test User Three (round1)",
-      "created_at": "2026-03-27T15:22:24.420Z"
-    },
-    {
-      "id": 2,
-      "participant_id": "TST002",
-      "event_type": "scenario_assigned",
-      "details": "Auto-assigned scenario: The Smart Staircase Lighting",
-      "created_at": "2026-03-27T15:22:24.357Z"
-    },
-    {
-      "id": 3,
-      "participant_id": "TST002",
-      "event_type": "participant_created",
-      "details": "New participant created: Test User Two (round2)",
-      "created_at": "2026-03-27T15:22:24.357Z"
-    },
-    {
-      "id": 1,
-      "participant_id": "TST001",
-      "event_type": "participant_created",
-      "details": "New participant created: Test User One (round1)",
-      "created_at": "2026-03-27T15:22:24.330Z"
-    },
-    {
-      "id": 38,
-      "participant_id": "TESTXX",
-      "event_type": "participant_created",
-      "details": "New participant created: Test Admin (round1)",
-      "created_at": "2026-03-27T20:43:44.787Z"
-    },
-    {
-      "id": 39,
-      "participant_id": "TST001",
-      "event_type": "locked",
-      "details": "Dashboard locked - time expired",
-      "created_at": "2026-03-27T20:43:46.986Z"
-    },
-    {
-      "id": 40,
-      "participant_id": "TST001",
+      "participant_id": "BUQ7NT",
       "event_type": "unlocked",
       "details": "Dashboard unlocked by admin",
-      "created_at": "2026-03-27T20:43:47.096Z"
+      "created_at": "2026-03-27T20:56:33.667Z"
     }
   ],
   "violations": [
     {
-      "id": 16,
-      "participant_id": "JF6DJM",
-      "violation_type": "tab_switch",
-      "severity": "critical",
-      "details": "Participant switched to another browser tab during Round 1.",
-      "is_approved": false,
-      "created_at": "2026-03-27T19:34:45.716Z"
-    },
-    {
-      "id": 15,
-      "participant_id": "6EUSXP",
-      "violation_type": "tab_switch",
-      "severity": "critical",
-      "details": "Participant switched to another browser tab during Round 1.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:41:24.042Z"
-    },
-    {
-      "id": 14,
-      "participant_id": "6EUSXP",
-      "violation_type": "window_blur",
-      "severity": "critical",
-      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:41:24.015Z"
-    },
-    {
-      "id": 13,
-      "participant_id": "6EUSXP",
-      "violation_type": "tab_switch",
-      "severity": "critical",
-      "details": "Participant switched to another browser tab during Round 1.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:33:27.651Z"
-    },
-    {
-      "id": 12,
-      "participant_id": "6EUSXP",
-      "violation_type": "window_blur",
-      "severity": "critical",
-      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:33:27.607Z"
-    },
-    {
-      "id": 11,
-      "participant_id": "6EUSXP",
-      "violation_type": "tab_switch",
-      "severity": "critical",
-      "details": "Participant switched to another browser tab during Round 1.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:33:21.675Z"
-    },
-    {
-      "id": 10,
-      "participant_id": "6EUSXP",
-      "violation_type": "window_blur",
-      "severity": "critical",
-      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:33:21.652Z"
-    },
-    {
-      "id": 9,
-      "participant_id": "6EUSXP",
-      "violation_type": "tab_switch",
-      "severity": "critical",
-      "details": "Participant switched to another browser tab during Round 1.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:28:50.460Z"
-    },
-    {
-      "id": 8,
-      "participant_id": "6EUSXP",
-      "violation_type": "window_blur",
-      "severity": "critical",
-      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:28:50.292Z"
-    },
-    {
-      "id": 7,
-      "participant_id": "6EUSXP",
-      "violation_type": "tab_switch",
-      "severity": "critical",
-      "details": "Participant switched to another browser tab during Round 1.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:27:06.229Z"
-    },
-    {
-      "id": 6,
-      "participant_id": "6EUSXP",
-      "violation_type": "window_blur",
-      "severity": "critical",
-      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
-      "is_approved": false,
-      "created_at": "2026-03-27T15:27:06.102Z"
-    },
-    {
       "id": 5,
-      "participant_id": "6EUSXP",
-      "violation_type": "tab_switch",
+      "participant_id": "BUQ7NT",
+      "violation_type": "fullscreen_exit",
       "severity": "critical",
-      "details": "Participant switched to another browser tab during Round 1.",
+      "details": "Participant exited fullscreen mode during Round 1.",
       "is_approved": false,
-      "created_at": "2026-03-27T15:26:31.340Z"
+      "created_at": "2026-03-27T20:54:25.999Z"
     },
     {
       "id": 4,
-      "participant_id": "6EUSXP",
-      "violation_type": "window_blur",
+      "participant_id": "BUQ7NT",
+      "violation_type": "fullscreen_exit",
       "severity": "critical",
-      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "details": "Participant exited fullscreen mode during Round 1.",
       "is_approved": false,
-      "created_at": "2026-03-27T15:26:31.202Z"
+      "created_at": "2026-03-27T20:54:01.109Z"
     },
     {
       "id": 3,
-      "participant_id": "6EUSXP",
-      "violation_type": "tab_switch",
+      "participant_id": "BUQ7NT",
+      "violation_type": "fullscreen_exit",
       "severity": "critical",
-      "details": "Participant switched to another browser tab during Round 1.",
+      "details": "Participant exited fullscreen mode during Round 1.",
       "is_approved": false,
-      "created_at": "2026-03-27T15:25:22.251Z"
+      "created_at": "2026-03-27T20:53:44.886Z"
     },
     {
       "id": 2,
-      "participant_id": "6EUSXP",
-      "violation_type": "window_blur",
+      "participant_id": "BUQ7NT",
+      "violation_type": "fullscreen_exit",
       "severity": "critical",
-      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "details": "Participant exited fullscreen mode during Round 1.",
       "is_approved": false,
-      "created_at": "2026-03-27T15:25:20.589Z"
+      "created_at": "2026-03-27T20:53:32.924Z"
     },
     {
       "id": 1,
-      "participant_id": "6EUSXP",
-      "violation_type": "window_blur",
+      "participant_id": "BUQ7NT",
+      "violation_type": "fullscreen_exit",
       "severity": "critical",
-      "details": "Participant switched away from the quiz window. Only this quiz site is permitted during Round 1 — no external applications are allowed.",
+      "details": "Participant exited fullscreen mode during Round 1.",
       "is_approved": false,
-      "created_at": "2026-03-27T15:24:38.939Z"
+      "created_at": "2026-03-27T20:52:44.239Z"
     }
   ],
   "initialized": true,
@@ -4019,6 +3620,26 @@
       "score_obtained": 6,
       "time_taken": 30,
       "answered_at": "2026-03-27T19:34:28.598Z"
+    },
+    {
+      "id": 3,
+      "participant_id": "BUQ7NT",
+      "question_id": 4,
+      "answer": "D",
+      "is_correct": false,
+      "score_obtained": 0,
+      "time_taken": 0,
+      "answered_at": "2026-03-27T20:52:19.230Z"
+    },
+    {
+      "id": 4,
+      "participant_id": "BUQ7NT",
+      "question_id": 61,
+      "answer": "{\"application\":\"application\",\"perception\":\"perception\",\"middleware\":\"middleware\",\"network\":\"network\"}",
+      "is_correct": true,
+      "score_obtained": 4,
+      "time_taken": 0,
+      "answered_at": "2026-03-27T20:52:41.264Z"
     }
   ],
   "round1Results": [
@@ -4039,6 +3660,27 @@
         "completion_status": "completed",
         "started_at": "2026-03-27T19:20:14.948Z",
         "completed_at": "2026-03-27T19:20:56.396Z",
+        "tab_switches": 0,
+        "violations": 0
+      }
+    ],
+    [
+      "BUQ7NT",
+      {
+        "id": null,
+        "participant_id": "BUQ7NT",
+        "total_score": 4,
+        "section_scores": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 4
+        },
+        "total_questions": 66,
+        "correct_answers": 1,
+        "completion_status": "completed",
+        "started_at": "2026-03-27T20:51:55.344Z",
+        "completed_at": "2026-03-27T20:54:33.788Z",
         "tab_switches": 0,
         "violations": 0
       }
@@ -4121,11 +3763,92 @@
         "expires_at": "2026-03-27T20:34:09.652Z",
         "submitted": false
       }
+    ],
+    [
+      "BUQ7NT",
+      {
+        "participant_id": "BUQ7NT",
+        "question_ids": [
+          32,
+          40,
+          64,
+          10,
+          42,
+          49,
+          15,
+          52,
+          38,
+          53,
+          24,
+          8,
+          29,
+          41,
+          50,
+          2,
+          39,
+          25,
+          18,
+          66,
+          54,
+          4,
+          59,
+          46,
+          26,
+          30,
+          11,
+          21,
+          55,
+          17,
+          13,
+          35,
+          14,
+          57,
+          36,
+          43,
+          16,
+          27,
+          1,
+          9,
+          51,
+          65,
+          19,
+          6,
+          20,
+          33,
+          47,
+          22,
+          61,
+          12,
+          23,
+          3,
+          45,
+          7,
+          5,
+          34,
+          56,
+          31,
+          62,
+          58,
+          44,
+          48,
+          63,
+          28,
+          60,
+          37
+        ],
+        "started_at": "2026-03-27T20:51:55.344Z",
+        "expires_at": "2026-03-27T21:51:55.344Z",
+        "submitted": true
+      }
     ]
   ],
   "round1SectionAccess": [
     [
       "JF6DJM",
+      0
+    ],
+    [
+      "BUQ7NT",
       0
     ]
   ],

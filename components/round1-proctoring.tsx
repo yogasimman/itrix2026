@@ -7,9 +7,11 @@ interface Round1ProctoringProps {
   enabled: boolean;
 }
 
+type WarningType = "fullscreen" | "tab_switch" | "window_switch";
+
 export function Round1Proctoring({ participantId, enabled }: Round1ProctoringProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
+  const [warningType, setWarningType] = useState<WarningType | null>(null);
   const [violationCount, setViolationCount] = useState(0);
   const lastViolationTime = useRef<Record<string, number>>({});
 
@@ -17,7 +19,7 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
     async (type: string, details: string, severity: "warning" | "critical" = "critical") => {
       const now = Date.now();
       const lastTime = lastViolationTime.current[type] || 0;
-      if (now - lastTime < 3000) return;
+      if (now - lastTime < 2000) return;
       lastViolationTime.current[type] = now;
 
       setViolationCount((prev) => prev + 1);
@@ -38,7 +40,7 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
     try {
       await document.documentElement.requestFullscreen();
       setIsFullscreen(true);
-      setShowWarning(false);
+      setWarningType(null);
     } catch {
       // Fullscreen may be blocked in embedded/iframe contexts
     }
@@ -53,14 +55,14 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
     return () => clearTimeout(timeout);
   }, [enabled, enterFullscreen]);
 
-  // Listen for fullscreen changes — only detect exit
+  // Fullscreen change — detect exit
   useEffect(() => {
     if (!enabled) return;
     const handleFSChange = () => {
       const inFS = !!document.fullscreenElement;
       setIsFullscreen(inFS);
       if (!inFS) {
-        setShowWarning(true);
+        setWarningType("fullscreen");
         logViolation(
           "fullscreen_exit",
           "Participant exited fullscreen mode during Round 1.",
@@ -72,10 +74,111 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
     return () => document.removeEventListener("fullscreenchange", handleFSChange);
   }, [enabled, logViolation]);
 
+  // Tab switch — visibilitychange
+  useEffect(() => {
+    if (!enabled) return;
+    const handleVisibility = () => {
+      if (document.hidden) {
+        setWarningType("tab_switch");
+        logViolation(
+          "tab_switch",
+          "Participant switched to another browser tab during Round 1.",
+          "critical"
+        );
+      } else {
+        // Tab is visible again — clear tab_switch warning, but keep fullscreen warning if still out
+        setWarningType((prev) => {
+          if (prev === "tab_switch") {
+            return !!document.fullscreenElement ? null : "fullscreen";
+          }
+          return prev;
+        });
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [enabled, logViolation]);
+
+  // Window blur — Alt+Tab or switching to another app
+  useEffect(() => {
+    if (!enabled) return;
+    const handleBlur = () => {
+      setWarningType("window_switch");
+      logViolation(
+        "window_switch",
+        "Participant switched away from the quiz window (Alt+Tab or external app).",
+        "critical"
+      );
+    };
+    const handleFocus = () => {
+      // Window is focused again — clear window_switch warning, keep fullscreen warning if needed
+      setWarningType((prev) => {
+        if (prev === "window_switch") {
+          return !!document.fullscreenElement ? null : "fullscreen";
+        }
+        return prev;
+      });
+    };
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("focus", handleFocus);
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [enabled, logViolation]);
+
+  // Disable copy, cut, paste, and right-click
+  useEffect(() => {
+    if (!enabled) return;
+    const prevent = (e: Event) => e.preventDefault();
+    document.addEventListener("copy", prevent);
+    document.addEventListener("cut", prevent);
+    document.addEventListener("contextmenu", prevent);
+    return () => {
+      document.removeEventListener("copy", prevent);
+      document.removeEventListener("cut", prevent);
+      document.removeEventListener("contextmenu", prevent);
+    };
+  }, [enabled]);
+
+  // Keyboard shortcut blocking: Ctrl/Cmd+C/X/A/V, Ctrl/Cmd+T/N/W
+  useEffect(() => {
+    if (!enabled) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const ctrl = e.ctrlKey || e.metaKey;
+
+      // Block copy / cut / select-all
+      if (ctrl && ["c", "x", "a"].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+        if (e.key.toLowerCase() !== "a") {
+          logViolation(
+            "copy_attempt",
+            `Participant attempted to ${e.key.toLowerCase() === "c" ? "copy" : "cut"} content (${e.ctrlKey ? "Ctrl" : "Cmd"}+${e.key.toUpperCase()}).`,
+            "warning"
+          );
+        }
+        return;
+      }
+
+      // Block new tab / new window / close tab
+      if (ctrl && ["t", "n", "w"].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+        logViolation(
+          "browser_shortcut",
+          `Participant attempted browser shortcut: ${e.ctrlKey ? "Ctrl" : "Cmd"}+${e.key.toUpperCase()}.`,
+          "critical"
+        );
+        return;
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => document.removeEventListener("keydown", handleKeyDown, true);
+  }, [enabled, logViolation]);
+
   if (!enabled) return null;
 
-  // Fullscreen entry prompt (initial state before fullscreen is active)
-  if (!isFullscreen && !showWarning) {
+  // Initial fullscreen entry prompt
+  if (!isFullscreen && warningType === null) {
     return (
       <div className="fixed inset-0 z-[9999] bg-background/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center">
         <div className="max-w-md space-y-6">
@@ -101,17 +204,36 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
     );
   }
 
-  // Violation warning overlay shown after fullscreen exit
-  if (showWarning) {
+  // Violation warning overlays
+  if (warningType !== null) {
+    const messages: Record<WarningType, { title: string; body: string; action: string }> = {
+      fullscreen: {
+        title: "FULLSCREEN VIOLATION",
+        body: "You have exited fullscreen mode. This is not permitted during Round 1.",
+        action: "Return to Fullscreen",
+      },
+      tab_switch: {
+        title: "TAB SWITCH DETECTED",
+        body: "You switched to another browser tab. This is not permitted during Round 1.",
+        action: "Return to Exam",
+      },
+      window_switch: {
+        title: "WINDOW SWITCH DETECTED",
+        body: "You switched away from the exam window (Alt+Tab). This is not permitted during Round 1.",
+        action: "Return to Exam",
+      },
+    };
+
+    const msg = messages[warningType];
+    const needsFullscreen = warningType === "fullscreen" || !document.fullscreenElement;
+
     return (
       <div className="fixed inset-0 z-[9999] bg-red-600/95 flex flex-col items-center justify-center p-8 text-white text-center">
         <div className="max-w-lg space-y-6">
           <div className="text-7xl">⚠️</div>
           <div>
-            <h1 className="text-3xl font-bold mb-3">FULLSCREEN VIOLATION</h1>
-            <p className="text-lg opacity-90 mb-2">
-              You have exited fullscreen mode. This is not permitted during Round 1.
-            </p>
+            <h1 className="text-3xl font-bold mb-3">{msg.title}</h1>
+            <p className="text-lg opacity-90 mb-2">{msg.body}</p>
             <p className="text-sm opacity-80">
               This incident has been recorded and sent to the invigilator.
             </p>
@@ -122,10 +244,10 @@ export function Round1Proctoring({ participantId, enabled }: Round1ProctoringPro
             </span>
           </div>
           <button
-            onClick={enterFullscreen}
+            onClick={needsFullscreen ? enterFullscreen : () => setWarningType(null)}
             className="w-full bg-white text-red-600 font-bold px-8 py-4 rounded-lg text-lg hover:bg-white/90 transition-colors"
           >
-            Return to Fullscreen
+            {needsFullscreen ? "Return to Fullscreen" : msg.action}
           </button>
         </div>
       </div>
