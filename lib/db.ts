@@ -1174,7 +1174,7 @@ export function startOrGetRound1Session(participantId: string, perParticipantQue
     perParticipantQuestionCount > 0 ? perParticipantQuestionCount : 66,
     questions.length
   );
-  const finalQuestions = questions.slice(0, requestedCount);
+  const finalQuestions = shuffled(questions).slice(0, requestedCount);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
 
