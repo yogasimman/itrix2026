@@ -107,6 +107,28 @@
         "round2_score": 0,
         "round2_completed": false
       }
+    ],
+    [
+      "JF6DJM",
+      {
+        "id": "JF6DJM",
+        "name": "r1",
+        "team_name": "e",
+        "phone": "e",
+        "email": "e",
+        "year": "e",
+        "assigned_round": "round1",
+        "scenario_id": null,
+        "timer_duration": 7200,
+        "timer_started_at": null,
+        "is_active": 0,
+        "is_locked": 0,
+        "created_at": "2026-03-27T16:58:09.327Z",
+        "round1_score": 0,
+        "round1_completed": false,
+        "round2_score": 0,
+        "round2_completed": false
+      }
     ]
   ],
   "scenarios": [

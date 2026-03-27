@@ -663,11 +663,11 @@ function buildSection4ChallengeQuestions(): BuiltQuestion[] {
   ];
 
   const q5Pairs = [
-    { id: 'AP', left: 'Smart Irrigation System', right: 'Soil Moisture Sensor + Water Pump / Solenoid Valve' },
-    { id: 'BQ', left: 'Automatic Street Light', right: 'LDR + LED / Street Light' },
-    { id: 'CR', left: 'Smoke Detection and Alarm', right: 'MQ-135 / Smoke Sensor + Buzzer' },
-    { id: 'DS', left: 'Smart Parking System', right: 'Ultrasonic Sensor + Servo Motor / Gate' },
-    { id: 'ET', left: 'Temperature-Controlled Fan', right: 'DHT22 / Temperature Sensor + DC Fan / Relay Module' },
+    { id: 'AP', left: 'Smart Irrigation System', right: 'Soil Moisture Sensor + Water Pump' },
+    { id: 'BQ', left: 'Automatic Street Light', right: 'LDR + LED' },
+    { id: 'CR', left: 'Smoke Detection and Alarm', right: 'MQ-135 + Buzzer' },
+    { id: 'DS', left: 'Smart Parking System', right: 'Ultrasonic Sensor + Servo Motor' },
+    { id: 'ET', left: 'Temperature-Controlled Fan', right: 'DHT22 + DC Fan' },
   ];
 
   const q6Pairs = [

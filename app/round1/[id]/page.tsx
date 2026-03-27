@@ -538,18 +538,12 @@ export default function Round1QuizPage() {
                   const stats = segmentCompletion[segment.id];
                   const isActive = activeSegment === segment.id;
                   const isCommitted = committedSegments[segment.id];
-                  const segmentIdx = SEGMENT_INDEX[segment.id];
-                  const isBlocked = segmentIdx > unlockedSection;
-
                   return (
                     <button
                       key={segment.id}
                       type="button"
-                      className={`w-full rounded-lg border px-3 py-2 text-left transition-colors ${isActive ? "border-cyan-300/50 bg-cyan-300/10" : "border-white/15 bg-slate-900/45 hover:bg-slate-900/70"} ${isBlocked ? "cursor-not-allowed opacity-50" : ""}`}
-                      onClick={() => {
-                        if (!isBlocked) setActiveSegment(segment.id);
-                      }}
-                      disabled={isBlocked}
+                      className={`w-full rounded-lg border px-3 py-2 text-left transition-colors ${isActive ? "border-cyan-300/50 bg-cyan-300/10" : "border-white/15 bg-slate-900/45 hover:bg-slate-900/70"}`}
+                      onClick={() => setActiveSegment(segment.id)}
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-cyan-50">{segment.title}</span>

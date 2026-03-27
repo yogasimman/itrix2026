@@ -38,10 +38,11 @@ export async function GET(request: NextRequest) {
           (q) => !q.sourceNodes?.length || !q.targetNodes?.length || !q.expectedConnections?.length
         );
 
-      if (existingPool.length === 0 || snippetMetaMissing) {
-        if (snippetMetaMissing) {
-          clearRound1Questions();
-        }
+      const sectionBCount = existingPool.filter((q) => q.section === 'B').length;
+      const needsRegen = existingPool.length === 0 || snippetMetaMissing || sectionBCount < 20;
+
+      if (needsRegen) {
+        clearRound1Questions();
         const generated = buildRound1QuestionSet();
         generated.forEach((q) => createRound1Question(q));
       }
