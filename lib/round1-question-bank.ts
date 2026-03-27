@@ -785,7 +785,7 @@ export function buildRound1QuestionSet(): Omit<Round1Question, 'id' | 'created_a
   const mixedMcq = ensureMixedDifficulty(shuffle([...easyChosen, ...hardChosen]));
 
   const selectedScenarios = shuffle(SCENARIO_SEEDS).slice(0, 2);
-  const scenarioQuestions = selectedScenarios.flatMap((seed) => toScenarioQuestions(seed).slice(0, 5));
+  const scenarioQuestions = selectedScenarios.flatMap((seed) => toScenarioQuestions(seed));
 
   const selectedCircuits = shuffle(CIRCUIT_QUESTION_SEEDS).slice(0, 2);
   const circuitQuestions = selectedCircuits.flatMap((seed) => toCircuitQuestions(seed));
@@ -796,7 +796,7 @@ export function buildRound1QuestionSet(): Omit<Round1Question, 'id' | 'created_a
 
   return questionSet.map((q, index) => ({
     ...q,
-    section: index < 20 ? 'A' : index < 30 ? 'B' : index < 50 ? 'C' : 'D',
+    section: index < 20 ? 'A' : index < 40 ? 'B' : index < 60 ? 'C' : 'D',
   }));
 }
 

@@ -74,6 +74,16 @@ export function Round1Question({
   const [snippetRunPending, setSnippetRunPending] = useState(false);
   const [snippetRunResult, setSnippetRunResult] = useState<SnippetCompileResult | null>(null);
 
+  const shuffledMatchingOptions = useMemo(() => {
+    if (!question.matchingPairs) return [];
+    const pairs = [...question.matchingPairs];
+    for (let i = pairs.length - 1; i > 0; i--) {
+      const j = Math.floor(((question.id * 1009 + i * 37) % (i + 1)));
+      [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+    }
+    return pairs;
+  }, [question.id, question.matchingPairs]);
+
   useEffect(() => {
     if (typeof currentAnswer === "string") {
       if (isMatchingType(question.type)) {
@@ -261,7 +271,7 @@ export function Round1Question({
                       }}
                     >
                       <option value="">Select matching right item</option>
-                      {question.matchingPairs?.map((rightPair) => (
+                      {shuffledMatchingOptions.map((rightPair) => (
                         <option key={`option-${pair.id}-${rightPair.id}`} value={rightPair.id}>
                           {rightPair.right}
                         </option>

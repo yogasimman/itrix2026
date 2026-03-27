@@ -65,7 +65,7 @@ const SEGMENTS: SegmentMeta[] = [
   {
     id: "scenario",
     title: "Segment 2: Scenario",
-    subtitle: "2 random scenarios with 5 questions each.",
+    subtitle: "2 random scenarios with 10 questions each.",
   },
   {
     id: "connection",
@@ -539,7 +539,7 @@ export default function Round1QuizPage() {
                   const isActive = activeSegment === segment.id;
                   const isCommitted = committedSegments[segment.id];
                   const segmentIdx = SEGMENT_INDEX[segment.id];
-                  const isBlocked = segmentIdx !== unlockedSection;
+                  const isBlocked = segmentIdx > unlockedSection;
 
                   return (
                     <button
