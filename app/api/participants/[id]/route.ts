@@ -85,7 +85,7 @@ export async function GET(
     
     // Get unlocked snippets and violations
     const unlockedSnippets = getUnlockedSnippets(id);
-    const violations = getViolations(id);
+    const violations = participant.assigned_round === 'round2' ? [] : getViolations(id);
     
     return NextResponse.json({ 
       participant: {
@@ -136,7 +136,7 @@ export async function PATCH(
     }
     
     if (body.action === 'start_timer') {
-      const duration = body.duration || 3600;
+      const duration = body.duration || 5400;
       startTimer(id, duration);
       return NextResponse.json({ success: true });
     }
@@ -181,6 +181,9 @@ export async function PATCH(
     }
     
     if (body.action === 'log_violation') {
+      if (participant.assigned_round === 'round2') {
+        return NextResponse.json({ success: true, skipped: true });
+      }
       logViolation(id, body.violationType, body.details, {
         severity: body.severity,
         app_name: body.appName,

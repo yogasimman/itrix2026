@@ -81,6 +81,7 @@ function summarize(stats: RequestStat[]) {
 async function main() {
   console.log(`Load test target: ${BASE_URL}`);
   console.log(`Students: ${STUDENT_COUNT} (parallel student simulation: ${STUDENT_PARALLELISM})`);
+  const runToken = Date.now();
 
   const initRes = await requestJson("/api/init", { method: "POST" });
   if (!initRes.ok) {
@@ -94,9 +95,11 @@ async function main() {
     const tag = `${Date.now()}_${idx}`;
     const payload = {
       name: `Load Student ${idx}`,
-      teamName: `Load Team ${Math.floor(idx / 5)}`,
+      teamName: `Load Team ${runToken}_${Math.floor(idx / 3)}`,
       phone: `9${String(100000000 + idx).slice(0, 9)}`,
       email: `load_${tag}@test.local`,
+      college: "ITRIX College",
+      department: "ECE",
       assignedRound: "round1",
       autoAssignScenario: false,
     };

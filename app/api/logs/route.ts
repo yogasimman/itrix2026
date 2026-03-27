@@ -31,7 +31,10 @@ export async function GET(request: NextRequest) {
     const participantMap = new Map(participants.map(p => [p.id, p.name]));
     
     if (type === 'violations') {
-      const violations = getViolations(participantId);
+      const violations = getViolations(participantId).filter((violation) => {
+        const violationParticipant = participants.find((p) => p.id === violation.participant_id);
+        return violationParticipant?.assigned_round !== 'round2';
+      });
       const violationsWithNames = violations.map(v => ({
         ...v,
         participant_name: participantMap.get(v.participant_id) || v.participant_id
@@ -69,6 +72,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (type === 'violation' && violationType) {
+      if (participant.assigned_round === 'round2') {
+        return NextResponse.json({ success: true, skipped: true });
+      }
       logViolation(participantId, violationType, details);
       return NextResponse.json({ success: true });
     }

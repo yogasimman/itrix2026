@@ -24,6 +24,8 @@ describe('round2 component access scoring integration', () => {
         teamName: 'Flow Team',
         phone: '0123456789',
         email: 'flow@example.com',
+        college: 'ITRIX Institute',
+        department: 'ECE',
         assignedRound: 'round2',
       }) as never
     );

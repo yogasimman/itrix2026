@@ -63,8 +63,8 @@ describe('admin API routes (integration)', () => {
     const initial = await getTimerRoute();
     const initialData = (await initial.json()) as { global_timer_duration: number; minutes: number };
 
-    expect(initialData.global_timer_duration).toBe(7200);
-    expect(initialData.minutes).toBe(120);
+    expect(initialData.global_timer_duration).toBe(5400);
+    expect(initialData.minutes).toBe(90);
 
     const updated = await postTimerRoute(makeJsonRequest({ duration: 3600 }) as never);
     const updatedData = (await updated.json()) as { success: boolean; global_timer_duration: number; minutes: number };

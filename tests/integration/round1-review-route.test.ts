@@ -24,6 +24,8 @@ describe('round1 response review route integration', () => {
         teamName: 'Review Team',
         phone: '0123456789',
         email: 'review@example.com',
+        college: 'ITRIX Institute',
+        department: 'ECE',
         assignedRound: 'round1',
       }) as never
     );

@@ -13,9 +13,12 @@ import {
   ArrowRight,
   AlertTriangle,
   Bolt,
+  CheckCircle2,
   Cpu,
+  Lock,
   Radio,
   Settings,
+  Timer,
   User,
   Wifi,
   WifiOff,
@@ -28,6 +31,16 @@ const IotAmbientCanvas = dynamic(
   { ssr: false }
 )
 
+interface ParticipantAccessState {
+  id: string
+  assignedRound: "round1" | "round2" | null
+  scenarioId: number | null
+  timerStartedAt: string | null
+  timerDuration: number
+  round1Completed: boolean
+  round2Completed: boolean
+}
+
 export function HomePageClient({ serverInitialized }: { serverInitialized: boolean }) {
   const router = useRouter()
   const [participantId, setParticipantId] = useState("")
@@ -37,6 +50,8 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
   const [isInitializing, setIsInitializing] = useState(false)
   const [initialized, setInitialized] = useState(serverInitialized)
   const [leaderboardEnabled, setLeaderboardEnabled] = useState(false)
+  const [verifiedParticipant, setVerifiedParticipant] = useState<ParticipantAccessState | null>(null)
+  const [launchingRound, setLaunchingRound] = useState<"round1" | "round2" | null>(null)
 
   const shellRef = useRef<HTMLDivElement>(null)
 
@@ -179,27 +194,66 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
 
       const assignedRound = data.participant.assigned_round
 
-      if (assignedRound === "round1") {
-        router.push(`/round1/${id}`)
-      } else if (assignedRound === "round2") {
-        if (data.participant.scenario_id && !data.participant.timer_started_at) {
-          await fetch(`/api/participants/${id}`, {
+      if (!assignedRound && !data.participant.round1_completed && !data.participant.round2_completed) {
+        setError("Round assignment pending. Please contact the admin.")
+        setIsLoading(false)
+        return
+      }
+
+      setVerifiedParticipant({
+        id,
+        assignedRound,
+        scenarioId: data.participant.scenario_id || null,
+        timerStartedAt: data.participant.timer_started_at || null,
+        timerDuration: data.participant.timer_duration || 5400,
+        round1Completed: Boolean(data.participant.round1_completed),
+        round2Completed: Boolean(data.participant.round2_completed),
+      })
+      setIsLoading(false)
+    } catch {
+      setError("Connection error. The system works offline - ensure the local server is running.")
+      setIsLoading(false)
+    }
+  }
+
+  const launchRound = async (round: "round1" | "round2") => {
+    if (!verifiedParticipant) return
+
+    const canAccessRound1 = verifiedParticipant.assignedRound === "round1" || verifiedParticipant.round1Completed
+    const canAccessRound2 = verifiedParticipant.assignedRound === "round2" || verifiedParticipant.round1Completed || verifiedParticipant.round2Completed
+
+    if (round === "round1" && !canAccessRound1) {
+      setError("Round 1 is disabled for this participant account.")
+      return
+    }
+
+    if (round === "round2" && !canAccessRound2) {
+      setError("Round 2 is locked until admin promotion from Round 1.")
+      return
+    }
+
+    setError(null)
+    setLaunchingRound(round)
+
+    try {
+      if (round === "round2") {
+        if (verifiedParticipant.scenarioId && !verifiedParticipant.timerStartedAt) {
+          await fetch(`/api/participants/${verifiedParticipant.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               action: "start_timer",
-              duration: data.participant.timer_duration || 3600,
+              duration: verifiedParticipant.timerDuration || 5400,
             }),
           })
         }
-        router.push(`/participant/${id}`)
-      } else {
-        setError("Round assignment pending. Please contact the admin.")
-        setIsLoading(false)
+        router.push(`/participant/${verifiedParticipant.id}`)
+        return
       }
-    } catch {
-      setError("Connection error. The system works offline - ensure the local server is running.")
-      setIsLoading(false)
+
+      router.push(`/round1/${verifiedParticipant.id}`)
+    } finally {
+      setLaunchingRound(null)
     }
   }
 
@@ -276,7 +330,7 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
             Live Prototype Arena
           </div>
           <div className="sensor-sprint-banner max-w-4xl">
-            <span className="sensor-sprint-chip">Circuit Mode</span>
+            <span className="sensor-sprint-chip">ITRIX 2026 • Circuit Mode</span>
             <h1 className="sensor-sprint-title">Sensor Sprint</h1>
             <div className="sensor-sprint-trace" aria-hidden>
               <span />
@@ -284,6 +338,9 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
               <span />
             </div>
           </div>
+          <p className="mt-3 max-w-2xl text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100/70">
+            ITRIX 2026 flagship event arena
+          </p>
           <p className="mt-4 max-w-2xl text-pretty text-base text-cyan-100/80 md:text-lg">
             Build fast, test smart, and deploy logic under pressure. This control deck powers timed IoT rounds with scenario execution, participant routing, and live hint tracking.
           </p>
@@ -343,6 +400,7 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
                   onChange={(e) => {
                     setParticipantId(e.target.value.toUpperCase())
                     setError(null)
+                    setVerifiedParticipant(null)
                   }}
                   className="h-12 border-white/20 bg-black/35 text-center font-mono text-lg tracking-[0.28em] text-cyan-50 placeholder:text-cyan-100/40"
                   autoComplete="off"
@@ -362,12 +420,57 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
                     </>
                   ) : (
                     <>
-                      Start Competition
+                      Verify Participant
                       <ArrowRight className="h-4 w-4" />
                     </>
                   )}
                 </Button>
               </form>
+
+              {verifiedParticipant ? (
+                <div className="mt-5 space-y-3 rounded-xl border border-cyan-200/20 bg-slate-900/45 p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-cyan-100">Choose your round</p>
+                    <p className="text-xs uppercase tracking-[0.15em] text-cyan-100/60">{verifiedParticipant.id}</p>
+                  </div>
+
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => launchRound("round1")}
+                      disabled={launchingRound !== null || !(verifiedParticipant.assignedRound === "round1" || verifiedParticipant.round1Completed)}
+                      className="rounded-lg border border-white/20 bg-slate-950/55 p-4 text-left transition hover:border-cyan-300/50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-sm font-semibold text-cyan-50">Round 1</span>
+                        {verifiedParticipant.assignedRound === "round2" && !verifiedParticipant.round1Completed ? (
+                          <Lock className="h-4 w-4 text-amber-300" />
+                        ) : (
+                          <CheckCircle2 className="h-4 w-4 text-emerald-300" />
+                        )}
+                      </div>
+                      <p className="text-xs text-cyan-100/70">MCQ + technical sections</p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => launchRound("round2")}
+                      disabled={launchingRound !== null || !(verifiedParticipant.assignedRound === "round2" || verifiedParticipant.round1Completed || verifiedParticipant.round2Completed)}
+                      className="rounded-lg border border-white/20 bg-slate-950/55 p-4 text-left transition hover:border-cyan-300/50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-sm font-semibold text-cyan-50">Round 2</span>
+                        <Timer className="h-4 w-4 text-cyan-300" />
+                      </div>
+                      <p className="text-xs text-cyan-100/70">Hands-on scenario • 90 min timer</p>
+                    </button>
+                  </div>
+
+                  <p className="text-xs text-cyan-100/60">
+                    If you are directly registered for Round 2, Round 1 remains disabled.
+                  </p>
+                </div>
+              ) : null}
             </CardContent>
           </Card>
 

@@ -16,10 +16,10 @@ describe('round1 question bank', () => {
      expect(getScenarioBank().every((scenario) => scenario.questions.length === 10)).toBe(true);
   });
 
-  it('builds participant set as 20 mcq + 10 scenario + 20 circuit + 6 challenge', () => {
+  it('builds participant set as 20 mcq + 20 scenario + 20 circuit + 6 challenge', () => {
     const set = buildRound1QuestionSet();
 
-     expect(set).toHaveLength(56);
+     expect(set).toHaveLength(66);
 
     const mcq = set.filter((q) => q.type === 'mcq');
     const scenario = set.filter((q) => q.type === 'scenario-mcq');
@@ -27,7 +27,7 @@ describe('round1 question bank', () => {
     const challenge = set.filter((q) => q.section === 'D');
 
     expect(mcq).toHaveLength(20);
-    expect(scenario).toHaveLength(10);
+    expect(scenario).toHaveLength(20);
     expect(circuit).toHaveLength(20);
     expect(challenge).toHaveLength(6);
 

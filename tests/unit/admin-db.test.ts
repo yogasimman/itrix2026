@@ -39,7 +39,7 @@ describe('admin core DB behavior (unit)', () => {
   });
 
   it('updates and reads global timer duration', () => {
-    expect(getGlobalTimerDuration()).toBe(7200);
+    expect(getGlobalTimerDuration()).toBe(5400);
 
     setGlobalTimerDuration(5400);
     expect(getGlobalTimerDuration()).toBe(5400);

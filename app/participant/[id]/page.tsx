@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Timer } from "@/components/timer";
 import { ScenarioDisplay } from "@/components/scenario-display";
 import { ComponentCard } from "@/components/component-card";
-import { ViolationTracker } from "@/components/violation-tracker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -99,11 +98,9 @@ export default function ParticipantDashboard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [round2HintSummary, setRound2HintSummary] = useState<Round2HintSummary | null>(null);
-  const [violationCount, setViolationCount] = useState(0);
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [reEntryWarning, setReEntryWarning] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -133,42 +130,6 @@ export default function ParticipantDashboard({
     const initializeParticipant = async () => {
       await fetchData();
 
-      // Re-entry detection:
-      // We use a window-level flag (resets on full page navigation but survives
-      // React's StrictMode double-mount) combined with sessionStorage (persists
-      // across navigations within the same browser session).
-      //
-      // window.__iotInit[id] = true  → this JS instance has already run the
-      //   check, so skip (handles StrictMode's second effect run).
-      // sessionStorage[key] exists   → participant has visited before in this
-      //   browser session (genuine re-entry after navigating away).
-      const win = window as any;
-      if (!win.__iotInit) win.__iotInit = {};
-
-      if (!win.__iotInit[id]) {
-        win.__iotInit[id] = true;
-
-        const sessionKey = `iot_session_${id}`;
-        const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
-        const isReload = navEntry?.type === "reload";
-
-        if (sessionStorage.getItem(sessionKey) && !isReload) {
-          setReEntryWarning(true);
-          fetch(`/api/participants/${id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "log_violation",
-              violationType: "re_entry",
-              details: "Participant navigated away and re-entered the dashboard.",
-              severity: "critical",
-            }),
-          }).catch(() => {});
-        } else {
-          sessionStorage.setItem(sessionKey, "active");
-        }
-      }
-
       fetch(`/api/participants/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -182,25 +143,6 @@ export default function ParticipantDashboard({
 
     initializeParticipant();
   }, [id, fetchData]);
-
-  // Log navigation-away when participant leaves the page
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      const blob = new Blob(
-        [JSON.stringify({
-          action: "log_violation",
-          violationType: "navigation_away",
-          details: "Participant navigated away from the dashboard.",
-          severity: "critical",
-        })],
-        { type: "application/json" }
-      );
-      navigator.sendBeacon(`/api/participants/${id}`, blob);
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [id]);
   
   useEffect(() => {
     const autoStartTimer = async () => {
@@ -211,7 +153,7 @@ export default function ParticipantDashboard({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               action: "start_timer",
-              duration: participant.timer_duration || 3600,
+              duration: participant.timer_duration || 5400,
             }),
           });
           fetchData();
@@ -257,10 +199,6 @@ export default function ParticipantDashboard({
   const handleUnlock = useCallback(async () => {
     await fetchData();
   }, [fetchData]);
-
-  const handleViolation = useCallback(() => {
-    setViolationCount((prev) => prev + 1);
-  }, []);
 
   if (loading) {
     return (
@@ -364,36 +302,6 @@ export default function ParticipantDashboard({
   return (
     <div className="relative min-h-screen bg-background">
       <div className="iot-grid-overlay" />
-      <ViolationTracker
-        participantId={id}
-        enabled={!isLocked && !!participant.timer_started_at}
-        mode="round2"
-        onViolation={handleViolation}
-      />
-
-      {/* Re-entry warning banner */}
-      {reEntryWarning && (
-        <div className="fixed top-0 left-0 right-0 z-[9999] bg-destructive text-destructive-foreground px-4 py-3 flex items-center justify-between gap-4 shadow-lg">
-          <div className="flex items-center gap-3">
-            <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-            </svg>
-            <span className="font-semibold text-sm">
-              VIOLATION RECORDED — You navigated away and re-entered this page.{" "}
-              <span className="font-normal opacity-90">
-                Leaving the competition dashboard is not permitted. This incident has been logged.
-              </span>
-            </span>
-          </div>
-          <button
-            onClick={() => setReEntryWarning(false)}
-            className="text-destructive-foreground/70 hover:text-destructive-foreground text-xs underline shrink-0 ml-4"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
       {/* Confirm Submit Dialog */}
       <AlertDialog open={submitDialogOpen} onOpenChange={setSubmitDialogOpen}>
         <AlertDialogContent>

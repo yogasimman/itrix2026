@@ -251,7 +251,7 @@ function getStore(): DataStore {
       initialized: false,
       admin_password: "admin123",
       password_history: [],
-      global_timer_duration: 7200, // 120 minutes in seconds
+      global_timer_duration: 5400, // 90 minutes in seconds
       whitelisted_apps: new Set(["Arduino IDE", "Visual Studio Code", "Notepad++", "Code::Blocks"]),
       round1Questions: new Map(),
       round1Responses: [],
@@ -276,7 +276,7 @@ function getStore(): DataStore {
     global.__iotStore.password_history = [];
   }
   if (!global.__iotStore.global_timer_duration) {
-    global.__iotStore.global_timer_duration = 7200;
+    global.__iotStore.global_timer_duration = 5400;
   }
   if (!global.__iotStore.whitelisted_apps) {
     global.__iotStore.whitelisted_apps = new Set(["Arduino IDE", "Visual Studio Code", "Notepad++", "Code::Blocks"]);

@@ -1,5 +1,13 @@
+import path from "path"
+import { fileURLToPath } from "url"
+
+const workspaceRoot = path.dirname(fileURLToPath(import.meta.url))
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  turbopack: {
+    root: workspaceRoot,
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
