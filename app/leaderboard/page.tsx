@@ -186,6 +186,23 @@ export default function PublicLeaderboardPage() {
               const placement = getRound2Placement(winner.rank);
               const isPodium = winner.rank <= 3;
 
+              if (!isPodium) {
+                return (
+                  <div key={winner.team_name} className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="flex items-center gap-3">
+                      <Badge variant="secondary">#{winner.rank}</Badge>
+                      <div>
+                        <p className="font-medium">{winner.team_name}</p>
+                        <p className="text-xs text-muted-foreground">Round 2 Qualified &amp; Attended</p>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className={placement.badgeClass}>
+                      {placement.label}
+                    </Badge>
+                  </div>
+                );
+              }
+
               return (
                 <div
                   key={winner.team_name}
