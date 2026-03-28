@@ -20,6 +20,45 @@ interface LeaderboardEntry {
   completed_members: number;
 }
 
+interface Round2WinnerEntry {
+  rank: number;
+  team_name: string;
+}
+
+const ROUND2_WINNERS: Round2WinnerEntry[] = [
+  { rank: 1, team_name: "T2" },
+  { rank: 2, team_name: "Shadow Sentinals" },
+  { rank: 3, team_name: "T4" },
+  { rank: 4, team_name: "BIOT" },
+  { rank: 5, team_name: "Neural Echo" },
+  { rank: 6, team_name: "T5" },
+];
+
+function getRound2Medal(rank: number): { label: string; className: string } {
+  if (rank === 1) {
+    return {
+      label: "Gold",
+      className: "border-yellow-400 bg-yellow-100 text-yellow-900",
+    };
+  }
+  if (rank === 2) {
+    return {
+      label: "Silver",
+      className: "border-zinc-400 bg-zinc-100 text-zinc-900",
+    };
+  }
+  if (rank === 3) {
+    return {
+      label: "Bronze",
+      className: "border-amber-600 bg-amber-100 text-amber-900",
+    };
+  }
+  return {
+    label: "Finalist",
+    className: "border-slate-300 bg-slate-100 text-slate-700",
+  };
+}
+
 export default function PublicLeaderboardPage() {
   const { data, isLoading } = useSWR("/api/leaderboard", fetcher, {
     refreshInterval: 15000,
@@ -70,7 +109,7 @@ export default function PublicLeaderboardPage() {
           <div>
             <h1 className="text-3xl font-semibold">Public Leaderboard</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Rankings are based on average completed Round 1 scores per team.
+              Round 2 winners are listed separately. Team rankings below are based on average completed Round 1 scores.
             </p>
           </div>
           <Link href="/">
@@ -106,7 +145,42 @@ export default function PublicLeaderboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Trophy className="h-5 w-5 text-amber-500" />
-              Team Rankings
+              Round 2 Winners
+            </CardTitle>
+            <CardDescription>
+              Official Round 2 ranking. Top 3 teams are cash-prize winners.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {ROUND2_WINNERS.map((winner) => {
+              const medal = getRound2Medal(winner.rank);
+              const isPodium = winner.rank <= 3;
+
+              return (
+                <div
+                  key={winner.team_name}
+                  className={`flex items-center justify-between rounded-lg border p-4 ${
+                    isPodium ? "border-amber-200 bg-amber-50/60" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Badge variant={isPodium ? "default" : "secondary"}>#{winner.rank}</Badge>
+                    <p className="font-medium">{winner.team_name}</p>
+                  </div>
+                  <Badge variant="outline" className={medal.className}>
+                    {medal.label}
+                  </Badge>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-amber-500" />
+              Round 1 Team Rankings
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
