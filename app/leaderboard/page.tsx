@@ -13,6 +13,8 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 interface LeaderboardEntry {
   rank: number;
   team_name: string;
+  team_lead: string;
+  member_names: string[];
   avg_score: number;
   members: number;
   completed_members: number;
@@ -117,6 +119,10 @@ export default function PublicLeaderboardPage() {
                     <Badge variant={row.rank <= 3 ? "default" : "secondary"}>#{row.rank}</Badge>
                     <div>
                       <p className="font-medium">{row.team_name}</p>
+                      <p className="text-xs text-muted-foreground">Lead: {row.team_lead}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Members: {row.member_names.length ? row.member_names.join(", ") : "-"}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         <Users className="mr-1 inline h-3 w-3" />
                         {row.members} members

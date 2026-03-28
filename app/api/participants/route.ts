@@ -11,6 +11,9 @@ import {
 } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed-data';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 function ensureInitialized() {
   if (!isInitialized()) {
     initializeDatabase();
@@ -32,7 +35,10 @@ export async function GET() {
   try {
     ensureInitialized();
     const participants = getAllParticipants();
-    return NextResponse.json({ participants });
+    return NextResponse.json(
+      { participants },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+    );
   } catch (error) {
     console.error('Error fetching participants:', error);
     return NextResponse.json({ error: 'Failed to fetch participants' }, { status: 500 });

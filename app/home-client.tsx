@@ -181,20 +181,24 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
 
       const data = await res.json()
 
+      const assignedRound = data.participant.assigned_round
+      const round1Completed = Boolean(data.participant.round1_completed)
+      const round2Completed = Boolean(data.participant.round2_completed)
+
       if (data.participant.is_locked) {
-        const isSubmitted = data.participant.round1_completed || data.participant.round2_completed
-        setError(
-          isSubmitted
-            ? "Your submission has already been recorded. This ID is no longer valid."
-            : "Your session has been locked. Please contact the admin."
-        )
-        setIsLoading(false)
-        return
+        const isSubmitted = round2Completed
+        if (assignedRound !== "round2" || isSubmitted) {
+          setError(
+            isSubmitted
+              ? "Your submission has already been recorded. This ID is no longer valid."
+              : "Your session has been locked. Please contact the admin."
+          )
+          setIsLoading(false)
+          return
+        }
       }
 
-      const assignedRound = data.participant.assigned_round
-
-      if (!assignedRound && !data.participant.round1_completed && !data.participant.round2_completed) {
+      if (!assignedRound && !round1Completed && !round2Completed) {
         setError("Round assignment pending. Please contact the admin.")
         setIsLoading(false)
         return
@@ -206,8 +210,8 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
         scenarioId: data.participant.scenario_id || null,
         timerStartedAt: data.participant.timer_started_at || null,
         timerDuration: data.participant.timer_duration || 5400,
-        round1Completed: Boolean(data.participant.round1_completed),
-        round2Completed: Boolean(data.participant.round2_completed),
+        round1Completed,
+        round2Completed,
       })
       setIsLoading(false)
     } catch {
@@ -220,7 +224,7 @@ export function HomePageClient({ serverInitialized }: { serverInitialized: boole
     if (!verifiedParticipant) return
 
     const canAccessRound1 = verifiedParticipant.assignedRound === "round1" || verifiedParticipant.round1Completed
-    const canAccessRound2 = verifiedParticipant.assignedRound === "round2" || verifiedParticipant.round1Completed || verifiedParticipant.round2Completed
+    const canAccessRound2 = verifiedParticipant.assignedRound === "round2" || verifiedParticipant.round2Completed
 
     if (round === "round1" && !canAccessRound1) {
       setError("Round 1 is disabled for this participant account.")

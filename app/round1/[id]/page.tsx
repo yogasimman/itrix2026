@@ -211,6 +211,12 @@ export default function Round1QuizPage() {
         setSession(data.session);
         setQuestions(data.questions);
 
+        const initialRemaining =
+          typeof data.remaining_seconds === "number"
+            ? Math.max(0, data.remaining_seconds)
+            : Math.max(0, Math.floor((new Date(data.session.expires_at).getTime() - Date.now()) / 1000));
+        setRemainingSeconds(initialRemaining);
+
         const responses = data.responses || [];
         const existingAnswers: Record<number, string | string[]> = {};
         responses.forEach((r: { question_id: number; answer: string | string[] }) => {
@@ -239,20 +245,6 @@ export default function Round1QuizPage() {
     initRound1();
   }, [participantId]);
 
-  useEffect(() => {
-    if (!session || quizState !== "started") return;
-    const tick = () => {
-      const left = Math.max(0, Math.floor((new Date(session.expires_at).getTime() - Date.now()) / 1000));
-      setRemainingSeconds(left);
-      if (left <= 0) {
-        void submitRound();
-      }
-    };
-    tick();
-    const timer = setInterval(tick, 1000);
-    return () => clearInterval(timer);
-  }, [session, quizState]);
-
   const submitRound = useCallback(async () => {
     if (isFinalizing || !participantId) return;
     setIsFinalizing(true);
@@ -272,6 +264,18 @@ export default function Round1QuizPage() {
     }
     setIsFinalizing(false);
   }, [participantId, isFinalizing]);
+
+  useEffect(() => {
+    if (!session || quizState !== "started") return;
+    if (remainingSeconds <= 0) {
+      void submitRound();
+      return;
+    }
+    const timer = setInterval(() => {
+      setRemainingSeconds((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [session, quizState, remainingSeconds, submitRound]);
 
   const handleAnswerChange = useCallback(async (question: Round1QuestionData, answer: string | string[]) => {
     if (!participantId) return;

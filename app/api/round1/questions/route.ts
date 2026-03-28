@@ -51,12 +51,19 @@ export async function GET(request: NextRequest) {
       const assignedQuestions = getRound1AssignedQuestions(participantId);
       const responses = getRound1Responses(participantId);
       const unlockedSection = getRound1UnlockedSection(participantId);
+      const serverNow = new Date();
+      const remainingSeconds = Math.max(
+        0,
+        Math.floor((new Date(session.expires_at).getTime() - serverNow.getTime()) / 1000)
+      );
 
       return NextResponse.json({
         session,
         questions: assignedQuestions,
         responses,
         unlockedSection,
+        server_now: serverNow.toISOString(),
+        remaining_seconds: remainingSeconds,
       });
     }
 
@@ -78,7 +85,7 @@ export async function POST(request: NextRequest) {
       if (!participantId) {
         return NextResponse.json({ error: 'Participant ID is required' }, { status: 400 });
       }
-      const unlockedSection = advanceRound1Section(participantId);
+      const unlockedSection = advanceRound1Section(String(participantId));
       return NextResponse.json({ success: true, unlockedSection });
     }
 

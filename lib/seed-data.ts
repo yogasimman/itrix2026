@@ -779,73 +779,100 @@ void loop() {
   Serial.print(flowRate);
   Serial.println(" L/min");
   delay(1000);
+}` },
+  { id: 50, name: "LCD 16x2 I2C", description: "16x2 LCD display module with I2C backpack", pinout: "VCC: 5V, GND: Ground, SDA: A4, SCL: A5", category: "Display", quantity: 10, code_snippet: `// 16x2 I2C LCD Example
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("SYSTEM READY");
+}
+
+void loop() {
+  // Update LCD rows as needed in your scenario logic
+}` },
+  { id: 51, name: "LCD with Relay", description: "Integrated setup of 16x2 I2C LCD status display with relay-based load control", pinout: "LCD SDA->A4, SCL->A5, Relay IN->D7, Relay VCC->5V, Relay GND->GND", category: "Display", quantity: 6, code_snippet: `// LCD with Relay Control
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+const int relayPin = 7;
+
+void setup() {
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, LOW);
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("SYSTEM READY");
+}
+
+void loop() {
+  digitalWrite(relayPin, HIGH);
+  lcd.setCursor(0, 1);
+  lcd.print("LOAD ON ");
+  delay(2000);
+
+  digitalWrite(relayPin, LOW);
+  lcd.setCursor(0, 1);
+  lcd.print("LOAD OFF");
+  delay(2000);
 }` }
 ];
 
 export const scenarios = [
   {
     id: 1,
-    title: "The Midnight Intruder Alarm",
+    title: "Multi-Level Security System",
     team_number: 1,
-    situation: "The college lab is locked after 6 PM - but someone has been sneaking in undetected. The warden installs a lock, but it gets bypassed. CCTV is expensive. The warden reaches out to the IoT lab team and says: \"I need something that detects motion in the dark and raises an alarm - but lets me silence it quickly if it's just me checking in.\"",
-    what_to_build: "1. Read LDR via analogRead to determine dark/light. When dark, monitor PIR for motion.\n2. Motion detected -> red LED flashes rapidly + piezo alarms.\n3. Pressing the pushbutton within 5 seconds silences the alarm.\n4. If button is NOT pressed within 5 s, alarm continues for a full 20 seconds.\n5. After alarm ends, system re-arms automatically. Use millis() - no delay().",
-    components: ["Photo Resistor LDR", "PIR Motion Sensor", "LED (Red)", "Piezo Capsule", "Pushbuttons"]
+    situation: "A high-security lab needs layered verification before granting access. Two independent sensors must both confirm presence before opening the physical barrier.",
+    what_to_build: "1. IR sensor monitors entry. On motion, start a 3-second verification window with millis().\n2. During that window, validate Ultrasonic distance < 25 cm.\n3. If both checks pass, rotate servo to 90 degrees, turn Green LED ON for 5 seconds, then return servo to 0 degrees.\n4. If only IR is triggered, enter warning mode: slow buzzer beep (500 ms ON/OFF) with Red LED blinking.\n5. If verification window expires without Ultrasonic confirmation, deny access and blink Red LED twice.\n6. Auto-reset state after 10 seconds and return to IDLE.\n7. Implement full state machine (IDLE, DETECTING, GRANTED, WARNING) using millis() only.",
+    components: ["IR Sensor", "Ultrasonic Sensor", "Small Servo Motor", "Piezo Capsule", "LED (Green)", "LED (Red)", "Resistors 220 ohm"]
   },
   {
     id: 2,
-    title: "The Touchless Hospital Dustbin",
+    title: "Smart Gate with Obstacle Safety",
     team_number: 2,
-    situation: "In the college medical room, bins are constantly being touched by multiple people - spreading germs during flu season. A nursing student raises a concern: \"We need bins that open themselves when you bring your hand close. No touch, no infection.\" The challenge is to make the lid movement smooth and controlled - not a sudden snap.",
-    what_to_build: "1. Poll the HC-SR04 every 150 ms. When a hand is detected within 15 cm, smoothly sweep the servo from 0 degrees (closed) to 90 degrees (open) - one degree at a time, 8 ms between steps.\n2. Hold open for 4 seconds, then sweep back to 0 degrees at the same speed.\n3. Green LED stays on while lid is open.\n4. One short beep when opening, two short beeps when closing.\n5. Block re-trigger while lid is already moving or open.",
-    components: ["Ultrasonic Sensor", "Small Servo Motor", "LED (Green)", "Piezo Capsule", "Resistors 220 ohm"]
+    situation: "An automatic gate should open on approach, but must never close while an object is still under the gate path.",
+    what_to_build: "1. Poll Ultrasonic every 100 ms using millis().\n2. If distance < 20 cm, open servo to 90 degrees and keep Green LED ON (OPEN state).\n3. When distance >= 20 cm, start a 3-second clearance timer.\n4. If clearance timer completes with no object, close servo to 0 degrees and turn Green LED OFF.\n5. If object returns during closing/clearance, reopen immediately, rapidly blink Red LED (100 ms toggle), and reset clearance timer.\n6. Return to IDLE only after successful close and no object detection.",
+    components: ["Ultrasonic Sensor", "Small Servo Motor", "LED (Green)", "LED (Red)", "Resistors 220 ohm"]
   },
   {
     id: 3,
-    title: "The Seminar Hall Occupancy Counter",
+    title: "Intelligent Parking Slot Indicator",
     team_number: 3,
-    situation: "The college seminar hall seats 80 people but is never managed properly. Some events are dangerously overcrowded while others are half-empty. The Events Committee asks: \"Can we have a live headcount at the door - something that tells us exactly how many people are inside right now, without cameras or manual counting?\"",
-    what_to_build: "1. Mount IR sensor A and B 5 cm apart at the door frame.\n2. Track which sensor triggers first: A then B = entry (count++), B then A = exit (count--).\n3. Allow a 300 ms window to detect the second sensor after the first fires.\n4. Display occupancy on 3 LEDs: green = low (0-3), yellow = medium (4-7), red = high (8+).\n5. A short beep on each valid entry or exit. Count must not go below 0.\n6. Log direction and count to Serial on every change.",
-    components: ["IR Sensor", "IR Sensor", "LED (Green)", "LED (Yellow)", "LED (Red)"]
+    situation: "A reserved parking slot must clearly indicate free, occupied, and misaligned parking states using a three-LED status panel.",
+    what_to_build: "1. Every 2 seconds, read Ultrasonic and IR sensors together.\n2. If Ultrasonic >= 30 cm, mark slot FREE: Green ON, Red OFF, Yellow OFF.\n3. If Ultrasonic < 30 cm and IR confirms alignment, mark PARKED: Red ON, Green OFF, Yellow OFF.\n4. If Ultrasonic < 30 cm but alignment fails, mark MISALIGNED: Yellow blink 500 ms ON/OFF.\n5. Ensure only one indicator LED state is active at any time.\n6. Add 200 ms IR debounce and use FREE/PARKED/MISALIGNED state tracking to reduce flicker.",
+    components: ["Ultrasonic Sensor", "IR Sensor", "LED (Green)", "LED (Red)", "LED (Yellow)", "Resistors 220 ohm"]
   },
   {
     id: 4,
-    title: "The Smart Staircase Lighting",
+    title: "Smart Lighting with Motion Priority",
     team_number: 4,
-    situation: "The hostel staircase is completely dark after 10 PM. A student broke their wrist tripping in the dark last semester - the switch is at the wrong end and nobody bothers to flick it. The hostel warden wants lights that respond automatically, stay on long enough for safe passage, and need no switches at all.",
-    what_to_build: "1. Two PIR sensors simulate top and bottom of a staircase.\n2. PIR-top triggers -> green LED on for 20 s; resets timer if motion is detected again within the window.\n3. PIR-bottom triggers -> red LED on for 20 s with the same re-trigger logic.\n4. Both LEDs can be on simultaneously - they operate fully independently.\n5. No blocking code - use millis() for both independent 20 s timers.\n6. Serial-print which PIR triggered and each LED's remaining time every 5 s.",
-    components: ["PIR Motion Sensor", "PIR Motion Sensor", "LED (Green)", "LED (Red)", "Resistors 220 ohm"]
+    situation: "Lighting must switch ON only when it is dark and motion is detected, then remain ON briefly after motion stops for user comfort.",
+    what_to_build: "1. Read LDR every 200 ms; treat analogRead(A0) < 400 as dark condition.\n2. Read IR motion sensor input continuously.\n3. If dark and motion detected, relay ON, status LED ON, LCD shows LIGHTS ON - MOTION.\n4. When motion stops in dark condition, keep relay ON for a 10-second hold using millis().\n5. If motion reappears during hold, reset hold timer.\n6. If bright ambient condition appears at any time, relay OFF immediately and LCD shows AMBIENT BRIGHT.\n7. Use millis() for all timing; no delay()-based logic.",
+    components: ["Photo Resistor LDR", "IR Sensor", "LCD with Relay", "LED (Green)", "Resistors 10 kilohm", "Resistors 220 ohm"]
   },
   {
     id: 5,
-    title: "The Smart Pedestrian Crossing",
+    title: "Smart Detection Zone with Manual Sensitivity",
     team_number: 5,
-    situation: "A narrow lane through the college campus has become dangerous. Vehicles speed through while pedestrians step out from between parked cars. Two near-misses in the same month forced the administration to act. A proper traffic light system would take months of approval. You have a weekend and five components.",
-    what_to_build: "1. Idle state: red LED on (stop), servo at 0 degrees (barrier down).\n2. Pedestrian presses button -> check HC-SR04 for vehicle (distance < 40 cm = vehicle present).\n3. Vehicle present -> red LED flashes fast, deny crossing, recheck every 500 ms for up to 10 s.\n4. No vehicle -> green LED on + servo sweeps to 90 degrees (barrier up). Hold crossing open for 7 s.\n5. Servo sweeps back to 0 degrees, green off, red on.\n6. Serial-log each button press, vehicle detection result, and crossing duration.",
-    components: ["Pushbuttons", "Ultrasonic Sensor", "Small Servo Motor", "LED (Green)", "LED (Red)"]
+    situation: "A configurable detection zone should let users tune distance threshold live while showing active, warning, and scanning states.",
+    what_to_build: "1. Read potentiometer and map 0-1023 to 10-50 cm threshold.\n2. Keep Yellow LED blinking at 1 Hz (500 ms toggle) continuously as scanning heartbeat.\n3. Read Ultrasonic every 100 ms; when distance <= threshold, set ACTIVE state and turn Green LED ON.\n4. If object leaves, start 4-second clear timer; turn Green LED OFF only after timer completes.\n5. Track trigger count inside 5-second rolling window; if >= 3 triggers, rapidly blink Red LED (80 ms toggle) and print warning in Serial.\n6. Continuously print Threshold, Distance, and ACTIVE/CLEAR state in Serial output.",
+    components: ["Ultrasonic Sensor", "Potentiometer 10 kilohm", "LED (Green)", "LED (Red)", "LED (Yellow)", "Resistors 220 ohm"]
   },
   {
     id: 6,
-    title: "The Malfunctioning Traffic Signal",
+    title: "Multi-Zone Intrusion Detection",
     team_number: 6,
-    situation: "The traffic signal at the college entrance has broken down. It's stuck on red and hasn't changed in two days. Vehicles are piling up and pedestrians are jaywalking dangerously. The college principal calls the IoT lab team: \"I need a temporary working traffic signal installed by tomorrow morning - one that runs automatically but lets a traffic officer override it manually with a button.\"",
-    what_to_build: "1. Normal operation: cycle automatically - white LED on (go) for 8 s -> yellow LED blink 3 times (slow down) -> relay clicks off (stop/red, simulated) -> repeat.\n2. Piezo beeps once at every phase change so people nearby can hear the signal switch.\n3. Pushbutton = officer override: immediately jumps to stop phase (relay OFF, yellow LED off, white LED off) and holds for 15 s before resuming auto-cycle.\n4. During override: yellow LED flashes rapidly to indicate manual control is active.\n5. Use millis() for all phase timing - no delay(). Serial-print current phase and time remaining every second.",
-    components: ["LED (Yellow)", "LED (Bright White)", "Pushbuttons", "Piezo Capsule", "Relay Module"]
-  },
-  {
-    id: 7,
-    title: "The Forgotten Classroom Lights",
-    team_number: 7,
-    situation: "Every evening the college classrooms are left with lights blazing - the last student out never bothers to switch them off. The electricity bill has doubled. The facilities manager is furious: \"I want the lights to turn off automatically when it gets dark outside and nobody is in the room - but I still want a manual override button for when someone genuinely needs to keep them on.\"",
-    what_to_build: "1. Read LDR every 1 s using millis(). When ambient light drops below threshold (< 300 ADC) -> relay ON, simulating room lights turning off (or fan stopping).\n2. When light is above threshold (bright, daytime) -> relay stays OFF (lights not needed).\n3. White LED mirrors relay state - on when relay is on.\n4. Yellow LED = system status indicator, always on to show the controller is active.\n5. Pushbutton toggles a manual override flag: when override is ON, relay is forced OFF regardless of LDR (lights stay on). Press again to release override.\n6. Serial-print LDR value, relay state, and override flag every 2 s.",
-    components: ["Photo Resistor LDR", "Relay Module", "LED (Yellow)", "LED (Bright White)", "Pushbuttons"]
-  },
-  {
-    id: 8,
-    title: "The Runaway Workshop Fan",
-    team_number: 8,
-    situation: "The college workshop bench fan has no speed limit. Students routinely crank it to maximum, and last semester the plastic blades cracked under stress, sending a fragment across the room. Nobody was hurt - barely. The HOD has mandated: the fan must not exceed a safe speed, and must slow itself down automatically if a student tries to go too fast.",
-    what_to_build: "1. Read potentiometer every 200 ms. Map ADC (0-1023) to PWM (0-255) and drive DC motor via NPN transistor.\n2. Yellow LED = slow zone (PWM < 100). Both LEDs off = medium (100-200). Red LED = fast (> 200).\n3. When PWM > 220 (danger zone): automatically cap PWM at 180 - override the potentiometer input.\n4. Red LED rapid flash + piezo 3000 Hz warning beep every 2 s during override.\n5. When pot is dialled back below 200, restore normal pot control and clear override.\n6. Serial-log pot value, PWM applied, speed zone, and override flag every 500 ms.",
-    components: ["Potentiometer 10 kilohm", "DC Motor 5V", "Transistor", "LED (Yellow)", "LED (Red)"]
+    situation: "A two-zone lab security layout must escalate alerts from low to medium to high based on combined IR and close-range Ultrasonic triggers.",
+    what_to_build: "1. Continuously read IR1 (outer), IR2 (inner), and Ultrasonic distance.\n2. LOW alert: only IR1 active -> Yellow LED solid ON and buzzer 1 Hz beep (500 ms ON/OFF).\n3. MEDIUM alert: IR1 and IR2 active -> Yellow LED rapid blink (200 ms toggle) and buzzer 4 Hz beep (125 ms ON/OFF).\n4. HIGH alert: IR1 + IR2 and Ultrasonic < 20 cm -> Red LED solid ON, Yellow OFF, buzzer continuous ON.\n5. Enforce priority HIGH > MEDIUM > LOW on every cycle.\n6. If no sensor activity for 8 consecutive seconds, reset to IDLE using millis()-based inactivity timer.",
+    components: ["IR Sensor", "Ultrasonic Sensor", "Piezo Capsule", "LED (Yellow)", "LED (Red)", "Resistors 220 ohm"]
   }
 ];
 

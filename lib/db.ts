@@ -447,7 +447,7 @@ function persistStore(): void {
 
 const ROUND2_BASE_SCORE = 100;
 const ROUND2_MAX_HINT_PENALTY = 30;
-const ROUND2_CANONICAL_TEAMS = new Set([1, 2, 3, 4, 5, 6, 7, 8]);
+const ROUND2_CANONICAL_TEAMS = new Set([1, 2, 3, 4, 5, 6]);
 
 function isCanonicalRound2Scenario(scenario: Scenario | undefined): scenario is Scenario {
   if (!scenario) {
@@ -585,7 +585,10 @@ export function getAllParticipants(): Participant[] {
 
     return {
       ...p,
-      round1_score: round1Result?.total_score ?? liveRound1Score,
+      round1_score:
+        round1Answered > 0
+          ? liveRound1Score
+          : (round1Result?.total_score ?? p.round1_score ?? 0),
       team_name: p.team_name,
       scenario_title: scenario?.title,
       snippets_unlocked: snippetsUnlocked,
@@ -1498,6 +1501,8 @@ export function setLeaderboardPublicEnabled(enabled: boolean): void {
 export interface LeaderboardEntry {
   rank: number;
   team_name: string;
+  team_lead: string;
+  member_names: string[];
   avg_score: number;
   members: number;
   completed_members: number;
@@ -1522,11 +1527,31 @@ export function getPublicLeaderboard(): LeaderboardEntry[] {
       ? completed.reduce((sum, member) => sum + (member.round1_score || 0), 0) / completed.length
       : 0;
 
+    const memberNames = Array.from(
+      new Set(
+        members.flatMap((member) => [
+          member.member1_name || member.name,
+          member.member2_name,
+          member.member3_name,
+        ])
+      )
+    ).filter((name): name is string => Boolean(name && name.trim()));
+
+    const teamLead =
+      members[0]?.member1_name ||
+      members[0]?.name ||
+      memberNames[0] ||
+      'Unknown';
+    const totalMembers = memberNames.length || members.length;
+    const completedMembers = completed.length > 0 ? totalMembers : 0;
+
     return {
       team_name: teamName,
+      team_lead: teamLead,
+      member_names: memberNames,
       avg_score: avg,
-      members: members.length,
-      completed_members: completed.length,
+      members: totalMembers,
+      completed_members: completedMembers,
     };
   });
 

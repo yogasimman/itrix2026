@@ -9,21 +9,30 @@ interface TimerProps {
   duration: number;
   onTimeUp: () => void;
   isLocked: boolean;
+  initialRemainingSeconds?: number | null;
+  serverNow?: string | null;
 }
 
-export function Timer({ startedAt, duration, onTimeUp, isLocked }: TimerProps) {
+export function Timer({
+  startedAt,
+  duration,
+  onTimeUp,
+  isLocked,
+  initialRemainingSeconds,
+  serverNow,
+}: TimerProps) {
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
 
   const calculateTimeRemaining = useCallback(() => {
     if (!startedAt) return null;
 
     const start = new Date(startedAt).getTime();
-    const now = Date.now();
+    const now = serverNow ? new Date(serverNow).getTime() : Date.now();
     const elapsed = Math.floor((now - start) / 1000);
     const remaining = duration - elapsed;
 
     return Math.max(0, remaining);
-  }, [startedAt, duration]);
+  }, [startedAt, duration, serverNow]);
 
   useEffect(() => {
     if (!startedAt || isLocked) {
@@ -31,20 +40,35 @@ export function Timer({ startedAt, duration, onTimeUp, isLocked }: TimerProps) {
       return;
     }
 
-    const updateTimer = () => {
-      const remaining = calculateTimeRemaining();
-      setTimeRemaining(remaining);
+    const initial =
+      typeof initialRemainingSeconds === "number"
+        ? Math.max(0, initialRemainingSeconds)
+        : calculateTimeRemaining();
 
-      if (remaining !== null && remaining <= 0) {
-        onTimeUp();
-      }
-    };
+    if (initial === null) {
+      setTimeRemaining(null);
+      return;
+    }
 
-    updateTimer();
-    const interval = setInterval(updateTimer, 1000);
+    setTimeRemaining(initial);
+    if (initial <= 0) {
+      onTimeUp();
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev === null) return prev;
+        const next = Math.max(0, prev - 1);
+        if (prev > 0 && next === 0) {
+          onTimeUp();
+        }
+        return next;
+      });
+    }, 1000);
 
     return () => clearInterval(interval);
-  }, [startedAt, isLocked, calculateTimeRemaining, onTimeUp]);
+  }, [startedAt, isLocked, initialRemainingSeconds, calculateTimeRemaining, onTimeUp]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);

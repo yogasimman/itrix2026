@@ -279,6 +279,19 @@ export function Round1Management() {
     }
   };
 
+  const promoteParticipant = async (participantId: string) => {
+    try {
+      const res = await fetch(`/api/participants/${participantId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "assign_round", assigned_round: "round2" }),
+      });
+      if (res.ok) refreshParticipants();
+    } catch (error) {
+      console.error("Failed to promote participant:", error);
+    }
+  };
+
   if (!participantsData) {
     return (
       <Card>
@@ -827,6 +840,16 @@ export function Round1Management() {
                             <SelectItem value="round2">Round 2</SelectItem>
                           </SelectContent>
                         </Select>
+                        {participant.round1_completed && participant.assigned_round !== "round2" ? (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="h-8"
+                            onClick={() => promoteParticipant(participant.id)}
+                          >
+                            Promote
+                          </Button>
+                        ) : null}
                         {(participant.round1_total_questions || 0) > 0 || (participant.round1_answered || 0) > 0 || !!participant.round1_completed ? (
                           <button
                             type="button"

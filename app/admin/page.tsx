@@ -60,7 +60,8 @@ import {
   Trophy,
 } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) =>
+  fetch(url, { cache: "no-store" }).then((res) => res.json());
 
 interface Participant {
   id: string;
@@ -105,6 +106,15 @@ interface Scenario {
   id: number;
   title: string;
   team_number: number;
+  situation?: string;
+  what_to_build?: string;
+  components?: Array<{
+    id: number;
+    name: string;
+    description: string;
+    pinout: string;
+    category: string;
+  }>;
 }
 
 interface ActivityLog {
@@ -527,7 +537,13 @@ export default function AdminDashboard() {
     if (!confirm("Are you sure you want to delete this participant?")) return;
 
     try {
-      await fetch(`/api/participants/${participantId}`, { method: "DELETE" });
+      const res = await fetch(`/api/participants/${participantId}`, {
+        method: "DELETE",
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        throw new Error("Delete request failed");
+      }
       refreshParticipants();
     } catch (error) {
       console.error("Failed to delete participant:", error);
@@ -1565,6 +1581,8 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
 
+            <ScenarioCatalogView scenarios={scenarios} />
+
             <ComponentsView />
           </TabsContent>
 
@@ -1772,5 +1790,63 @@ function ComponentsView() {
         </Card>
       ))}
     </div>
+  );
+}
+
+function ScenarioCatalogView({ scenarios }: { scenarios: Scenario[] }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Scenario Catalog With Component Details</CardTitle>
+        <CardDescription>
+          Official Round 2 scenarios and their mapped components.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {scenarios.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No scenarios found.</p>
+        ) : (
+          scenarios.map((scenario) => (
+            <div key={`scenario-${scenario.id}`} className="rounded-lg border p-4 space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline">Team {scenario.team_number}</Badge>
+                <h3 className="font-semibold">{scenario.title}</h3>
+              </div>
+
+              {scenario.situation ? (
+                <p className="text-sm text-muted-foreground">{scenario.situation}</p>
+              ) : null}
+
+              {scenario.what_to_build ? (
+                <div className="rounded-md bg-muted/50 p-3 text-sm whitespace-pre-wrap">
+                  {scenario.what_to_build}
+                </div>
+              ) : null}
+
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Component</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Pinout</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(scenario.components || []).map((component) => (
+                    <TableRow key={`${scenario.id}-${component.id}`}>
+                      <TableCell className="font-medium">{component.name}</TableCell>
+                      <TableCell>{component.category}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{component.description}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">{component.pinout}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ))
+        )}
+      </CardContent>
+    </Card>
   );
 }

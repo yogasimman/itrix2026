@@ -34,9 +34,11 @@ import {
 interface Participant {
   id: string;
   name: string;
+  assigned_round?: 'round1' | 'round2' | null;
   scenario_id: number | null;
   timer_duration: number;
   timer_started_at: string | null;
+  timer_remaining_seconds?: number | null;
   is_active: number;
   is_locked: number;
   round2_completed: boolean;
@@ -97,6 +99,7 @@ export default function ParticipantDashboard({
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [serverNow, setServerNow] = useState<string | null>(null);
   const [round2HintSummary, setRound2HintSummary] = useState<Round2HintSummary | null>(null);
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -104,20 +107,17 @@ export default function ParticipantDashboard({
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch(`/api/participants/${id}`);
-      if (!res.ok) {
-        if (res.status === 404) {
-          setError("Participant not found");
-          return;
-        }
-        throw new Error("Failed to fetch data");
-      }
-
+      const res = await fetch(`/api/participants/${id}?requireRound2=1`);
       const data = await res.json();
+      if (!res.ok) {
+        setError(data?.error || "Failed to load dashboard");
+        return;
+      }
       setParticipant(data.participant);
       setComponents(data.components);
       setUnlockedSnippets(data.unlockedSnippets);
       setRound2HintSummary(data.round2HintSummary || null);
+      setServerNow(data.server_now || null);
     } catch (err) {
       setError("Failed to load dashboard");
       console.error(err);
@@ -227,9 +227,12 @@ export default function ParticipantDashboard({
           <CardContent className="pt-6">
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
+              <AlertTitle>Access blocked</AlertTitle>
               <AlertDescription>{error || "Participant not found"}</AlertDescription>
             </Alert>
+            <p className="mt-4 text-sm text-cyan-100/70">
+              Participant ID: <span className="font-mono font-semibold text-cyan-50">{id}</span>
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -376,6 +379,8 @@ export default function ParticipantDashboard({
               duration={participant.timer_duration}
               onTimeUp={handleTimeUp}
               isLocked={isLocked}
+              initialRemainingSeconds={participant.timer_remaining_seconds ?? null}
+              serverNow={serverNow}
             />
           </CardContent>
         </Card>
@@ -413,6 +418,35 @@ export default function ParticipantDashboard({
                 hintSummary={round2HintSummary}
               />
             )}
+
+            <Card className="border-cyan-200/20 bg-slate-950/60 backdrop-blur-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-cyan-50">
+                  <Cpu className="h-5 w-5" />
+                  Scenario Components Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {components.length === 0 ? (
+                  <p className="text-sm text-cyan-100/70">No components mapped for this scenario yet.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {components.map((component) => (
+                      <div key={`scenario-component-${component.id}`} className="rounded-lg border border-cyan-200/20 bg-slate-900/55 p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="font-medium text-cyan-50">{component.name}</p>
+                          <Badge variant="outline" className="border-cyan-200/35 text-cyan-100">
+                            {component.category}
+                          </Badge>
+                        </div>
+                        <p className="mt-1 text-sm text-cyan-100/80">{component.description}</p>
+                        <p className="mt-2 text-xs text-cyan-100/70">Pinout: {component.pinout}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="components" className="space-y-6">
