@@ -34,7 +34,7 @@ const ROUND2_WINNERS: Round2WinnerEntry[] = [
   { rank: 6, team_name: "T5" },
 ];
 
-function getRound2Medal(rank: number): { label: string; className: string } {
+function getRound2Placement(rank: number): { label: string; className: string } {
   if (rank === 1) {
     return {
       label: "Gold",
@@ -54,7 +54,7 @@ function getRound2Medal(rank: number): { label: string; className: string } {
     };
   }
   return {
-    label: "Finalist",
+    label: "Qualified & Attended",
     className: "border-slate-300 bg-slate-100 text-slate-700",
   };
 }
@@ -148,12 +148,12 @@ export default function PublicLeaderboardPage() {
               Round 2 Winners
             </CardTitle>
             <CardDescription>
-              Official Round 2 ranking. Top 3 teams are cash-prize winners.
+              Official Round 2 ranking. Top 3 teams are cash-prize winners, and ranks 4-6 are teams that qualified and attended Round 2.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {ROUND2_WINNERS.map((winner) => {
-              const medal = getRound2Medal(winner.rank);
+              const placement = getRound2Placement(winner.rank);
               const isPodium = winner.rank <= 3;
 
               return (
@@ -167,8 +167,8 @@ export default function PublicLeaderboardPage() {
                     <Badge variant={isPodium ? "default" : "secondary"}>#{winner.rank}</Badge>
                     <p className="font-medium">{winner.team_name}</p>
                   </div>
-                  <Badge variant="outline" className={medal.className}>
-                    {medal.label}
+                  <Badge variant="outline" className={placement.className}>
+                    {placement.label}
                   </Badge>
                 </div>
               );
